@@ -1,0 +1,90 @@
+﻿@model AIS.ViewModels.TemplateViewModel;
+
+
+
+
+<h2>Добавление шаблона</h2>
+
+<form  asp-action="createtemplate" asp-controller="process" method="post" enctype="multipart/form-data" id="formContract">
+    <div class="validation" asp-validation-summary="ModelOnly"></div>
+    <div class="container">
+
+         <div class="row">
+            <div class="col-5 mb-3">
+                <select class="form-select" data-placeholder="Тип госрегулирования" id="TypeOfStateReg" multiple="multiple" asp-items="@Model.TypeOfStateRegs" asp-for="TypeOfStateRegIds">
+                </select>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select class="form-select" data-placeholder="Тип контрагента" id="PartnerType" multiple="multiple" asp-items="@Model.PartnerTypes" asp-for="PartnerTypeIds">
+                </select>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select class="form-select" size="2" data-placeholder="Тип контракта" id="TypeOfContractId" asp-for="TypeOfContractId" asp-items="@Model.TypesOfContract">
+                </select>
+            </div>
+            <div class="col-7"></div>
+        </div>
+        
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Имя шаблона" aria-label="Имя шаблона" asp-for="NameOfTemplate">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Имя для скачивания" aria-label="Имя для скачивания" asp-for="OutputName">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+    <div class="container overflow-hidden">
+        <div class="row">
+           <div class="col-5 mb-3">
+                <div class="input-group" id="parentId"></div>
+           </div>
+           <div class="col-7"></div>
+        </div>
+    </div>
+    </div>
+
+    <button type="button" class="btn btn-success" onclick="return addField()">Добавить вложение</button>
+
+        <div class="row">
+            <div class="col-12 mb-3"></div>
+        </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <input class="btn btn-primary" type="submit" value="Отправить" />
+            </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+</form>
+
+
+
+@section scripts{
+    <script asp-src-include="~/js/Enclosures.js"></script>
+    <script asp-src-include="~/js/select.js"></script>
+}
+
+
+

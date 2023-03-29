@@ -1,0 +1,121 @@
+﻿@model AIS.ViewModels.MySubTaskViewModel;
+
+<div class="modal-content">
+    <div class="modal-header">
+    </div>
+  <div class="modal-body">
+
+    <h2>Добавление подзадачи</h2>
+    <form asp-action="createSubtask" asp-controller="process" method="post" enctype="multipart/form-data">
+
+       <div class=" container-fluid">
+
+            <input type="hidden" class="form-control" asp-for="MyTaskId">
+
+            <div class="row">
+                <div class="col-8 mb-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Наименование" aria-label="Наименование" asp-for="Name">
+                    </div>
+                </div>
+                <div class="col-4"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-8 mb-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Описание" aria-label="Описание" asp-for="Description">
+                    </div>
+                </div>
+                <div class="col-4"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-8 mb-3">
+                    <div class="input-group">
+                        <input type="datetime-local" class="form-control" placeholder="Дата создания" aria-label="Дата создания" asp-for="DateStart">
+                    </div>
+                </div>
+                <div class="col-4"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-8 mb-3">
+                    <div class="input-group">
+                        <input type="datetime-local" class="form-control" placeholder="Дата окончания" aria-label="Дата окончания" asp-for="DateEnd">
+                    </div>
+                </div>
+                <div class="col-4"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-8 mb-3">
+                        <style type="text/css">
+                            select#MyTaskStatuses {
+                                width: 100% !important;
+                                height: 40px;
+                                border-width: 1px;
+                                border-color: #c0c0c0;
+                                border-radius: 5px;
+                                text-align: center;
+                                outline: none;
+                            }
+                        </style>
+                 <select class="form-select" asp-for="MyTaskStatusId" asp-items="@Model.MyTaskStatuses" id="MyTaskStatuses">
+                 <option selected disabled>Статус</option>
+                </select>
+                </div>
+                <div class="col-4"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-8 mb-3">
+                        <style type="text/css">
+                            select#MyTaskLevelImportances {
+                                width: 100% !important;
+                                height: 40px;
+                                border-width: 1px;
+                                border-color: #c0c0c0;
+                                border-radius: 5px;
+                                text-align: center;
+                                outline: none;
+                            }
+                        </style>
+                        <select class="form-select form-select-sm-8 mb-3" asp-for="MyTaskLevelImportanceId" asp-items="@Model.MyTaskLevelImportances" id="MyTaskLevelImportances">
+                    <option selected>Важность</option>
+                    </select>
+                </div>
+                <div class="col-4"></div>
+            </div>
+       </div> 
+
+
+ 
+            <div class="input-group-lg mb-3" id="parentId">
+                <div class="row mb-3">
+                <div class="col-sm-8"><input type="file" name="Enclosure" class="form-control" placeholder="Прикрепить файл" aria - label="Прикрепить файл" /></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-8"><input type="file" name="Enclosure" class="form-control" placeholder="Прикрепить файл" aria - label="Прикрепить файл" /></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-8"><input type="file" name="Enclosure" class="form-control" placeholder="Прикрепить файл" aria - label="Прикрепить файл" /></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6 mb-3">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <input class="btn btn-primary"  type="submit" value="Отправить" />
+                    </div>
+                </div>
+                <div class="col-6"> <button class="btn btn-secondary" data-dismiss="modal" area-hidden="true">Отменить</button></div>
+            </div>
+    </form>
+
+</div>
+</div>
+
+@section scripts{
+    <script asp-src-include="~/js/select.js"></script>
+}

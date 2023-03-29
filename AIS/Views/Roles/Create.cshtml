@@ -1,0 +1,24 @@
+﻿@model string
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Create" method="post">
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="form-group">
+                <label for="name">Новая роль</label>
+                <input name="name" class="form-control" />
+            </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+    
+    <div class="row">
+        <div class="col-5 mb-3">
+            <button type="submit" class="btn btn-primary">Добавить</button>
+        </div>
+        <div class="col-7"></div>
+    </div>
+
+</form>

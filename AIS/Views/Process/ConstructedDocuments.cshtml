@@ -1,0 +1,21 @@
+﻿@model AIS.ViewModels.ConstructedDocumentViewModel
+;
+@{
+    ViewData["Title"] = "Сформированные контракты";
+}
+
+<h2>Сформированные контракты</h2>
+<table class="table">
+    <tr><th>Номер</th><th>Дата подписания</th><th>Дата окончания</th><th>Контрагент</th><th>Предмет</th><th>Цена</th><th>Ссылка</th></tr>
+            <tr>
+                <td>@Model.NumberOfContract</td>
+                <td>@Model.DateStart</td>
+                <td>@Model.DateEnd</td>
+                <td>@Model.PartnerName</td>
+                <td>@Model.SubjectOfContract</td>
+                <td>@Model.Cost</td>
+                <td>
+                    <a href="/files/output/@Model.NameInServer" download="@Model.Name" class="btn btn-outline-success">Скачать</a>
+                </td>
+            </tr>
+</table>

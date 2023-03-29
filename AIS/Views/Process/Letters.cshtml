@@ -1,0 +1,61 @@
+﻿@model IEnumerable<Core.Letter>
+@{
+    ViewData["Title"] = "Журнал регистрации";
+}
+
+<h2>Список задач</h2>
+
+<div class="row">
+    <div class="col-3 mb-3">
+        <p><a asp-action="CreateLetter">Добавить документ</a></p>
+    </div>
+    <div class="col-6"></div>
+</div>
+
+<table class="table table-sm table-hover table-condensed" id="currentTable">
+    <tr><th onclick="sortTable(0)">Номер</th><th onclick="sortTable(1)">Дата</th><th onclick="sortTable(2)">Адресат</th><th onclick="sortTable(3)">Описание</th><th onclick="sortTable(4)">Тип отправки</th><th onclick="sortTable(5)">Документооборот</th></tr>
+    <tr class="table-filters">
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr class="table-data">
+                <td>@item.Number</td>
+                <td>@item.DepartureDate</td>
+                <td>@item.Destination</td>
+                <td>@item.Name</td>
+                <td>@item.ShippingMethod.Name</td>
+                <td>@item.LetterType.Name</td>
+            <td align="right">
+                <a class="btn btn-outline-primary" role="button" asp-action="EditLetter" asp-controller="process" asp-route-id="@item.Id">Изменить</a>
+            </td>
+            <td align="left">
+                <form asp-controller="process" asp-action="DeleteLetter" method="post" asp-route-id="@item.Id">
+                    <input type="submit" value="Удалить" class="btn btn-outline-danger" />
+                </form>
+            </td>
+        </tr>
+    }
+</table>
+
+@section scripts{
+    <script asp-src-include="~/js/tables.js"></script>
+}

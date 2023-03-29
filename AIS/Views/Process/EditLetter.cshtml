@@ -1,0 +1,78 @@
+﻿@model AIS.ViewModels.LetterViewModel;
+
+<h2>Изменение документа</h2>
+
+<form asp-action="editletter" name="form1" asp-controller="process">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Номер" aria-label="Номер" asp-for="Number">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                        <input type="date" asp-format="{0:yyyy-MM-dd}" class="form-control" placeholder="Дата отправки" aria-label="Дата отправки" asp-for="DepartureDate">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Место назначения" aria-label="Место назначения" asp-for="Destination">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Описание" aria-label="Описание" asp-for="Name">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select size="2" data-placeholder="Способ отправки" class="form-select" asp-for="ShippingMethodId" asp-items="@Model.ShippingMethods" id="ShippingMethod">
+                </select>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+
+    <div class="row">
+        <div class="col-5 mb-3">
+                <select size="2" data-placeholder="Тип документа" class="form-select" asp-for="LetterTypeId" asp-items="@Model.LetterTypes" id="LetterType">
+            </select>
+        </div>
+        <div class="col-7"></div>
+    </div>
+
+
+
+
+    </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <input class="btn btn-primary" type="submit" value="Отправить" />
+            </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+    </form>
+
+@section scripts{
+    <script asp-src-include="~/js/select.js"></script>
+}

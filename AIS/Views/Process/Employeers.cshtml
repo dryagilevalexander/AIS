@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Core.Employee>
+@{
+    ViewData["Title"] = "Сотрудники организаций";
+}
+
+<h2>Список Сотрудников</h2>
+<p><a asp-action="CreateEmployee">Добавить сотрудника</a></p>
+<table class="table table-sm table-hover table-condensed">
+    <tr><th>Имя</th><th>Фамилия</th><th>Отчество</th><th>Адрес</th><th>Телефон</th><th>Email</th><th>Контрагент</th></tr>
+    @foreach (var item in Model)
+    {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.FirstName</td>
+                <td>@item.LastName</td>
+                <td>@item.Address</td>
+                <td>@item.PhoneNumber</td>
+                <td>@item.Email</td>
+                @if(item.Partner is not null)
+                {
+                <td>@item.Partner.Name</td>
+                }
+                else
+                {
+                <td></td>
+                }
+            <td align="right">
+                <a class="btn btn-outline-primary" role="button" asp-action="EditEmployee" asp-controller="process" asp-route-id="@item.Id">Изменить</a>
+            </td>
+            <td align="left">
+                <form asp-controller="process" asp-action="DeleteEmployee" method="post" asp-route-id="@item.Id">
+                    <input type="submit" value="Удалить" class="btn btn-outline-danger" />
+                </form>
+            </td>
+            </tr>
+    }
+</table>

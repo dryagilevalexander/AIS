@@ -1,0 +1,61 @@
+﻿<table class="table table-sm table-hover" id="currentTable">
+    <tr><th onclick="sortTable(0)">Автор</th><th onclick="sortTable(1)">Адресат</th><th onclick="sortTable(2)">Наименование</th><th onclick="sortTable(3)">Описание</th><th onclick="sortTable(4)">Дата начала</th><th onclick="sortTable(5)">Дата окончания</th><th onclick="sortTable(6)">Статус</th><th onclick="sortTable(7)">Важность</th></tr>
+    <tr class="table-filters">
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr class="table-data">
+            <td>@item.SenderUserName</td>
+            <td>@item.DestinationUserName</td>
+            <td>@item.Name</td>
+            <td>@item.Description</td>
+            <td>@item.DateStart</td>
+            <td>@item.DateEnd</td>
+            <td>
+                @if (item.MyTaskStatus is not null && item.MyTaskStatus.Name is not null)
+                {
+                    @item.MyTaskStatus.Name
+                }
+            </td>
+            <td>
+                @if (item.MyTaskLevelImportance is not null)
+                {
+                    <a href="#" class="@item.MyTaskLevelImportance.ClassView">@item.MyTaskLevelImportance.Name</a>
+                }
+            </td>
+            <td align="right">
+                <a class="btn btn-outline-primary" role="button" asp-action="EditMyTask" asp-controller="process" asp-route-id="@item.Id">Изменить</a>
+            </td>
+            <td align="left">
+                <form asp-controller="process" asp-action="DeleteMyTask" method="post" asp-route-id="@item.Id">
+                    <input type="submit" value="Удалить" class="btn btn-outline-danger" />
+                </form>
+            </td>
+        </tr>
+    }
+</table>

@@ -1,0 +1,51 @@
+﻿@model AIS.ViewModels.CreateUserViewModel
+@{
+    ViewBag.Title = "Добавление пользователя";
+}
+<form asp-action="Create" asp-controller="Users">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="form-group">
+                <label asp-for="UserNickName" class="control-label">Имя пользователя</label>
+                <input type="text" asp-for="UserNickName" class="form-control" />
+            </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="form-group">
+                <label asp-for="Email" class="control-label">Email</label>
+                <input type="text" asp-for="Email" class="form-control" />
+            </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="form-group">
+                <label asp-for="Password" class="control-label">Пароль</label>
+                <input type="password" asp-for="Password" class="form-control" />
+            </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="form-group">
+                <input type="submit" value="Добавить" class="btn btn-outline-secondary" />
+            </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+
+</form>

@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Core.DocumentTemplate>
+@{
+    ViewData["Title"] = "Договоры";
+}
+
+<h2>Список задач</h2>
+<p><a asp-action="CreateTemplate">Добавить шаблон</a></p>
+<table class="table table-sm table-hover table-condensed">
+    <tr><th>Имя шаблона</th><th>Сохраняемое имя</th><th>Тип</th><th>Госрегулирование</th></tr>
+
+@if(Model is not null)
+{
+    foreach (var item in Model)
+    {
+
+            <tr>
+                <td>@item.NameOfTemplate</td>
+                <td>@item.NameOutput</td>
+                <td>@if (item.TypeOfContract is not null)
+                    {
+                        @item.TypeOfContract.Name;
+                    }
+                </td>
+            <td>
+                @foreach (var type in item.TypeOfStateRegs)
+                {
+                        @type.Name<br />;
+                }
+            </td>
+            <td align="left">
+                <form asp-controller="process" asp-action="DeleteTemplate" method="post" asp-route-id="@item.Id">
+                    <input type="submit" value="Удалить" class="btn btn-outline-danger" />
+                </form>
+            </td>
+            </tr>
+}
+}
+</table>

@@ -1,0 +1,226 @@
+﻿@model AIS.ViewModels.MyTaskViewModel;
+
+<h2>Редактирование задачи</h2>
+<form asp-action="editmytask" asp-controller="process" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+
+    <div class="container">
+        
+        <input type="hidden" class="form-control" asp-for="SenderUserId">
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select size="2" data-placeholder="Адресат" class="form-select" asp-for="DestinationUserId" asp-items=@Model.DestinationUsers id="DestinaionUserId">
+                </select>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Наименование" aria-label="Наименование" asp-for="Name">
+        </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-5 mb-3">
+        <div class="input-group">
+             <input type="text" class="form-control" placeholder="Описание" aria-label="Описание" asp-for="Description">
+        </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+
+   <div class="row">
+        <div class="col-5 mb-3">
+        <div class="input-group">
+            <input type="datetime-local" class="form-control" placeholder="Дата создания" aria-label="Дата создания" asp-for="DateStart">
+        </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+        <div class="input-group">
+            <input type="datetime-local" class="form-control" placeholder="Дата окончания" aria-label="Дата окончания" asp-for="DateEnd">
+        </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select size="2" data-placeholder="Статус"  class="form-select" asp-for="MyTaskStatusId" asp-items="ViewBag.MyTaskStatuses" id="MyTaskStatusId">
+            </select>
+        </div>
+        <div class="col-7"></div>
+    </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select size="2" data-placeholder="Важность" class="form-select" asp-for="MyTaskLevelImportanceId" asp-items="ViewBag.MyTaskLevels" id="MyTaskLevelImportanceId">
+             </select>
+        </div>
+        <div class="col-7"></div>
+    </div>
+
+    </div>
+    
+<div class="row">
+<div class="col-5 mb-3">
+<table class="table">
+    <tr><th>Наименование</th></tr>
+        @if(Model.MyFiles is not null)
+        {
+        @foreach (var item in Model.MyFiles)
+        {
+                    <tr class="@("file"+item.Id)">
+                    <td >@item.Name</td>
+                    <td align="right">
+                    <button type="button" class="btn btn-outline-danger" onclick="return deleteFieldBySelector(@("'"+("file"+item.Id)+"'"),@item.Id)">Удалить</button>
+                    </td>
+                    <td align="left">
+                    <a href="/files/@item.NameInServer" download="@item.Name" class="btn btn-outline-success">Скачать</a>
+                    </td>
+                    </tr>
+        }
+        }
+</table>
+</div>
+</div>
+
+    <div class="container overflow-hidden">
+        <div class="input-group-lg mb-3" id="parentId">
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-success" onclick="return addField()">Добавить вложение</button>
+
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <input class="btn btn-primary" type="submit" value="Отправить" />
+            </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+
+    
+
+</form>
+  <style>
+   .line {
+        border-bottom: 1px solid #d3d3d3; /* Параметры линии */
+   }
+   </style>
+<div class="line col-12"></div>
+<h2>Подзадачи</h2>
+
+<table class="table table-sm table-hover" id="currentTable">
+    <tr>><th onclick="sortTable(0)">Наименование</th><th onclick="sortTable(1)">Описание</th><th onclick="sortTable(2)">Дата начала</th><th onclick="sortTable(3)">Дата окончания</th><th onclick="sortTable(4)">Статус</th><th onclick="sortTable(5)">Важность</th></tr>
+    <tr class="table-filters">
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+    </tr>
+
+    @foreach (var item in Model.MySubTasks)
+    {
+        <tr class="table-data">
+            <td>@item.Name</td>
+            <td>@item.Description</td>
+            <td>@item.DateStart</td>
+            <td>@item.DateEnd</td>
+            <td>
+                @if (item.MyTaskStatus is not null && item.MyTaskStatus.Name is not null)
+                {
+                    @item.MyTaskStatus.Name
+                }
+            </td>
+            <td>
+                @if (item.MyTaskLevelImportance is not null)
+                {
+                    <a href="#" class="@item.MyTaskLevelImportance.ClassView">@item.MyTaskLevelImportance.Name</a>
+                }
+            </td>
+            <td align="right">
+                <a class="btn btn-outline-primary" role="button" onclick="editSubTask(@item.Id)">Изменить</a>
+            </td>
+            <td align="left">
+                <form asp-controller="process" asp-action="DeleteMySubTask" method="post" asp-route-id="@item.Id">
+                    <input type="submit" value="Удалить" class="btn btn-outline-danger" />
+                </form>
+            </td>
+        </tr>
+    }
+</table>
+
+<div id="modDialog" class="modal fade">
+        <div id="dialogContent" class="modal-dialog modal-lg modal-dialog-centered"></div>
+</div>
+
+
+
+<button class="btn btn-success" onclick="myFunction()">Добавить</button>
+
+@section scripts{
+
+<script asp-src-include="~/js/Enclosures.js"></script>
+<script asp-src-include="~/js/subTasks.js"></script>
+<script asp-src-include="~/js/tables.js"></script>
+<script asp-src-include="~/js/select.js"></script>
+    <script>
+        async function myFunction() {
+            let url = '/Process/CreateSubTask/' + @Model.Id;
+            let response = await fetch(url);
+            if (response.ok) {
+                let data = await response.text();
+                $('#dialogContent').html(data);
+                $('#modDialog').modal('show');
+            }
+            else {
+                alert("Ошибка HTTP: " + response.status);
+            }
+
+        }
+
+        async function editSubTask(id) {
+            let url = '/Process/EditMySubTask/' + id;
+            let response = await fetch(url);
+            if (response.ok) {
+                let data = await response.text();
+                $('#dialogContent').html(data);
+                $('#modDialog').modal('show');
+            }
+            else {
+                alert("Ошибка HTTP: " + response.status);
+            }
+
+        }
+    </script>
+}
+
+
+
+
+    

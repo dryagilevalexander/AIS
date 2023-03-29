@@ -1,0 +1,171 @@
+﻿@model AIS.ViewModels.MyContractViewModel;
+
+<h2>Изменение договора</h2>
+<form asp-antiforgery="true" asp-action="editcontract" asp-controller="process" method="post" enctype="multipart/form-data" id="formContract">
+    <div class="validation" asp-validation-summary="ModelOnly"></div>
+    <div class="container">
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select size="2" data-placeholder="Тип госрегулирования" class="form-select" asp-for="TypeOfStateRegId" asp-items="@Model.TypeOfStateRegs" id="TypeOfStateRegId" onchange="change()">
+                </select>
+            </div>
+            <div class="col-7"><span asp-validation-for="TypeOfStateRegId"></span></div>
+        </div>
+
+        <div class="row" id="articleoflaw" style="display: none">
+            <div class="col-5 mb-3">
+                <select size="2" data-placeholder="Статья закона" class="form-select" asp-for="ArticleOfLawId" asp-items="@Model.ArticleOfLaws" id="ArticleOfLawId">
+                </select>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select size="2" data-placeholder="Тип договора" class="form-select" asp-for="TypeOfContractId" asp-items="@Model.TypeOfContracts" id="TypeOfContractId" onchange="addTemplates()">
+                </select>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select size="2" data-placeholder="Контрагент" class="form-select" asp-for="PartnerId" asp-items="@Model.MyPartners" id="PartnerId" onchange="addTemplates()">
+                </select>
+            </div>
+            <div class="col-7"><span asp-validation-for="PartnerId"></span></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <style type="text/css">
+                    select#DocumentTemplates {
+                        width: 100% !important;
+                        height: 40px;
+                        border-width: 1px;
+                        border-color: #c0c0c0;
+                        border-radius: 5px;
+                        text-align: center;
+                        outline: none;
+                    }
+                </style>
+                <select id="DocumentTemplates">
+                    <option selected disabled>Выбор шаблона</option>
+                </select>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Номер контракта" aria-label="Номер контракта" asp-for="NumberOfContract" id="NumberOfContract">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="date" asp-format="{0:yyyy-MM-dd}" class="form-control" placeholder="Дата подписания" aria-label="Дата подписания" asp-for="DateStart" id="DateStart">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="date" asp-format="{0:yyyy-MM-dd}" class="form-control" placeholder="Дата окончания" aria-label="Дата окончания" asp-for="DateEnd" id="DateEnd">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Предмет контракта" aria-label="Предмет контракта" asp-for="SubjectOfContract" id="SubjectOfContract">
+                </div>
+            </div>
+            <div class="col-7"><span asp-validation-for="SubjectOfContract"></span></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="number" class="form-control" placeholder="Цена контракта" aria-label="Цена контракта" asp-for="Cost" step="0.01" id="Cost" />
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select size="2" data-placeholder="Статус договора" class="form-select" asp-for="MyContractStatusId" asp-items="@Model.MyContractStatuses" id="MyContractStatusId">
+                </select>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <table class="table">
+                    <tr><th>Наименование</th></tr>
+                    @if (Model.MyFiles is not null)
+                    {
+                        @foreach (var item in Model.MyFiles)
+                        {
+                            <tr class="@("file"+item.Id)">
+                                <td>@item.Name</td>
+                                <td align="right">
+                                    <button type="button" class="btn btn-outline-danger" onclick="return deleteFieldBySelector(@("'"+("file"+item.Id)+"'"),@item.Id)">Удалить</button>
+                                </td>
+                                <td align="left">
+                                    <a href="/files/@item.NameInServer" download="@item.Name" class="btn btn-outline-success">Скачать</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+
+        <div class="container overflow-hidden">
+            <div class="input-group-lg mb-3" id="parentId">
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-success" onclick="return ConstructContract()">Заполнить договор</button>
+        <button type="button" class="btn btn-success" onclick="return addField()">Добавить вложение</button>
+
+        <div class="row">
+            <div class="col-12 mb-3"></div>
+        </div>
+
+        <div class="container overflow-hidden">
+            <div class="input-group-lg mb-3 pb-10" id="projectDocumentLink">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <input class="btn btn-primary" type="submit" value="Отправить" />
+            </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+</form>
+
+@section scripts{
+    <script asp-src-include="~/js/DocumentConstructor.js"></script>
+    <script asp-src-include="~/js/Enclosures.js"></script>
+    <script asp-src-include="~/js/select.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script asp-src-include="~/js/templates.js"></script>
+}

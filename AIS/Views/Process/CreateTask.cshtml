@@ -1,0 +1,100 @@
+﻿@model AIS.ViewModels.MyTaskViewModel;
+
+<h2>Добавление задачи</h2>
+<form asp-action="createtask" asp-controller="process" method="post" enctype="multipart/form-data">
+
+    <div class="container">
+
+        <input type= "hidden" class="form-control" asp-for="SenderUserId">
+        <input type="hidden" class="form-control" asp-for="SenderUserName">
+        
+        <div class="row">
+        <div class="col-5 mb-3">
+        <div class="input-group">
+                    <select size="2" data-placeholder="Адресат" class="form-select" asp-for="DestinationUserId" asp-items="@Model.DestinationUsers" id="DestinaionUserId">
+                </select>
+            </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Наименование" aria-label="Наименование" asp-for="Name">
+        </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+        <div class="input-group">
+             <input type="text" class="form-control" placeholder="Описание" aria-label="Описание" asp-for="Description">
+        </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+        <div class="input-group">
+            <input type="datetime-local" class="form-control" placeholder="Дата создания" aria-label="Дата создания" asp-for="DateStart">
+        </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+        <div class="input-group">
+            <input type="datetime-local" class="form-control" placeholder="Дата окончания" aria-label="Дата окончания" asp-for="DateEnd">
+        </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select size="2" data-placeholder="Статус" class="form-select" asp-for="MyTaskStatusId" asp-items="@Model.MyTaskStatuses" id="MyTaskStatusId">
+                </select>
+        </div>
+        <div class="col-7"></div>
+    </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select size="2" data-placeholder="Важность" class="form-select form-select-sm-8 mb-3" asp-for="MyTaskLevelImportanceId" asp-items="@Model.MyTaskLevelImportances" id="MyTaskLevelImportanceId">
+                </select>
+        </div>
+        <div class="col-7"></div>
+        </div>
+    
+
+    <div class="container overflow-hidden">
+            <div class="input-group-lg mb-3" id="parentId">
+            </div>
+    </div>
+    
+  </div>
+
+    <button type="button" class="btn btn-success" onclick="return addField()">Добавить вложение</button>
+       
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <input class="btn btn-primary"  type="submit" value="Отправить" />
+            </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+
+</form>
+
+@section scripts{
+<script asp-src-include="~/js/Enclosures.js"></script>
+<script asp-src-include="~/js/select.js"></script>
+}
+
+
+
