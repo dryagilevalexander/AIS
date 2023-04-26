@@ -131,6 +131,12 @@ namespace AIS.Services
                         myFiles.Add(myFile);
                     }
                 }
+
+                if(destinationUser.Id==mtvm.SenderUserId)
+                {
+                    myTask.FirstView = true;
+                }
+
                 myTask.MyFiles = myFiles;
                 db.MyTasks.Update(myTask);
                 await db.SaveChangesAsync();

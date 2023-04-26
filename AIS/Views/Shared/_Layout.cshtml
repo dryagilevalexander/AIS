@@ -40,20 +40,11 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Process" asp-action="MyContracts">Договоры</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Process" asp-action="ConstructDocument">Конструктор</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Process" asp-action="TemplatesDocuments">Шаблоны</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Process" asp-action="Letters">Журнал регистрации</a>
                         </li>
-                        @if(User.IsInRole("admin"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Пользователи</a>
-                            </li>
-                        }
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Process" asp-action="Pref">Настройки</a>
+                        </li>
                         @if (!User.Identity.IsAuthenticated)
                         {
                         <li class="nav-item">

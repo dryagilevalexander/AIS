@@ -1,0 +1,67 @@
+﻿@model AIS.ViewModels.ConditionViewModel;
+
+<h2>Добавление условия контракта</h2>
+
+<form  asp-action="createcondition" asp-controller="process" method="post">
+    <div class="validation" asp-validation-summary="ModelOnly"></div>
+    <div class="container">
+
+        <input type="hidden" class="form-control" asp-for="ContractTemplateId">
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select class="form-select" size="2" data-placeholder="Тип условия" id="TypeOfConditionId" asp-for="TypeOfConditionId" asp-items="@Model.TypesOfCondition">
+                </select>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                    <select class="form-select" size="2" data-placeholder="Тип регулирования" id="TypeOfStateRegId" asp-for="TypeOfStateRegId" asp-items="@Model.TypesOfStateReg">
+                </select>
+            </div>
+            <div class="col-7"></div>
+        </div>
+        
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Наименование условия (заголовок)" aria-label="Наименование условия (заголовок)" asp-for="Name">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Текст условия" aria-label="Текст условия" asp-for="Text">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+    </div>
+
+        <div class="row">
+            <div class="col-12 mb-3"></div>
+        </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <input class="btn btn-primary" type="submit" value="Отправить" />
+            </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+</form>
+
+
+
+@section scripts{
+    <script asp-src-include="~/js/select.js"></script>
+}
+
+
+

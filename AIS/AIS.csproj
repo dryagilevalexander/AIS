@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Content Remove="wwwroot\js\messages.js" />
-    <Content Remove="wwwroot\js\select.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,6 +16,8 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.Unobtrusive.Ajax" Version="2.0.0" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="2.20.0" />
+    <PackageReference Include="HtmlToOpenXml" Version="1.6.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.15" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.14" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.3">
@@ -25,9 +26,8 @@
     </PackageReference>
     <PackageReference Include="Microsoft.jQuery.Unobtrusive.Ajax" Version="3.2.6" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.3" />
+    <PackageReference Include="Open-XML-SDK" Version="2.9.1" />
     <PackageReference Include="System.IO.Packaging" Version="7.0.0" />
-    <PackageReference Include="Xceed.Document.NET" Version="2.4.22471.15220" />
-    <PackageReference Include="Xceed.Words.NET" Version="2.4.22471.15220" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,8 +43,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\js\select.js" />
     <None Include="wwwroot\js\messages.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Views\Process\CreateCondition.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

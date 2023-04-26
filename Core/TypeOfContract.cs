@@ -10,6 +10,5 @@ namespace Core
     {
     public int Id { get; set; }
     public string Name { get; set; }
-    public List<DocumentTemplate> DocumentTemplates { get; set; }
     }
 }

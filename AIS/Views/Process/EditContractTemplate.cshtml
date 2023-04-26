@@ -1,0 +1,104 @@
+﻿@model AIS.ViewModels.ContractTemplateViewModel;
+
+<h2>Редактирование шаблона контракта</h2>
+<form asp-action="editcontracttemplate" asp-controller="process" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select class="form-select" size="2" data-placeholder="Тип контракта" id="TypeOfContractId" asp-for="TypeOfContractId" asp-items="@Model.TypesOfContract">
+                </select>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Имя шаблона" aria-label="Имя шаблона" asp-for="Name">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Описание" aria-label="Описание" asp-for="Description">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <input class="btn btn-primary" type="submit" value="Отправить" />
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+    </div>
+
+
+
+</form>
+  <style>
+   .line {
+        border-bottom: 1px solid #d3d3d3; /* Параметры линии */
+   }
+   </style>
+<div class="line col-12"></div>
+<h2>Условия</h2>
+
+<table class="table table-sm table-hover" id="currentTable">
+    <tr><th onclick="sortTable(0)">Тип условия</th><th onclick="sortTable(1)">Описание</th><th onclick="sortTable(2)">Тип регулирования</th></tr>
+    <tr class="table-filters">
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+    </tr>
+
+    @foreach (var item in Model.Conditions)
+    {
+        <tr class="table-data">
+            <td>@Model.TypesOfCondition.FirstOrDefault(p=>p.Value==item.TypeOfConditionId.ToString()).Text.ToString()</td>
+            <td>
+                @if (item.Name != null) @item.Name
+            </td>
+                <td>@Model.TypesOfStateReg.FirstOrDefault(p=>p.Value==item.TypeOfStateRegId.ToString()).Text.ToString()</td>
+            <td align="right">
+                 <a class="btn btn-outline-primary" role="button" asp-action="EditCondition" asp-controller="process" asp-route-id="@item.Id">Изменить</a>
+            </td>
+            <td align="left">
+                <form asp-controller="process" asp-action="DeleteCondition" method="post" asp-route-id="@item.Id">
+                    <input type="submit" value="Удалить" class="btn btn-outline-danger" />
+                </form>
+            </td>
+        </tr>
+    }
+</table>
+
+
+
+
+<a class="btn btn-outline-primary" role="button" asp-action="CreateCondition" asp-controller="process" asp-route-id="@Model.Id">Добавить</a>
+
+@section scripts{
+
+<script asp-src-include="~/js/tables.js"></script>
+<script asp-src-include="~/js/select.js"></script>
+}
+
+
+
+
+    

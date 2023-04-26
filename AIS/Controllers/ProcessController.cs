@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using AIS.Models;
+﻿using AIS.Models;
 using Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,6 +11,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using System.Runtime.CompilerServices;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using AspNetCore;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AIS.Controllers
 {
@@ -24,30 +25,39 @@ namespace AIS.Controllers
         private IMyTaskService _myTaskService;
         private IMyUsersService _myUserService;
         private IContractsService _contractsService;
-        private ITemplatesService _templatesService;
         private ILetterService _letterService;
         private IEnclosureService _enclosureService;
         private IWebHostEnvironment _appEnvironment;
-        private IDocumentConstructor _documentConstructor;
+        private IConditionsService _conditionsService;
         private readonly UserManager<User> _userManager;
         IHubContext<AisHub> _hubContext;
 
 
-        public ProcessController(ILogger<ProcessController> logger, IWebHostEnvironment appEnvironment, IDocumentConstructor documentConstructor, UserManager<User> userManager, IPartnerService partnerService, IEmployeeService employeeService, IMyTaskService myTaskService, IMyUsersService myUserService, IContractsService contractsService, ITemplatesService templatesService, ILetterService letterService, IEnclosureService enclosureService, IHubContext<AisHub> hubContext)
+        public ProcessController(ILogger<ProcessController> logger, 
+                                 IWebHostEnvironment appEnvironment, 
+                                 UserManager<User> userManager, 
+                                 IPartnerService partnerService, 
+                                 IEmployeeService employeeService, 
+                                 IMyTaskService myTaskService, 
+                                 IMyUsersService myUserService, 
+                                 IContractsService contractsService, 
+                                 ILetterService letterService, 
+                                 IEnclosureService enclosureService, 
+                                 IConditionsService conditionsService, 
+                                 IHubContext<AisHub> hubContext)
         {
             _logger = logger;
             _appEnvironment = appEnvironment;
-            _documentConstructor = documentConstructor;
             _userManager = userManager;
             _employeeService = employeeService;
             _partnerService = partnerService;
             _myTaskService = myTaskService;
             _myUserService = myUserService;
             _contractsService = contractsService;
-            _templatesService = templatesService;
             _letterService = letterService;
             _enclosureService = enclosureService;
             _hubContext = hubContext;
+            _conditionsService = conditionsService;
         }
 
 
@@ -66,7 +76,7 @@ namespace AIS.Controllers
                 return View();
             }
             else
-            { 
+            {
                 return NotFound();
             }
         }
@@ -146,7 +156,7 @@ namespace AIS.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePartner(PartnerViewModel partnerViewModel)
         {
-            if(await _partnerService.CreatePartner(partnerViewModel)== true)
+            if (await _partnerService.CreatePartner(partnerViewModel) == true)
             {
                 return RedirectToAction("Partners");
             }
@@ -236,12 +246,12 @@ namespace AIS.Controllers
         {
             var userName = User.FindFirstValue(ClaimTypes.Name);
             var currentUser = await _myUserService.GetCurrentUser(userName);
-            if(User.IsInRole("admin"))
+            if (User.IsInRole("admin"))
             {
                 return View(await _myTaskService.GetMyActiveTasks());
             }
             else
-            { 
+            {
                 return View(await _myTaskService.GetMyActiveTasksWithCurrentUser(currentUser.Id));
             }
         }
@@ -359,9 +369,9 @@ namespace AIS.Controllers
         [HttpPost]
         public async Task<IActionResult> EditMyTask(MyTaskViewModel mtvm)
         {
-           var destinationUser = await _myUserService.GetUserById(mtvm.DestinationUserId);
-           
-            if(await _myTaskService.EditMyTask(destinationUser, mtvm) == true)
+            var destinationUser = await _myUserService.GetUserById(mtvm.DestinationUserId);
+
+            if (await _myTaskService.EditMyTask(destinationUser, mtvm) == true)
             {
                 return RedirectToAction("MyTasks");
             }
@@ -413,7 +423,7 @@ namespace AIS.Controllers
             return View(myContractViewModel);
         }
 
-    [HttpPost]
+        [HttpPost]
         public async Task<IActionResult> CreateContract(MyContractViewModel mcvm)
         {
 
@@ -422,7 +432,7 @@ namespace AIS.Controllers
             //     return View(mcvm);
             // }
 
-           if(await _contractsService.CreateContract(mcvm) == true)
+            if (await _contractsService.CreateContract(mcvm) == true)
             {
                 return RedirectToAction("MyContracts");
             }
@@ -492,7 +502,7 @@ namespace AIS.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteContract(int? id)
         {
-            if(await _contractsService.DeleteContract(id) == true)
+            if (await _contractsService.DeleteContract(id) == true)
             {
                 return RedirectToAction("MyContracts");
             }
@@ -503,244 +513,6 @@ namespace AIS.Controllers
         }
         #endregion
 
-        #region [DocumentsConstructor]
-        public IActionResult ConstructDocument()
-        {
-            return View();
-        }
-
-        public async Task<IActionResult> ConstructWorkContract()
-        {
-
-            DocumentConstructorViewModel dcvm = new DocumentConstructorViewModel();
-            IEnumerable<Partner> myPartners = await _partnerService.GetPartners();
-            IEnumerable<TypeOfStateReg> typeOfStateRegs = await _contractsService.GetTypeOfStateRegs();
-            IEnumerable<ArticleOfLaw> articleOfLaws =await _contractsService.GetArticleOfLaws();
-            dcvm.MyPartners = from myPartner in myPartners select new SelectListItem { Text = myPartner.ShortName, Value = myPartner.Id.ToString() };
-            dcvm.TypeOfStateRegs = from typeOfStateReg in typeOfStateRegs select new SelectListItem { Text = typeOfStateReg.Name, Value = typeOfStateReg.Id.ToString() };
-            dcvm.ArticleOfLaws = from articleOfLaw in articleOfLaws select new SelectListItem { Text = articleOfLaw.Name, Value = articleOfLaw.Id.ToString() };
-            return View(dcvm);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ConstructWorkContract(DocumentConstructorViewModel dcvm)
-        {
-            Partner headOrganization = await _partnerService.GetOurOrganization();
-            Partner? partner = await _partnerService.GetPartner(dcvm.PartnerId);
-            DirectorType? directorType = await _partnerService.GetDirectorTypeById(partner.DirectorTypeId);
-            DirectorType? headDirectorType = await _partnerService.GetDirectorTypeById(headOrganization.DirectorTypeId);
-
-            string nameOfContract = "";
-            string baseOfContract = "";
-            if (dcvm.TypeOfStateRegId != 1)
-            {
-                nameOfContract = "Договор";
-            }
-            else
-            {
-                nameOfContract = "Контракт";
-            }
-
-
-            if (dcvm.ArticleOfLawId is not null)
-            {
-                if (dcvm.ArticleOfLawId == 1)
-                    baseOfContract = "на основании пункта 8 части 1 статьи 93 Федерального Закона от 05.04.2013 № 44-ФЗ 'О контрактной системе в сфере закупок товаров, работ, услуг для обеспечения государственных и муниципальных нужд',";
-                else if (dcvm.ArticleOfLawId == 2)
-                    baseOfContract = "на основании части 4 статьи 93 Федерального Закона от 05.04.2013 № 44-ФЗ 'О контрактной системе в сфере закупок товаров, работ, услуг для обеспечения государственных и муниципальных нужд',";
-
-            }
-            else
-            {
-                if (dcvm.TypeOfStateRegId == 2)
-                    baseOfContract = "на основании Федерального закона 'О закупках товаров, работ, услуг отдельными видами юридических лиц' от 18.07.2011 N 223-ФЗ,";
-                else if (dcvm.TypeOfStateRegId == 3)
-                {
-                    baseOfContract = "";
-                }
-            }
-
-
-            Dictionary<string, string> _replacePatterns = new Dictionary<string, string>()
-            {
-        { "NAMEOFCONTRACT", nameOfContract },
-        { "BASEOFCONTRACT", baseOfContract },
-        { "NUMBER", dcvm.NumberOfContract},
-        { "DATESTART", ((DateTime)dcvm.DateStart).ToString("dd.MM.yyyy") },
-        { "DATEEND", ((DateTime)dcvm.DateEnd).ToString("dd.MM.yyyy") },
-        { "PARTNERFNAME", partner.Name },
-        { "PARTNERDIR", directorType.Name },
-        { "PARTNERDIRNAME", partner.DirectorName},
-        { "SUBJECTOFCONTRACT", dcvm.SubjectOfContract},
-        { "COST", Math.Truncate(Convert.ToDecimal(dcvm.Cost)).ToString() },
-        { "COSTINWORDS", _documentConstructor.CostInWords(Convert.ToDecimal(dcvm.Cost)) },
-        { "COIN", ((Convert.ToDecimal(dcvm.Cost)-Math.Truncate(Convert.ToDecimal(dcvm.Cost))).ToString()).Replace("0.","") },
-        { "PARTNERSHORTNAME", partner.Name },
-        { "ADDRESS", partner.Address},
-        { "INN", partner.INN },
-        { "KPP", partner.KPP },
-        { "OGRN", partner.OGRN },
-        { "ACCOUNT", partner.Account },
-        { "CORRACCOUNT", partner.CorrespondentAccount},
-        { "BANK", partner.Bank },
-        { "BIK", partner.BIK },
-        { "HEADFNAME", headOrganization.Name },
-        { "HEADDIR", headDirectorType.Name },
-        { "HEADDIRNAME", headOrganization.DirectorName},
-        { "HEADSHORTNAME", headOrganization.Name },
-        { "HEADADDRESS", headOrganization.Address},
-        { "HEADINN", headOrganization.INN },
-        { "HEADKPP", headOrganization.KPP },
-        { "HEADOGRN", headOrganization.OGRN },
-        { "HEADACCOUNT", headOrganization.Account },
-        { "HEADCORRACCOUNT", headOrganization.CorrespondentAccount},
-        { "HEADBANK", headOrganization.Bank },
-        { "HEADBIK", headOrganization.BIK },
-        { "PASSSERIES", partner.PassportSeries},
-        { "PASSNUMBER", partner.PassportNumber },
-        { "PASSDATEI", partner.PassportDateOfIssue.ToString() },
-        { "DATEBIRTH", partner.PassportDateOfBirth.ToString() },
-        { "PASSPLASEI", partner.PassportPlaseOfIssue },
-        { "PASSDIVCODE", partner.PassportDivisionCode}
-            };
-            string fileName = String.Format(@"{0}", System.Guid.NewGuid());
-            string appPath = _appEnvironment.WebRootPath;
-            _documentConstructor.SetReplacePatterns(_replacePatterns);
-            _documentConstructor.Replacing(appPath, "dogovorpodryada.docx", fileName);
-
-            ConstructedDocumentViewModel cdvc = new ConstructedDocumentViewModel
-            {
-                NumberOfContract = dcvm.NumberOfContract,
-                DateStart = dcvm.DateStart,
-                DateEnd = dcvm.DateEnd,
-                PartnerName = partner.Name,
-                Cost = dcvm.Cost,
-                SubjectOfContract = dcvm.SubjectOfContract,
-                NameInServer = fileName + ".docx",
-                Name = "dogovorpodryada.docx"
-            };
-
-            return RedirectToAction("ConstructedDocuments", cdvc);
-        }
-
-        public IActionResult ConstructedDocuments(ConstructedDocumentViewModel cdvc)
-        {
-            return View(cdvc);
-        }
-
-        [HttpPost]
-        public async Task<string> ShadowConstructContract([FromBody] JsonDocument currentContractData)
-        {
-
-            CurrentContractData? dcvm = JsonSerializer.Deserialize<CurrentContractData>(currentContractData);
-            Partner headOrganization = await _partnerService.GetOurOrganization();
-            Partner? partner = await _partnerService.GetPartner(Convert.ToInt32(dcvm.PartnerId));
-            DirectorType? directorType = await _partnerService.GetDirectorTypeById(partner.DirectorTypeId);
-            DirectorType? headDirectorType = await _partnerService.GetDirectorTypeById(headOrganization.DirectorTypeId);
-
-
-            Dictionary<string, string>? _replacePatterns = _documentConstructor.GetReplacePatterns(partner.PartnerTypeId, partner, headOrganization, dcvm, headDirectorType, directorType);
-
-            string fileName = String.Format(@"{0}", System.Guid.NewGuid());
-            string appPath = _appEnvironment.WebRootPath;
-            _documentConstructor.SetReplacePatterns(_replacePatterns);
-            DocumentTemplate docTemplate = new DocumentTemplate();
-            docTemplate = await _templatesService.GetDocumentTemplateWithFilesById(Convert.ToInt32(dcvm.DocumentTemplateId));
-            _documentConstructor.Replacing(appPath, docTemplate.TemplateFile.NameInServer, fileName);
-
-            return ("\\Files\\Output\\" + fileName + ".docx");
-        }
-
-            public async Task<IActionResult> TemplatesDocuments()
-        {
-            return View(await _templatesService.GetAllTemplatesWitnToFAndToS());
-        }
-
-        public async Task<IActionResult> CreateTemplate()
-        {
-            TemplateViewModel templateViewModel = new TemplateViewModel();
-            var typeOfContracts = await _contractsService.GetTypeOfContracts();
-            var partnerTypes = await _partnerService.GetPartnerTypes();
-            IEnumerable<TypeOfStateReg> typeOfStateRegs = await _contractsService.GetTypeOfStateRegs();
-            templateViewModel.TypeOfStateRegs = from typeOfStateReg in typeOfStateRegs select new SelectListItem { Text = typeOfStateReg.Name, Value = typeOfStateReg.Id.ToString() };
-            templateViewModel.TypesOfContract = from typeOfContract in typeOfContracts select new SelectListItem { Text = typeOfContract.Name, Value = typeOfContract.Id.ToString() };
-            templateViewModel.PartnerTypes = from partnerType in partnerTypes select new SelectListItem { Text = partnerType.Name, Value = partnerType.Id.ToString() };
-
-            return View(templateViewModel);
-        }
-
-
-        [HttpPost]
-        public async Task<IActionResult> CreateTemplate(TemplateViewModel tvm)
-        {
-            if(await _templatesService.CreateTemplate(tvm)==true)
-            {
-                return RedirectToAction("TemplatesDocuments");
-            }
-            else
-            {
-                return NotFound();
-            }
-        }
-
-        public class TypeOfContract
-        {
-            public string id { get; set; }
-        }
-        private class DataOfTemplate
-        {
-            public string tCid { get; set; }
-            public string pId { get; set; }
-        }
-
-        private class TemplateInformation
-        {
-            public string id { get; set; }
-            public string nameOfTemplate { get; set; }
-        }
-
-        [HttpPost]
-        public async Task<JsonResult> AddAccessibleTemplates([FromBody] JsonDocument dataOfTemplate)
-        {
-            DataOfTemplate dof = new DataOfTemplate();
-            try
-            { 
-            dof = JsonSerializer.Deserialize<DataOfTemplate>(dataOfTemplate);
-            }
-            catch
-            {
-                int r = 0;
-            }
-
-            int typeOfContractId = Convert.ToInt32(dof.tCid);
-            int partnerId = Convert.ToInt32(dof.pId);
-            var partner = await _partnerService.GetPartner(partnerId);
-            int partnerTypeId = partner.PartnerTypeId;
-            IEnumerable<DocumentTemplate> templates = await _templatesService.GetTemplatesWithTypeOfContractAndPartnerType(typeOfContractId, partnerTypeId);
-            List<TemplateInformation> templatesInfo = new List<TemplateInformation>();
-            foreach (var template in templates)
-            {
-                TemplateInformation templ = new TemplateInformation();
-                templ.id = template.Id.ToString();
-                templ.nameOfTemplate = template.NameOfTemplate;
-                templatesInfo.Add(templ);
-            }            
-            return Json(templatesInfo);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> DeleteTemplate(int? id)
-        {
-            if (await _templatesService.DeleteTemplate(id) == true)
-            {                
-                return RedirectToAction("TemplatesDocuments");
-            }
-            else
-            { 
-                return NotFound();
-            }
-        }
-        #endregion
 
         #region[subTasks]
         [HttpGet]
@@ -759,7 +531,7 @@ namespace AIS.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateSubTask(MySubTaskViewModel mtvm)
         {
-            if(await _myTaskService.CreateSubTask(mtvm)==true)
+            if (await _myTaskService.CreateSubTask(mtvm) == true)
             {
                 return RedirectToAction("EditMyTask", new { id = mtvm.MyTaskId });
             }
@@ -796,7 +568,7 @@ namespace AIS.Controllers
                 mySubTaskViewModel.MyTaskLevelImportances = from myTaskLevel in taskLevels select new SelectListItem { Text = myTaskLevel.Name, Value = myTaskLevel.Id.ToString() };
 
 
-                if (mySubTask!= null) return PartialView(mySubTaskViewModel);
+                if (mySubTask != null) return PartialView(mySubTaskViewModel);
             }
             return NotFound();
         }
@@ -804,14 +576,14 @@ namespace AIS.Controllers
         [HttpPost]
         public async Task<IActionResult> EditMySubTask(MySubTaskViewModel mtvm)
         {
-        if(await _myTaskService.EditSubTask(mtvm)==true)
-        {
-            return RedirectToAction("EditMyTask", new { id = mtvm.MyTaskId });
-        }
-        else
-        {
-            return NotFound();
-        }
+            if (await _myTaskService.EditSubTask(mtvm) == true)
+            {
+                return RedirectToAction("EditMyTask", new { id = mtvm.MyTaskId });
+            }
+            else
+            {
+                return NotFound();
+            }
 
 
         }
@@ -820,7 +592,7 @@ namespace AIS.Controllers
         public async Task<IActionResult> DeleteMySubTask(int? id)
         {
             MySubTask currentSubTask = await _myTaskService.GetMySubTaskByIdWithFiles(id.Value);
-            if (await _myTaskService.DeleteMySubTask(id, currentSubTask)==true)
+            if (await _myTaskService.DeleteMySubTask(id, currentSubTask) == true)
             {
                 return RedirectToAction("EditMyTask", new { id = currentSubTask.MyTaskId });
             }
@@ -855,20 +627,20 @@ namespace AIS.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateLetter(LetterViewModel letterViewModel)
         {
-            if(await _letterService.CreateLetter(letterViewModel) == true)
+            if (await _letterService.CreateLetter(letterViewModel) == true)
             {
                 return RedirectToAction("Letters");
             }
             else
             {
                 return NotFound();
-            }    
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> DeleteLetter(int? id)
         {
-            if (await _letterService.DeleteLetter(id)==true)
+            if (await _letterService.DeleteLetter(id) == true)
             {
                 return RedirectToAction("Letters");
             }
@@ -907,7 +679,7 @@ namespace AIS.Controllers
         [HttpPost]
         public async Task<IActionResult> EditLetter(Letter letter)
         {
-            if(await _letterService.EditLetter(letter)==true)
+            if (await _letterService.EditLetter(letter) == true)
             {
                 return RedirectToAction("Letters");
             }
@@ -919,8 +691,217 @@ namespace AIS.Controllers
         }
         #endregion
 
-        #region[messages]
+        #region[DocumentGenerator]
+
+        public async Task<IActionResult> ContractTemplates()
+        {
+            return View(await _conditionsService.GetContractTemplates());
+        }
+
+        public async Task<IActionResult> CreateContractTemplate()
+        {
+            ContractTemplateViewModel contractTemplateViewModel = new ContractTemplateViewModel();
+            var typesOfContract = await _contractsService.GetTypeOfContracts();
+            contractTemplateViewModel.TypesOfContract = from typeOfContract in typesOfContract select new SelectListItem { Text = typeOfContract.Name, Value = typeOfContract.Id.ToString() };
+            return View(contractTemplateViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateContractTemplate(ContractTemplateViewModel ctvm)
+        {
+            if (await _conditionsService.CreateContractTemplate(ctvm) == true)
+            {
+                return RedirectToAction("ContractTemplates");
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+
+        public async Task<IActionResult> EditContractTemplate(int? id)
+        {
+            if (id != null)
+            {
+                ContractTemplate? contractTemplate = await _conditionsService.GetContractTemplateWithConditionsById(id.Value);
+                var typesOfContract = await _contractsService.GetTypeOfContracts();
+                var typesOfCondition = await _conditionsService.GetTypesOfCondition();
+                var typesOfStateReg = await _contractsService.GetTypeOfStateRegs();
+                ContractTemplateViewModel contractTemplateViewModel = new ContractTemplateViewModel
+                {
+                    Id = contractTemplate.Id,
+                    Name = contractTemplate.Name,
+                    Description = contractTemplate.Description,
+                    TypeOfContractId = contractTemplate.TypeOfContractId,
+                    Conditions = contractTemplate.Conditions
+                };
+
+                contractTemplateViewModel.TypesOfCondition = from typeOfCondition in typesOfCondition select new SelectListItem { Text = typeOfCondition.Name, Value = typeOfCondition.Id.ToString() };
+                contractTemplateViewModel.TypesOfContract = from typeOfContract in typesOfContract select new SelectListItem { Text = typeOfContract.Name, Value = typeOfContract.Id.ToString() };
+                contractTemplateViewModel.TypesOfStateReg = from typeOfStateReg in typesOfStateReg select new SelectListItem { Text = typeOfStateReg.Name, Value = typeOfStateReg.Id.ToString() };
+
+
+                if (contractTemplate != null) return View(contractTemplateViewModel);
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditContractTemplate(ContractTemplateViewModel ctvm)
+        {
+            if (await _conditionsService.EditContractTemplate(ctvm) == true)
+            {
+                return RedirectToAction("ContractTemplates");
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteContractTemplate(int? id)
+        {
+            if (await _conditionsService.DeleteContractTemplate(id) == true)
+            {
+                return RedirectToAction("ContractTemplates");
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> CreateCondition(int? id)
+        {
+            if (id != null)
+            {
+                ConditionViewModel conditionViewModel = new ConditionViewModel();
+                conditionViewModel.ContractTemplateId = id.Value;
+                var typesOfCondition = await _conditionsService.GetTypesOfCondition();
+                conditionViewModel.TypesOfCondition = from typeOfCondition in typesOfCondition select new SelectListItem { Text = typeOfCondition.Name, Value = typeOfCondition.Id.ToString() };
+                var typesOfStateReg = await _contractsService.GetTypeOfStateRegs();
+                conditionViewModel.TypesOfStateReg = from typeOfStateReg in typesOfStateReg select new SelectListItem { Text = typeOfStateReg.Name, Value = typeOfStateReg.Id.ToString() };
+                return View(conditionViewModel);
+            }
+            else return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateCondition(ConditionViewModel cvm)
+        {
+            if (await _conditionsService.CreateCondition(cvm) == true)
+            {
+                return RedirectToAction("EditContractTemplate", new {id = cvm.ContractTemplateId});
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditCondition(int? id)
+        {
+            if (id != null)
+            {
+                ConditionViewModel conditionViewModel = new ConditionViewModel();
+                Condition condition = await _conditionsService.GetCondition(id.Value);
+                conditionViewModel.Id = condition.Id;
+                conditionViewModel.TypeOfConditionId = condition.TypeOfConditionId;
+                conditionViewModel.TypeOfStateRegId = condition.TypeOfStateRegId;
+                conditionViewModel.Name = condition.Name;
+                conditionViewModel.Text = condition.Text;
+                conditionViewModel.ContractTemplateId = condition.ContractTemplateId;
+                conditionViewModel.SubConditions = condition.SubConditions;
+                var typesOfCondition = await _conditionsService.GetTypesOfCondition();
+                conditionViewModel.TypesOfCondition = from typeOfCondition in typesOfCondition select new SelectListItem { Text = typeOfCondition.Name, Value = typeOfCondition.Id.ToString() };
+                var typesOfStateReg = await _contractsService.GetTypeOfStateRegs();
+                conditionViewModel.TypesOfStateReg = from typeOfStateReg in typesOfStateReg select new SelectListItem { Text = typeOfStateReg.Name, Value = typeOfStateReg.Id.ToString() };
+                return View(conditionViewModel);
+            }
+            else return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditCondition(ConditionViewModel cvm)
+        {
+            if (await _conditionsService.EditCondition(cvm) == true)
+            {
+                return RedirectToAction("EditContractTemplate", new { id = cvm.ContractTemplateId });
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteCondition(int? id)
+        {
+            Condition condition = await _conditionsService.GetCondition(id.Value);
+            int contractTemplateId = condition.ContractTemplateId;
+            if (await _conditionsService.DeleteCondition(id) == true)
+            {
+                return RedirectToAction("EditContractTemplate", new { id = contractTemplateId });
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CreateSubCondition(int? id)
+        {
+            if (id != null)
+            {
+                SubConditionViewModel subConditionViewModel = new SubConditionViewModel();
+                subConditionViewModel.ConditionId = id.Value;
+                return View(subConditionViewModel);
+            }
+            else return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateSubCondition(SubConditionViewModel scvm)
+        {
+            if (await _conditionsService.CreateSubCondition(scvm) == true)
+            {
+                return RedirectToAction("EditCondition", new { id = scvm.ConditionId });
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteSubCondition(int? id)
+        {
+            SubCondition subCondition = await _conditionsService.GetSubCondition(id.Value);
+            int conditionId = subCondition.ConditionId;
+            if (await _conditionsService.DeleteSubCondition(id) == true)
+            {
+                return RedirectToAction("EditCondition", new { id = conditionId });
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+
 
         #endregion
+
+        #region[pref]
+        public IActionResult Pref()
+        {
+            return View();
+        }
+        #endregion
+
     }
 }

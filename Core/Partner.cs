@@ -23,6 +23,7 @@ namespace Core
         public int? DirectorTypeId { get; set; }
         public DirectorType? DirectorType { get; set; }
         public string? DirectorName { get; set; }
+        public string DirectorNameR { get; set; }
         //ЮЛ ИП
         public string? Bank { get; set; }
         public string? Account { get; set; }

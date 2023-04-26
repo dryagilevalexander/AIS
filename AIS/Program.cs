@@ -20,12 +20,12 @@ builder.Services.AddTransient<IPartnerService, PartnerService>();
 builder.Services.AddTransient<IMyTaskService, MyTaskService>();
 builder.Services.AddTransient<IMyUsersService, MyUsersService>();
 builder.Services.AddTransient<IContractsService, ContractsService>();
-builder.Services.AddTransient<ITemplatesService, TemplatesService>();
 builder.Services.AddTransient<ILetterService, LetterService>();
 builder.Services.AddTransient<IEnclosureService, EnclosureService>();
+builder.Services.AddTransient<IConditionsService, ConditionsService>();
+builder.Services.AddTransient<IDocumentGenerator, DocumentGenerator>();
 builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
-builder.Services.AddTransient<IDocumentConstructor, DocumentConstructor>();
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var app = builder.Build();
 

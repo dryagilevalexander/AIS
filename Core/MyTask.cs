@@ -18,6 +18,7 @@ namespace Core
         public string? Description { get; set; }
         public DateTime? DateStart { get; set; }
         public DateTime? DateEnd { get; set; }
+        public bool FirstView { get; set; } = false;
         public int? MyTaskStatusId { get; set; }
         public MyTaskStatus? MyTaskStatus { get; set; }
         public int? MyTaskLevelImportanceId { get; set; }

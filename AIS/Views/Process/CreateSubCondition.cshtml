@@ -1,0 +1,49 @@
+﻿@model AIS.ViewModels.SubConditionViewModel;
+
+<h2>Добавление подпункта условия контракта</h2>
+
+<form  asp-action="createsubcondition" asp-controller="process" method="post">
+    <div class="validation" asp-validation-summary="ModelOnly"></div>
+    <div class="container">
+
+        <input type="hidden" class="form-control" asp-for="ConditionId">
+        
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Наименование (в контракте не фигурирует)" aria-label="Наименование (в контракте не фигурирует)" asp-for="Name">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Текст пункта" aria-label="Текст пункта" asp-for="Text">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+    </div>
+
+        <div class="row">
+            <div class="col-12 mb-3"></div>
+        </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <input class="btn btn-primary" type="submit" value="Отправить" />
+            </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+</form>
+
+@section scripts{
+    <script asp-src-include="~/js/select.js"></script>
+}
+
+
+

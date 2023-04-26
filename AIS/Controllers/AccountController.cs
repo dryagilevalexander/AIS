@@ -11,11 +11,13 @@ namespace AIS.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private CoreContext db;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, CoreContext coreContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            db = coreContext;
         }
         [HttpGet]
         public IActionResult Register()

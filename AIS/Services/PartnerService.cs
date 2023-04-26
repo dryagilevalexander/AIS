@@ -44,7 +44,7 @@ namespace AIS.Services
         {
             try 
             { 
-            Partner? partner = await db.Partners.FirstOrDefaultAsync(p => p.Id == id);
+            Partner? partner = await db.Partners.Include(p => p.DirectorType).FirstOrDefaultAsync(p => p.Id == id);
             return partner;
             }
             catch
@@ -211,6 +211,11 @@ namespace AIS.Services
         public async Task<DirectorType?> GetDirectorTypeById(int? id)
         {
             return await db.DirectorTypes.FirstOrDefaultAsync(p => p.Id == id);
+        }
+
+        public Partner GetMainOrganization()
+        {
+            return db.Partners.Include(p => p.DirectorType).FirstOrDefault(p => p.PartnerStatusId == 1);
         }
     }
 }
