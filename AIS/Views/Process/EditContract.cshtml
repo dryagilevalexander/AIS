@@ -23,14 +23,6 @@
 
         <div class="row">
             <div class="col-5 mb-3">
-                <select size="2" data-placeholder="Тип договора" class="form-select" asp-for="TypeOfContractId" asp-items="@Model.TypeOfContracts" id="TypeOfContractId" onchange="addTemplates()">
-                </select>
-            </div>
-            <div class="col-7"></div>
-        </div>
-
-        <div class="row">
-            <div class="col-5 mb-3">
                 <select size="2" data-placeholder="Контрагент" class="form-select" asp-for="PartnerId" asp-items="@Model.MyPartners" id="PartnerId" onchange="addTemplates()">
                 </select>
             </div>

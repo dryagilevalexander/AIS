@@ -205,7 +205,7 @@ namespace AIS.Services
 
         public async Task<Partner> GetOurOrganization()
         {
-            return db.Partners.FirstOrDefault(p => p.PartnerStatusId == 1);
+            return db.Partners.Include(p => p.DirectorType).FirstOrDefault(p => p.PartnerStatusId == 1);
         }
 
         public async Task<DirectorType?> GetDirectorTypeById(int? id)

@@ -134,7 +134,7 @@ namespace AIS
                 }
 
                 //Получаем пункт основания заключения контракта (для 44-ФЗ)
-                if (contract.RegulationType == 3)
+                if (contract.RegulationType == 1)
                 {
                     switch (contract.RegulationParagraph)
                     {
@@ -151,16 +151,17 @@ namespace AIS
                 switch (contract.RegulationType)
                 {
                     case 1:
-                        contractName = "Договор";
+                        contractName = "Контракт";
+                        baseOfContract = "на основании " + paragraphBaseOfContract + "федерального закона \"О контрактной системе в сфере закупок товаров, работ, услуг для обеспечения государственных и муниципальных нужд\" от 05.04.2013 N 44-ФЗ,";
                         break;
                     case 2:
                         contractName = "Договор";
                         baseOfContract = "на основании федерального закона \"О закупках товаров, работ, услуг отдельными видами юридических лиц\" от 18.07.2011 N 223-ФЗ,";
                         break;
                     case 3:
-                        contractName = "Контракт";
-                        baseOfContract = "на основании " + paragraphBaseOfContract + "федерального закона \"О контрактной системе в сфере закупок товаров, работ, услуг для обеспечения государственных и муниципальных нужд\" от 05.04.2013 N 44-ФЗ,";
+                        contractName = "Договор";
                         break;
+
                 }
 
                 docText = docText.Replace("договор", contractName);

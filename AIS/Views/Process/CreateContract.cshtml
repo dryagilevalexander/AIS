@@ -25,42 +25,37 @@
 
         <div class="row">
             <div class="col-5 mb-3">
-                <select class="form-select" size="2" data-placeholder="Тип договора" asp-for="TypeOfContractId" asp-items="@Model.TypeOfContracts" id="TypeOfContractId">
+                <select class="form-select" size="2" data-placeholder="Шаблон договора" asp-for="ContractTemplateId" asp-items="@Model.ContractTemplates" id="ContractTemplateId">
                 </select>
             </div>
             <div class="col-7"></div>
         </div>
 
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Место заключения договора" aria-label="Место заключения договора" asp-for="PlaceOfContract" id="PlaceOfContract">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select class="form-select" size="2" data-placeholder="Заказчик или исполнитель" asp-for="IsCustomer" id="IsCustomer">
+                    <option selected value ="true">Заказчик</option>
+                    <option value="false">Исполнитель</option>
+                </select>
+            </div>
+            <div class="col-7"></div>
+        </div>
                 <div class="row">
             <div class="col-5 mb-3">
-                <select class="form-select" size="2" data-placeholder="Контрагент" asp-for="PartnerId" asp-items="@Model.MyPartners" id="PartnerId" onchange="addTemplates()">
+                <select class="form-select" size="2" data-placeholder="Контрагент" asp-for="PartnerId" asp-items="@Model.MyPartners" id="PartnerId">
                 </select>
             </div>
             <div class="col-7"><span asp-validation-for="PartnerId"></span></div>
         </div>
-
-
-
-
-        <div class="row">
-        <div class="col-5 mb-3">
-                <style type="text/css">
-                    select#DocumentTemplates {
-                        width: 100% !important;
-                        height: 40px;
-                        border-width: 1px;
-                        border-color: #c0c0c0;
-                        border-radius: 5px;
-                        text-align: center;
-                        outline: none;
-                    }
-                </style>
-                <select data-placeholder="Выбор шаблона" id="DocumentTemplates">
-        </select>
-        </div>
-        <div class="col-7"></div>
-        </div>
-
 
         <div class="row">
             <div class="col-5 mb-3">
@@ -148,7 +143,6 @@
     <script asp-src-include="~/js/DocumentConstructor.js"></script>
     <script asp-src-include="~/js/Enclosures.js"></script>
     <script asp-src-include="~/js/select.js"></script>
-    <script asp-src-include="~/js/templates.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 }

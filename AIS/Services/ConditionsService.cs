@@ -132,12 +132,82 @@ namespace AIS.Services
             }
         }
 
+        public async Task<bool> EditSubCondition(SubConditionViewModel scvm)
+        {
+            try
+            {
+                SubCondition subCondition = await db.SubConditions.FirstOrDefaultAsync(p => p.Id == scvm.Id);
+                subCondition.Name = scvm.Name;
+                subCondition.Text = scvm.Text;
+                subCondition.ConditionId = scvm.ConditionId;
+
+                db.SubConditions.Update(subCondition);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public async Task<bool> DeleteSubCondition(int? id)
         {
             if (id != null)
             {
                 SubCondition subCondition = await db.SubConditions.FirstOrDefaultAsync(p => p.Id == id);
                 db.SubConditions.Remove(subCondition);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> CreateSubConditionParagraph(SubConditionParagraphViewModel scpvm)
+        {
+            try
+            {
+                SubConditionParagraph subConditionParagraph = new SubConditionParagraph
+                {
+                    Text = scpvm.Text,
+                    SubConditionId = scpvm.SubConditionId
+
+                };
+
+                db.SubConditionParagraphs.Add(subConditionParagraph);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> EditSubConditionParagraph(SubConditionParagraphViewModel scpvm)
+        {
+            try
+            {
+                SubConditionParagraph subConditionParagraph = await db.SubConditionParagraphs.FirstOrDefaultAsync(p => p.Id == scpvm.Id);
+                subConditionParagraph.Text = scpvm.Text;
+                subConditionParagraph.SubConditionId = scpvm.SubConditionId;
+
+                db.SubConditionParagraphs.Update(subConditionParagraph);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteSubConditionParagraph(int? id)
+        {
+            if (id != null)
+            {
+                SubConditionParagraph subConditionParagraph = await db.SubConditionParagraphs.FirstOrDefaultAsync(p => p.Id == id);
+                db.SubConditionParagraphs.Remove(subConditionParagraph);
                 await db.SaveChangesAsync();
                 return true;
             }
@@ -151,6 +221,21 @@ namespace AIS.Services
             {
                 ContractTemplate? contractTemplate = await db.ContractTemplates
                     .Include(p => p.Conditions).ThenInclude(p => p.SubConditions).ThenInclude(p => p.SubConditionParagraphs)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+                return contractTemplate;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<ContractTemplate?> GetContractTemplateWithTypeOfContractById(int id)
+        {
+            try
+            {
+                ContractTemplate? contractTemplate = await db.ContractTemplates
+                    .Include(p => p.TypeOfContract)
                     .FirstOrDefaultAsync(p => p.Id == id);
                 return contractTemplate;
             }
@@ -215,6 +300,20 @@ namespace AIS.Services
                     .Include(p => p.SubConditionParagraphs)
                     .FirstOrDefaultAsync(p => p.Id == id);
                 return subCondition;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<SubConditionParagraph?> GetSubConditionParagraph(int id)
+        {
+            try
+            {
+                SubConditionParagraph? subConditionParagraph = await db.SubConditionParagraphs
+                    .FirstOrDefaultAsync(p => p.Id == id);
+                return subConditionParagraph;
             }
             catch
             {

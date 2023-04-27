@@ -1,6 +1,5 @@
 ﻿class DocConstructor
 {
-    TypeOfContractId;
     NumberOfContract;
     DateStart;
     DateEnd;
@@ -9,7 +8,9 @@
     Cost;
     TypeOfStateRegId;
     ArticleOfLawId;
-    DocumentTemplateId;
+    ContractTemplateId;
+    IsCustomer;
+    PlaceOfContract;
 }
 
 function change() {
@@ -29,7 +30,6 @@ async function ConstructContract() {
 
     currentContract = new DocConstructor();
     formContract = document.getElementById('formContract').value;
-    currentContract.TypeContractId = document.getElementById('TypeOfContractId').value;
     currentContract.NumberOfContract = document.getElementById('NumberOfContract').value;
     currentContract.DateStart = document.getElementById('DateStart').value;
     currentContract.DateEnd = document.getElementById('DateEnd').value;
@@ -38,7 +38,9 @@ async function ConstructContract() {
     currentContract.Cost = document.getElementById('Cost').value;
     currentContract.TypeOfStateRegId = document.getElementById('TypeOfStateRegId').value;
     currentContract.ArticleOfLawId = document.getElementById('ArticleOfLawId').value;
-    currentContract.DocumentTemplateId = document.getElementById('DocumentTemplates').value;
+    currentContract.ContractTemplateId = document.getElementById('ContractTemplateId').value;
+    currentContract.IsCustomer = document.getElementById('IsCustomer').value;
+    currentContract.PlaceOfContract = document.getElementById('PlaceOfContract').value;
 
     let response = await fetch('/Process/ShadowConstructContract', {
         method: 'POST',

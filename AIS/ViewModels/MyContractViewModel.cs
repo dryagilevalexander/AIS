@@ -19,7 +19,6 @@ namespace AIS.ViewModels
         public string? SubjectOfContract { get; set; }
         public decimal Cost { get; set; }
         public string? ProjectContractLink { get; set; }
-        public int TypeOfContractId { get; set; }
         public TypeOfContract TypeOfContract { get; set; }
         public IEnumerable<MyFile>? MyFiles { get; set; }
         public List<MyFile>? ContractFiles { get; set; }
@@ -32,6 +31,11 @@ namespace AIS.ViewModels
         public int? MyContractStatusId { get; set; }
         public MyContractStatus? MyContractStatus { get; set; }
         public IEnumerable<SelectListItem>? MyContractStatuses { get; set; }
+        public bool IsCustomer { get; set; }
+        public string PlaceOfContract { get; set; }
+        public int ContractTemplateId { get; set; }
+        public IEnumerable<SelectListItem>? ContractTemplates { get; set; }
+
     }
 }
 

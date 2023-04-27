@@ -13,6 +13,8 @@ using System.Runtime.CompilerServices;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using AspNetCore;
 using Microsoft.AspNetCore.Mvc;
+using DocumentFormat.OpenXml.Office2010.Excel;
+using static AIS.Controllers.ProcessController;
 
 namespace AIS.Controllers
 {
@@ -413,9 +415,11 @@ namespace AIS.Controllers
             IEnumerable<Partner> myPartners = await _partnerService.GetPartnersWithoutOurOrganization();
             myContractViewModel.MyPartners = from myPartner in myPartners select new SelectListItem { Text = myPartner.ShortName, Value = myPartner.Id.ToString() };
             var typeOfContracts = await _contractsService.GetTypeOfContracts();
+            IEnumerable<ContractTemplate> contractTemplates = await _conditionsService.GetContractTemplates();
             IEnumerable<TypeOfStateReg> typeOfStateRegs = await _contractsService.GetTypeOfStateRegs();
             IEnumerable<ArticleOfLaw> articleOfLaws = await _contractsService.GetArticleOfLaws();
             IEnumerable<MyContractStatus> myContractStatuses = await _contractsService.GetMyContractStatuses();
+            myContractViewModel.ContractTemplates = from contractTemplate in contractTemplates select new SelectListItem { Text = contractTemplate.Name, Value = contractTemplate.Id.ToString() };
             myContractViewModel.TypeOfStateRegs = from typeOfStateReg in typeOfStateRegs select new SelectListItem { Text = typeOfStateReg.Name, Value = typeOfStateReg.Id.ToString() };
             myContractViewModel.ArticleOfLaws = from articleOfLaw in articleOfLaws select new SelectListItem { Text = articleOfLaw.Name, Value = articleOfLaw.Id.ToString() };
             myContractViewModel.TypeOfContracts = from typeOfContract in typeOfContracts select new SelectListItem { Text = typeOfContract.Name, Value = typeOfContract.Id.ToString() };
@@ -431,8 +435,10 @@ namespace AIS.Controllers
             // {
             //     return View(mcvm);
             // }
+            ContractTemplate contractTemplate = await _conditionsService.GetContractTemplateWithTypeOfContractById(Convert.ToInt32(mcvm.ContractTemplateId));
+            int typeOfContractId = contractTemplate.TypeOfContractId;
 
-            if (await _contractsService.CreateContract(mcvm) == true)
+            if (await _contractsService.CreateContract(mcvm, typeOfContractId) == true)
             {
                 return RedirectToAction("MyContracts");
             }
@@ -877,6 +883,37 @@ namespace AIS.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> EditSubCondition(int? id)
+        {
+            if (id != null)
+            {
+                SubConditionViewModel subConditionViewModel = new SubConditionViewModel();
+                SubCondition subCondition = await _conditionsService.GetSubCondition(id.Value);
+                subConditionViewModel.Id = subCondition.Id;
+                subConditionViewModel.Name = subCondition.Name;
+                subConditionViewModel.Text = subCondition.Text;
+                subConditionViewModel.ConditionId = subCondition.ConditionId;
+                subConditionViewModel.SubConditionParagraphs = subCondition.SubConditionParagraphs;
+                return View(subConditionViewModel);
+            }
+            else return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditSubCondition(SubConditionViewModel scvm)
+        {
+            if (await _conditionsService.EditSubCondition(scvm) == true)
+            {
+                return RedirectToAction("EditCondition", new { id = scvm.ConditionId });
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> DeleteSubCondition(int? id)
         {
@@ -892,7 +929,122 @@ namespace AIS.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> CreateSubConditionParagraph(int? id)
+        {
+            if (id != null)
+            {
+                SubConditionParagraphViewModel subConditionParagraphViewModel = new SubConditionParagraphViewModel();
+                subConditionParagraphViewModel.SubConditionId = id.Value;
+                return View(subConditionParagraphViewModel);
+            }
+            else return NotFound();
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateSubConditionParagraph(SubConditionParagraphViewModel scpvm)
+        {
+            if (await _conditionsService.CreateSubConditionParagraph(scpvm) == true)
+            {
+                return RedirectToAction("EditSubCondition", new { id = scpvm.SubConditionId });
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditSubConditionParagraph(int? id)
+        {
+            if (id != null)
+            {
+                SubConditionParagraphViewModel subConditionParagraphViewModel = new SubConditionParagraphViewModel();
+                SubConditionParagraph subConditionParagraph = await _conditionsService.GetSubConditionParagraph(id.Value);
+                subConditionParagraphViewModel.Id = subConditionParagraph.Id;
+                subConditionParagraphViewModel.Text = subConditionParagraph.Text;
+                subConditionParagraphViewModel.SubConditionId = subConditionParagraph.SubConditionId;
+                return View(subConditionParagraphViewModel);
+            }
+            else return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditSubConditionParagraph(SubConditionParagraphViewModel scpvm)
+        {
+            if (await _conditionsService.EditSubConditionParagraph(scpvm) == true)
+            {
+                return RedirectToAction("EditSubCondition", new { id = scpvm.SubConditionId });
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteSubConditionParagraph(int? id)
+        {
+            SubConditionParagraph subConditionParagraph = await _conditionsService.GetSubConditionParagraph(id.Value);
+            int subConditionId = subConditionParagraph.SubConditionId;
+            if (await _conditionsService.DeleteSubConditionParagraph(id) == true)
+            {
+                return RedirectToAction("EditSubCondition", new { id = subConditionId });
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        public class JsonContractData
+        {
+            public string NumberOfContract { get; set; }
+            public string DateStart { get; set; }
+            public string DateEnd { get; set; }
+            public string PartnerId { get; set; }
+            public string SubjectOfContract { get; set; }
+            public string Cost { get; set; }
+            public string TypeOfStateRegId { get; set; }
+            public string ArticleOfLawId { get; set; }
+            public string ContractTemplateId { get; set; }
+            public string IsCustomer { get; set; }
+            public string PlaceOfContract { get; set; }
+        }
+
+        [HttpPost]
+        public async Task<string> ShadowConstructContract([FromBody] JsonContractData jsonContractData)
+        {
+            bool isCustomer;
+            ContractTemplate contractTemplate = await _conditionsService.GetContractTemplateWithTypeOfContractById(Convert.ToInt32(jsonContractData.ContractTemplateId));
+            int typeOfContract = contractTemplate.TypeOfContractId;
+            if (jsonContractData.IsCustomer == "true") isCustomer = true;
+            else isCustomer = false;
+            ContractModel contract = new ContractModel()
+            {
+                ContractType = typeOfContract,
+                ContractTemplateId = Convert.ToInt32(jsonContractData.ContractTemplateId),
+                IsCustomer = isCustomer,
+                RegulationType = Convert.ToInt32(jsonContractData.TypeOfStateRegId),
+                RegulationParagraph = Convert.ToInt32(jsonContractData.ArticleOfLawId),
+                SubjectOfContract = jsonContractData.SubjectOfContract,
+                PlaceOfContract = jsonContractData.PlaceOfContract,
+                DateStart = jsonContractData.DateStart,
+                DateEnd = jsonContractData.DateEnd
+            };
+            Partner contragent = await _partnerService.GetPartner(Convert.ToInt32(jsonContractData.PartnerId));
+            Partner mainOrganization = await _partnerService.GetOurOrganization();
+            contract = _contractsService.CreateConditions(contract);
+            contract = _contractsService.SetContractRequisites(contract, mainOrganization, contragent);
+            string fileName = Guid.NewGuid().ToString();
+            fileName = fileName + ".docx";
+            string path = _appEnvironment.WebRootPath + "\\files\\Output\\" + fileName;
+            new DocumentGenerator().CreateContract(path, contract);
+
+
+            return path;
+        }
 
         #endregion
 

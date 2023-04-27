@@ -1,0 +1,40 @@
+﻿@model AIS.ViewModels.SubConditionParagraphViewModel;
+
+<h2>Изменение подпункта пункта условия контракта</h2>
+
+<form  asp-action="editsubconditionparagraph" asp-controller="process" method="post">
+    <div class="validation" asp-validation-summary="ModelOnly"></div>
+    <div class="container">
+
+        <input type="hidden" class="form-control" asp-for="SubConditionId">
+        
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Текст подпункта" aria-label="Текст подпункта" asp-for="Text">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+    </div>
+
+        <div class="row">
+            <div class="col-12 mb-3"></div>
+        </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <input class="btn btn-primary" type="submit" value="Отправить" />
+            </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+</form>
+
+@section scripts{
+    <script asp-src-include="~/js/select.js"></script>
+}
+
+
+
