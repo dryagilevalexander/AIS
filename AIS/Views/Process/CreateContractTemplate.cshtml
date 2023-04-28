@@ -6,6 +6,8 @@
     <div class="validation" asp-validation-summary="ModelOnly"></div>
     <div class="container">
 
+                <input type="hidden" class="form-control" asp-for="CommonContractTemplateId">
+
         <div class="row">
             <div class="col-5 mb-3">
                 <select class="form-select" size="2" data-placeholder="Тип контракта" id="TypeOfContractId" asp-for="TypeOfContractId" asp-items="@Model.TypesOfContract">

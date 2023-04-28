@@ -1,5 +1,6 @@
 ﻿using AIS.ViewModels;
 using Core;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,16 @@ namespace AIS.Services
             _appEnvironment = appEnvironment;
         }
 
+        public async Task<List<CommonContractTemplate>> GetCommonContractTemplates()
+        {
+            return await db.CommonContractTemplates.ToListAsync();
+        }
+
+        public async Task<CommonContractTemplate> GetCommonContractTemplateWithContractTemplatesById(int id)
+        {
+            return await db.CommonContractTemplates.Include(p => p.ContractTemplates).FirstOrDefaultAsync(p => p.Id == id);
+        }
+
         public async Task<List<ContractTemplate>> GetContractTemplates()
         {
             return await db.ContractTemplates.ToListAsync();
@@ -26,18 +37,19 @@ namespace AIS.Services
             return await db.TypesOfCondition.ToListAsync();
         }
 
-        public async Task<bool> CreateContractTemplate(ContractTemplateViewModel ctvm)
+        public async Task<bool> CreateCommonContractTemplate(CommonContractTemplateViewModel cctvm)
         {
             try
             {
-                ContractTemplate contractTemplate = new ContractTemplate
+               CommonContractTemplate commonContractTemplate = new CommonContractTemplate
                 {
-                    Name = ctvm.Name,
-                    Description = ctvm.Description,
-                    TypeOfContractId = ctvm.TypeOfContractId
+                    Name = cctvm.Name,
+                    Description = cctvm.Description,
+                    Title = cctvm.Title,
+                    Preamble = cctvm.Preamble
                 };
 
-                db.ContractTemplates.Add(contractTemplate);
+                db.CommonContractTemplates.Add(commonContractTemplate);
                 await db.SaveChangesAsync();
                 return true;
             }
@@ -45,6 +57,56 @@ namespace AIS.Services
             {
                 return false;
             }
+        }
+
+        public async Task<bool> EditCommonContractTemplate(CommonContractTemplateViewModel cctvm)
+        {
+            try
+            {
+                CommonContractTemplate commonContractTemplate = await db.CommonContractTemplates.FirstOrDefaultAsync(p => p.Id == cctvm.Id);
+                commonContractTemplate.Name = cctvm.Name;
+                commonContractTemplate.Description = cctvm.Description;
+                commonContractTemplate.Title = cctvm.Title;
+                commonContractTemplate.Preamble = cctvm.Preamble;
+
+                db.CommonContractTemplates.Update(commonContractTemplate);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteCommonContractTemplate(int? id)
+        {
+            if (id != null)
+            {
+                CommonContractTemplate commonContractTemplate = await db.CommonContractTemplates.FirstOrDefaultAsync(p => p.Id == id);
+                db.CommonContractTemplates.Remove(commonContractTemplate);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
+
+        public async Task<bool> CreateContractTemplate(ContractTemplateViewModel ctvm)
+        {
+
+                ContractTemplate contractTemplate = new ContractTemplate
+                {
+                    Name = ctvm.Name,
+                    Description = ctvm.Description,
+                    TypeOfContractId = ctvm.TypeOfContractId,
+                    CommonContractTemplateId = ctvm.CommonContractTemplateId
+                };
+
+                db.ContractTemplates.Add(contractTemplate);
+                await db.SaveChangesAsync();
+                return true;
+
         }
 
         public async Task<bool> EditContractTemplate(ContractTemplateViewModel ctvm)
@@ -214,6 +276,19 @@ namespace AIS.Services
             return false;
         }
 
+        public async Task<ContractTemplate?> GetContractTemplateById(int id)
+        {
+            try
+            {
+                ContractTemplate? contractTemplate = await db.ContractTemplates
+                    .FirstOrDefaultAsync(p => p.Id == id);
+                return contractTemplate;
+            }
+            catch
+            {
+                return null;
+            }
+        }
 
         public async Task<ContractTemplate?> GetContractTemplateWithConditionsById(int id)
         {
@@ -249,8 +324,8 @@ namespace AIS.Services
         {
             if (id != null)
             {
-                ContractTemplate contractTemplate = new ContractTemplate { Id = id.Value };
-                db.Entry(contractTemplate).State = EntityState.Deleted;
+                ContractTemplate contractTemplate = await db.ContractTemplates.FirstOrDefaultAsync(p => p.Id == id);
+                db.ContractTemplates.Remove(contractTemplate);
                 await db.SaveChangesAsync();
                 return true;
             }

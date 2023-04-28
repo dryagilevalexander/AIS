@@ -698,15 +698,88 @@ namespace AIS.Controllers
         #endregion
 
         #region[DocumentGenerator]
+        public async Task<IActionResult> CommonContractTemplates()
+        {
+            return View(await _conditionsService.GetCommonContractTemplates());
+        }
+
+        public async Task<IActionResult> CreateCommonContractTemplate()
+        {
+            CommonContractTemplateViewModel commonContractTemplateViewModel = new CommonContractTemplateViewModel();
+            return View(commonContractTemplateViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateCommonContractTemplate(CommonContractTemplateViewModel cctvm)
+        {
+            if (await _conditionsService.CreateCommonContractTemplate(cctvm) == true)
+            {
+                return RedirectToAction("CommonContractTemplates");
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+
+        public async Task<IActionResult> EditCommonContractTemplate(int? id)
+        {
+            if (id != null)
+            {
+                CommonContractTemplate? commonContractTemplate = await _conditionsService.GetCommonContractTemplateWithContractTemplatesById(id.Value);
+                CommonContractTemplateViewModel commonContractTemplateViewModel = new CommonContractTemplateViewModel
+                {
+                    Id = commonContractTemplate.Id,
+                    Name = commonContractTemplate.Name,
+                    Description = commonContractTemplate.Description,
+                    Title= commonContractTemplate.Title,
+                    Preamble = commonContractTemplate.Preamble,
+                    ContractTemplates = commonContractTemplate.ContractTemplates
+                };
+
+                if (commonContractTemplate != null) return View(commonContractTemplateViewModel);
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditCommonContractTemplate(CommonContractTemplateViewModel cctvm)
+        {
+            if (await _conditionsService.EditCommonContractTemplate(cctvm) == true)
+            {
+                return RedirectToAction("CommonContractTemplates");
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteCommonContractTemplate(int? id)
+        {
+            if (await _conditionsService.DeleteCommonContractTemplate(id) == true)
+            {
+                return RedirectToAction("CommonContractTemplates");
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+
 
         public async Task<IActionResult> ContractTemplates()
         {
             return View(await _conditionsService.GetContractTemplates());
         }
 
-        public async Task<IActionResult> CreateContractTemplate()
+        public async Task<IActionResult> CreateContractTemplate(int? id)
         {
             ContractTemplateViewModel contractTemplateViewModel = new ContractTemplateViewModel();
+            contractTemplateViewModel.CommonContractTemplateId = id.Value;
             var typesOfContract = await _contractsService.GetTypeOfContracts();
             contractTemplateViewModel.TypesOfContract = from typeOfContract in typesOfContract select new SelectListItem { Text = typeOfContract.Name, Value = typeOfContract.Id.ToString() };
             return View(contractTemplateViewModel);
@@ -717,7 +790,7 @@ namespace AIS.Controllers
         {
             if (await _conditionsService.CreateContractTemplate(ctvm) == true)
             {
-                return RedirectToAction("ContractTemplates");
+                return RedirectToAction("EditCommonContractTemplate", new { id = ctvm.CommonContractTemplateId });
             }
             else
             {
@@ -758,7 +831,7 @@ namespace AIS.Controllers
         {
             if (await _conditionsService.EditContractTemplate(ctvm) == true)
             {
-                return RedirectToAction("ContractTemplates");
+                return RedirectToAction("EditCommonContractTemplate", new { id = ctvm.CommonContractTemplateId });
             }
             else
             {
@@ -769,9 +842,11 @@ namespace AIS.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteContractTemplate(int? id)
         {
+            ContractTemplate contractTemplate = await _conditionsService.GetContractTemplateById(id.Value);
+            int commonContractTemplateId = contractTemplate.CommonContractTemplateId;
             if (await _conditionsService.DeleteContractTemplate(id) == true)
             {
-                return RedirectToAction("ContractTemplates");
+                return RedirectToAction("EditCommonContractTemplate", new { id = commonContractTemplateId });
             }
             else
             {

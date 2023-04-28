@@ -1,0 +1,62 @@
+﻿@model AIS.ViewModels.CommonContractTemplateViewModel;
+
+<h2>Добавление коренного шаблона контракта</h2>
+
+<form  asp-action="createcommoncontracttemplate" asp-controller="process" method="post" enctype="multipart/form-data" id="formContract">
+    <div class="validation" asp-validation-summary="ModelOnly"></div>
+    <div class="container">
+        
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Имя шаблона" aria-label="Имя шаблона" asp-for="Name">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Описание" aria-label="Описание" asp-for="Description">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Заголовок договора" aria-label="Заголовок договора" asp-for="Title">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Преамбула" aria-label="Преамбула" asp-for="Preamble">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+    </div>
+
+        <div class="row">
+            <div class="col-12 mb-3"></div>
+        </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <input class="btn btn-primary" type="submit" value="Отправить" />
+            </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+</form>
+
+
+

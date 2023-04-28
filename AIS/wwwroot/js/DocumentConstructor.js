@@ -26,7 +26,7 @@ function change() {
 
 async function ConstructContract() {
 
-    if (document.getElementById('TypeOfContractId').value == '' || document.getElementById('TypeOfStateRegId').value == '') { alert("Не заполнены обязательные поля!") }
+    if (document.getElementById('TypeOfStateRegId').value == '') { alert("Не заполнены обязательные поля!") }
 
     currentContract = new DocConstructor();
     formContract = document.getElementById('formContract').value;

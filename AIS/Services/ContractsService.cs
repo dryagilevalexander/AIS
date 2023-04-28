@@ -201,19 +201,48 @@ namespace AIS.Services
             return db.ContractTemplates.Include(p => p.Conditions).ThenInclude(p => p.SubConditions).ThenInclude(c => c.SubConditionParagraphs).FirstOrDefault(p => p.Id == id);
         }
 
+        public CommonContractTemplate? GetCommonContractTemplateById(int id)
+        {
+            try
+            {
+                CommonContractTemplate? commonContractTemplate = db.CommonContractTemplates
+                    .FirstOrDefault(p => p.Id == id);
+                return commonContractTemplate;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         //Метод установки условий контракта в модель контракта
         public ContractModel CreateConditions(ContractModel contract)
         {
             List<Condition> conditions = new List<Condition>();
 
             //Добавляем все условия из общего шаблона (заголовок, преамбула)
-            ContractTemplate commonTemplate = GetContractTemplateId(1);
-            foreach (var condition in commonTemplate.Conditions)
-            {
-                conditions.Add(condition);
-            }
 
             ContractTemplate contractTemplate = GetContractTemplateId(contract.ContractTemplateId);
+            
+            CommonContractTemplate commonTemplate = GetCommonContractTemplateById(contractTemplate.CommonContractTemplateId);
+
+            Condition title = new Condition
+            {
+                TypeOfConditionId = 1,
+                TypeOfStateRegId = 4,
+                Name = commonTemplate.Title
+            };
+
+            Condition preamble = new Condition
+            {
+                TypeOfConditionId = 2,
+                TypeOfStateRegId = 4,
+                Text = commonTemplate.Preamble
+            };
+
+            conditions.Add(title);
+            conditions.Add(preamble);
+
             foreach (var condition in contractTemplate.Conditions)
             {
                 //Добавляем все общие условия

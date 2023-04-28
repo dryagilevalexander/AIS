@@ -5,9 +5,15 @@ namespace AIS.Services
 {
     public interface IConditionsService
     {
+        Task<List<CommonContractTemplate>> GetCommonContractTemplates();
         Task<List<ContractTemplate>> GetContractTemplates();
+        Task<bool> CreateCommonContractTemplate(CommonContractTemplateViewModel cctvm);
+        Task<bool> EditCommonContractTemplate(CommonContractTemplateViewModel cctvm);
+        Task<bool> DeleteCommonContractTemplate(int? id);
+        Task<CommonContractTemplate> GetCommonContractTemplateWithContractTemplatesById(int id);
         Task<bool> CreateContractTemplate(ContractTemplateViewModel ctvm);
         Task<bool> EditContractTemplate(ContractTemplateViewModel ctvm);
+        Task<ContractTemplate?> GetContractTemplateById(int id);
         Task<ContractTemplate?> GetContractTemplateWithConditionsById(int id);
         Task<ContractTemplate?> GetContractTemplateWithTypeOfContractById(int id);
         Task<List<TypeOfCondition>> GetTypesOfCondition();

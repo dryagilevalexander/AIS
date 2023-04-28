@@ -1,13 +1,13 @@
-﻿@model IEnumerable<Core.ContractTemplate>
+﻿@model IEnumerable<Core.CommonContractTemplate>
 @{
-    ViewData["Title"] = "Шаблоны контрактов";
+    ViewData["Title"] = "Корневые шаблоны контрактов";
 }
 
 <h2>Шаблоны</h2>
 
 <div class="row">
     <div class="col-3 mb-3">
-        <p><a asp-action="CreateContractTemplate">Добавить шаблон</a></p>
+        <p><a asp-action="CreateCommonContractTemplate">Добавить шаблон</a></p>
     </div>
     <div class="col-3">
     </div>
@@ -31,10 +31,10 @@
                 <td>@item.Name</td>
                 <td>@item.Description</td>
             <td align="right">
-                <a class="btn btn-outline-primary" role="button" asp-action="EditContractTemplate" asp-controller="process" asp-route-id="@item.Id">Изменить</a>
+                <a class="btn btn-outline-primary" role="button" asp-action="EditCommonContractTemplate" asp-controller="process" asp-route-id="@item.Id">Изменить</a>
             </td>
             <td align="left">
-                <form asp-controller="process" asp-action="DeleteContractTemplate" method="post" asp-route-id="@item.Id">
+                <form asp-controller="process" asp-action="DeleteCommonContractTemplate" method="post" asp-route-id="@item.Id">
                     <input type="submit" value="Удалить" class="btn btn-outline-danger" />
                 </form>
             </td>
