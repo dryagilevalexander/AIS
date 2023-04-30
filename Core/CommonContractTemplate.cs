@@ -8,11 +8,14 @@ namespace Core
 {
     public class CommonContractTemplate
     {
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public string Title { get; set; }
-    public string Preamble { get; set; }
-    public List<ContractTemplate> ContractTemplates { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Title { get; set; }
+        public string? Preamble { get; set; }
+
+        public int TypeOfDocumentId {get; set;}
+        public TypeOfDocument TypeOfDocument { get; set; }
+        public List<ContractTemplate> ContractTemplates { get; set; }
     }
 }

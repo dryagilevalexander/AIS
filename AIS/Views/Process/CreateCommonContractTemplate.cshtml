@@ -1,11 +1,19 @@
 ﻿@model AIS.ViewModels.CommonContractTemplateViewModel;
 
-<h2>Добавление коренного шаблона контракта</h2>
+<h2>Добавление корневого шаблона документа</h2>
 
 <form  asp-action="createcommoncontracttemplate" asp-controller="process" method="post" enctype="multipart/form-data" id="formContract">
     <div class="validation" asp-validation-summary="ModelOnly"></div>
     <div class="container">
-        
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select class="form-select" size="2" data-placeholder="Тип документа" id="TypeOfDocumentId" asp-for="TypeOfDocumentId" asp-items="@Model.TypesOfDocument">
+                </select>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
         <div class="row">
             <div class="col-5 mb-3">
                 <div class="input-group">
@@ -27,7 +35,7 @@
         <div class="row">
             <div class="col-5 mb-3">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Заголовок договора" aria-label="Заголовок договора" asp-for="Title">
+                    <input type="text" class="form-control" placeholder="Заголовок договора" aria-label="Заголовок" asp-for="Title">
                 </div>
             </div>
             <div class="col-7"></div>
@@ -57,6 +65,10 @@
         <div class="col-7"></div>
     </div>
 </form>
+
+@section scripts{
+    <script asp-src-include="~/js/select.js"></script>
+}
 
 
 

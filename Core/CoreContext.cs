@@ -35,11 +35,12 @@ namespace Core
     public DbSet<ContractTemplate> ContractTemplates { get; set; }
     public DbSet<TypeOfCondition> TypesOfCondition { get; set; }
     public DbSet<CommonContractTemplate> CommonContractTemplates { get; set; }
+    public DbSet<TypeOfDocument> TypesOfDocument { get; set; }
 
         public CoreContext(DbContextOptions<CoreContext> options)
         : base(options)
         {            
-           //Database.EnsureDeleted();
+            //Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
@@ -146,12 +147,19 @@ new PartnerType[]
                 new ShippingMethod {Id=4, Name="Электронный документооборот"}
             });
 
+            modelBuilder.Entity<TypeOfDocument>().HasData(
+            new TypeOfDocument[]
+            {
+                new TypeOfDocument {Id=1, Name="Контракт"},
+                new TypeOfDocument {Id=2, Name="Заявление"},
+                new TypeOfDocument {Id=3, Name="Исковое заявление"}
+            });
+
             modelBuilder.Entity<TypeOfCondition>().HasData(
             new TypeOfCondition[]
             {
                 new TypeOfCondition {Id=1, Name="Заголовок"},
                 new TypeOfCondition {Id=2, Name="Преамбула"},
-                new TypeOfCondition {Id=3, Name="Обычное условие"}
             });
 
             modelBuilder.Entity<LetterType>().HasData(
@@ -164,15 +172,14 @@ new PartnerType[]
             modelBuilder.Entity<CommonContractTemplate>().HasData(
             new CommonContractTemplate[]
             {
-                new CommonContractTemplate {Id=1, Name="Общий шаблон договора", Description = "Содержит заголовок и преамбулу договора", Title = "Договор contractType № __", Preamble = "customerName именуемое в дальнейшем \"Заказчик\", в лице customerDirectorTypeNameR customerDirectorNameR, действующего на основании Устава, с одной стороны, и executorName, именуемое в дальнейшем \"executor\", в лице executorDirectorTypeNameR executorDirectorNameR, действующего на основании Устава, с другой стороны, baseOfContract заключили настоящий договор о нижеследующем:"},
+                new CommonContractTemplate {Id=1, Name="Общий шаблон договора", Description = "Содержит заголовок и преамбулу договора", Title = "Договор contractType № __", Preamble = "customerName именуемое в дальнейшем \"Заказчик\", в лице customerDirectorTypeNameR customerDirectorNameR, действующего на основании Устава, с одной стороны, и executorName, именуемое в дальнейшем \"executor\", в лице executorDirectorTypeNameR executorDirectorNameR, действующего на основании Устава, с другой стороны, baseOfContract заключили настоящий договор о нижеследующем:", TypeOfDocumentId = 1},
             });
 
             modelBuilder.Entity<ContractTemplate>().HasData(
             new ContractTemplate[]
             {
-                new ContractTemplate {Id=1, Name = "Договор (общие)", Description = "", TypeOfContractId = 5, CommonContractTemplateId = 1},
-                new ContractTemplate {Id=2, Name = "Договор подряда", Description = "", TypeOfContractId = 1, CommonContractTemplateId = 1},
-                new ContractTemplate {Id=3, Name = "Договор оказания услуг", Description = "", TypeOfContractId = 2, CommonContractTemplateId = 1}
+                new ContractTemplate {Id=1, Name = "Договор подряда", Description = "", TypeOfContractId = 1, CommonContractTemplateId = 1},
+                new ContractTemplate {Id=2, Name = "Договор оказания услуг", Description = "", TypeOfContractId = 2, CommonContractTemplateId = 1}
 
             });
 
@@ -188,49 +195,49 @@ new PartnerType[]
             new Condition[]
             {
        
-                new Condition {Id = 1, Name = "Предмет договора", TypeOfConditionId = 3, ContractTemplateId =  2, TypeOfStateRegId = 4},
-                new Condition {Id = 2, Name = "Права и обязанности сторон", TypeOfConditionId = 3, ContractTemplateId = 2, TypeOfStateRegId = 4},
-                new Condition {Id = 3, Name = "Ответственность сторон", TypeOfConditionId = 3, ContractTemplateId = 2, TypeOfStateRegId = 1},
+                new Condition {Id = 1, Name = "Предмет договора", ContractTemplateId =  1, TypeOfStateRegId = 4, NumLevelReference = 1, NumId = 1},
+                new Condition {Id = 2, Name = "Права и обязанности сторон", ContractTemplateId = 1, TypeOfStateRegId = 4, NumLevelReference = 1, NumId = 1},
+                new Condition {Id = 3, Name = "Ответственность сторон", ContractTemplateId = 1, TypeOfStateRegId = 1, NumLevelReference = 1, NumId = 1},
 
-                new Condition {Id = 4, Name = "Предмет договора", TypeOfConditionId = 3, ContractTemplateId =  3, TypeOfStateRegId = 4},
-                new Condition {Id = 5, Name = "Права и обязанности сторон", TypeOfConditionId = 3, ContractTemplateId = 3, TypeOfStateRegId = 4},
-                new Condition {Id = 6, Name = "Ответственность сторон", TypeOfConditionId = 3, ContractTemplateId = 3, TypeOfStateRegId = 1},
+                new Condition {Id = 4, Name = "Предмет договора", ContractTemplateId =  2, TypeOfStateRegId = 4, NumLevelReference = 1, NumId = 1},
+                new Condition {Id = 5, Name = "Права и обязанности сторон", ContractTemplateId = 2, TypeOfStateRegId = 4, NumLevelReference = 1, NumId = 1},
+                new Condition {Id = 6, Name = "Ответственность сторон", ContractTemplateId = 2, TypeOfStateRegId = 1, NumLevelReference = 1, NumId = 1},
 
             });
 
             modelBuilder.Entity<SubCondition>().HasData(
             new SubCondition[]
             {
-                new SubCondition {Id=1, Text="За неисполнение или ненадлежащее исполнение Контракта Стороны несут ответственность в соответствии с законодательством Российской Федерации и условиями Контракта.", ConditionId = 3},
-                new SubCondition {Id=2, Text="В случае полного (частичного) неисполнения условий Контракта одной из Сторон эта Сторона обязана возместить другой Стороне причиненные убытки в части, непокрытой неустойкой.", ConditionId = 3},
-                new SubCondition {Id=3, Text="В случае просрочки исполнения Подрядчиком обязательств, предусмотренных Контрактом, Подрядчик уплачивает Заказчику пени. Пеня начисляется за каждый день просрочки исполнения Подрядчиком обязательства, предусмотренного Контрактом, начиная со дня, следующего после дня истечения установленного Контрактом срока исполнения обязательства. Размер пени составляет одна трехсотая действующей на дату уплаты пени ключевой ставки Центрального банка Российской Федерации от цены Контракта (отдельного этапа исполнения Контракта), уменьшенной на сумму, пропорциональную объему обязательств, предусмотренных Контрактом (соответствующим отдельным этапом исполнения Контракта) и фактически исполненных Подрядчиком.", ConditionId = 3},
-                new SubCondition {Id=4, Text="В случае просрочки исполнения Заказчиком обязательств, предусмотренных Контрактом, Подрядчик вправе потребовать уплату пени в размере одной трехсотой действующей на дату уплаты пеней ключевой ставки Центрального банка Российской Федерации от не уплаченной в срок суммы. Пеня начисляется за каждый день просрочки исполнения обязательства, предусмотренного Контрактом, начиная со дня, следующего после дня истечения установленного Контрактом срока исполнения обязательства.", ConditionId = 3},
-                new SubCondition {Id=5, Text="Применение неустойки (штрафа, пени) не освобождает Стороны от исполнения обязательств по Контракту.", ConditionId = 3},
-                new SubCondition {Id=6, Text="В случае расторжения Контракта в связи с односторонним отказом Стороны от исполнения Контракта другая Сторона вправе потребовать возмещения только фактически понесенного ущерба, непосредственно обусловленного обстоятельствами, являющимися основанием для принятия решения об одностороннем отказе от исполнения Контракта.", ConditionId = 3},
-                new SubCondition {Id=7, Text="Подрядчик обязуется выполнить по заданию Заказчика работу, указанную в пункте 1.2 настоящего договора, и сдать ее результат Заказчику, а Заказчик обязуется принять результат работы и оплатить его.", ConditionId = 3},
-                new SubCondition {Id=8, Text="Подрядчик обязуется выполнить следующую работу: subjectOfContract, именуемую в дальнейшем \"Работа\".", ConditionId = 1},
-                new SubCondition {Id=9, Text="Подрядчик обязуется:", ConditionId = 2},
+                new SubCondition {Id=1, Text="За неисполнение или ненадлежащее исполнение Контракта Стороны несут ответственность в соответствии с законодательством Российской Федерации и условиями Контракта.", ConditionId = 3, NumLevelReference = 2, NumId = 1},
+                new SubCondition {Id=2, Text="В случае полного (частичного) неисполнения условий Контракта одной из Сторон эта Сторона обязана возместить другой Стороне причиненные убытки в части, непокрытой неустойкой.", ConditionId = 3, NumLevelReference = 2, NumId = 1},
+                new SubCondition {Id=3, Text="В случае просрочки исполнения Подрядчиком обязательств, предусмотренных Контрактом, Подрядчик уплачивает Заказчику пени. Пеня начисляется за каждый день просрочки исполнения Подрядчиком обязательства, предусмотренного Контрактом, начиная со дня, следующего после дня истечения установленного Контрактом срока исполнения обязательства. Размер пени составляет одна трехсотая действующей на дату уплаты пени ключевой ставки Центрального банка Российской Федерации от цены Контракта (отдельного этапа исполнения Контракта), уменьшенной на сумму, пропорциональную объему обязательств, предусмотренных Контрактом (соответствующим отдельным этапом исполнения Контракта) и фактически исполненных Подрядчиком.", ConditionId = 3, NumLevelReference = 2, NumId = 1},
+                new SubCondition {Id=4, Text="В случае просрочки исполнения Заказчиком обязательств, предусмотренных Контрактом, Подрядчик вправе потребовать уплату пени в размере одной трехсотой действующей на дату уплаты пеней ключевой ставки Центрального банка Российской Федерации от не уплаченной в срок суммы. Пеня начисляется за каждый день просрочки исполнения обязательства, предусмотренного Контрактом, начиная со дня, следующего после дня истечения установленного Контрактом срока исполнения обязательства.", ConditionId = 3, NumLevelReference = 2, NumId = 1},
+                new SubCondition {Id=5, Text="Применение неустойки (штрафа, пени) не освобождает Стороны от исполнения обязательств по Контракту.", ConditionId = 3, NumLevelReference = 2, NumId = 1 },
+                new SubCondition {Id=6, Text="В случае расторжения Контракта в связи с односторонним отказом Стороны от исполнения Контракта другая Сторона вправе потребовать возмещения только фактически понесенного ущерба, непосредственно обусловленного обстоятельствами, являющимися основанием для принятия решения об одностороннем отказе от исполнения Контракта.", ConditionId = 3, NumLevelReference = 2, NumId = 1},
+                new SubCondition {Id=7, Text="Подрядчик обязуется выполнить по заданию Заказчика работу, указанную в пункте 1.2 настоящего договора, и сдать ее результат Заказчику, а Заказчик обязуется принять результат работы и оплатить его.", ConditionId = 3, NumLevelReference = 2, NumId = 1},
+                new SubCondition {Id=8, Text="Подрядчик обязуется выполнить следующую работу: subjectOfContract, именуемую в дальнейшем \"Работа\".", ConditionId = 1, NumLevelReference = 2, NumId = 1},
+                new SubCondition {Id=9, Text="Подрядчик обязуется:", ConditionId = 2, NumLevelReference = 2, NumId = 1},
 
-                new SubCondition {Id=10, Text="За неисполнение или ненадлежащее исполнение Контракта Стороны несут ответственность в соответствии с законодательством Российской Федерации и условиями Контракта.", ConditionId = 6},
-                new SubCondition {Id=11, Text="В случае полного (частичного) неисполнения условий Контракта одной из Сторон эта Сторона обязана возместить другой Стороне причиненные убытки в части, непокрытой неустойкой.", ConditionId = 6},
-                new SubCondition {Id=12, Text="В случае просрочки исполнения Исполнителем обязательств, предусмотренных Контрактом, Исполнитель уплачивает Заказчику пени. Пеня начисляется за каждый день просрочки исполнения Исполнителем обязательства, предусмотренного Контрактом, начиная со дня, следующего после дня истечения установленного Контрактом срока исполнения обязательства. Размер пени составляет одна трехсотая действующей на дату уплаты пени ключевой ставки Центрального банка Российской Федерации от цены Контракта (отдельного этапа исполнения Контракта), уменьшенной на сумму, пропорциональную объему обязательств, предусмотренных Контрактом (соответствующим отдельным этапом исполнения Контракта) и фактически исполненных Исполнителем.", ConditionId = 6},
-                new SubCondition {Id=13, Text="В случае просрочки исполнения Заказчиком обязательств, предусмотренных Контрактом, Исполнитель вправе потребовать уплату пени в размере одной трехсотой действующей на дату уплаты пеней ключевой ставки Центрального банка Российской Федерации от не уплаченной в срок суммы. Пеня начисляется за каждый день просрочки исполнения обязательства, предусмотренного Контрактом, начиная со дня, следующего после дня истечения установленного Контрактом срока исполнения обязательства.", ConditionId = 6},
-                new SubCondition {Id=14, Text="Применение неустойки (штрафа, пени) не освобождает Стороны от исполнения обязательств по Контракту.", ConditionId = 6},
-                new SubCondition {Id=15, Text="В случае расторжения Контракта в связи с односторонним отказом Стороны от исполнения Контракта другая Сторона вправе потребовать возмещения только фактически понесенного ущерба, непосредственно обусловленного обстоятельствами, являющимися основанием для принятия решения об одностороннем отказе от исполнения Контракта.", ConditionId = 6},
-                new SubCondition {Id=16, Text="Исполнитель обязуется оказать по заданию Заказчика услуги, указанные в пункте 1.2 настоящего договора, и сдать ее результат Заказчику, а Заказчик обязуется принять результат оказания услуг и оплатить его.", ConditionId = 6},
-                new SubCondition {Id=17, Text="Исполнитель обязуется оказать следующие услуги: subjectOfContract, именуемые в дальнейшем \"Услуги\".", ConditionId = 4},
-                new SubCondition {Id=18, Text="Исполнитель обязуется:", ConditionId = 5},
+                new SubCondition {Id=10, Text="За неисполнение или ненадлежащее исполнение Контракта Стороны несут ответственность в соответствии с законодательством Российской Федерации и условиями Контракта.", ConditionId = 6, NumLevelReference = 2, NumId = 1},
+                new SubCondition {Id=11, Text="В случае полного (частичного) неисполнения условий Контракта одной из Сторон эта Сторона обязана возместить другой Стороне причиненные убытки в части, непокрытой неустойкой.", ConditionId = 6, NumLevelReference = 2, NumId = 1},
+                new SubCondition {Id=12, Text="В случае просрочки исполнения Исполнителем обязательств, предусмотренных Контрактом, Исполнитель уплачивает Заказчику пени. Пеня начисляется за каждый день просрочки исполнения Исполнителем обязательства, предусмотренного Контрактом, начиная со дня, следующего после дня истечения установленного Контрактом срока исполнения обязательства. Размер пени составляет одна трехсотая действующей на дату уплаты пени ключевой ставки Центрального банка Российской Федерации от цены Контракта (отдельного этапа исполнения Контракта), уменьшенной на сумму, пропорциональную объему обязательств, предусмотренных Контрактом (соответствующим отдельным этапом исполнения Контракта) и фактически исполненных Исполнителем.", ConditionId = 6, NumLevelReference = 2, NumId = 1},
+                new SubCondition {Id=13, Text="В случае просрочки исполнения Заказчиком обязательств, предусмотренных Контрактом, Исполнитель вправе потребовать уплату пени в размере одной трехсотой действующей на дату уплаты пеней ключевой ставки Центрального банка Российской Федерации от не уплаченной в срок суммы. Пеня начисляется за каждый день просрочки исполнения обязательства, предусмотренного Контрактом, начиная со дня, следующего после дня истечения установленного Контрактом срока исполнения обязательства.", ConditionId = 6, NumLevelReference = 2, NumId = 1},
+                new SubCondition {Id=14, Text="Применение неустойки (штрафа, пени) не освобождает Стороны от исполнения обязательств по Контракту.", ConditionId = 6, NumLevelReference = 2, NumId = 1},
+                new SubCondition {Id=15, Text="В случае расторжения Контракта в связи с односторонним отказом Стороны от исполнения Контракта другая Сторона вправе потребовать возмещения только фактически понесенного ущерба, непосредственно обусловленного обстоятельствами, являющимися основанием для принятия решения об одностороннем отказе от исполнения Контракта.", ConditionId = 6, NumLevelReference = 2, NumId = 1},
+                new SubCondition {Id=16, Text="Исполнитель обязуется оказать по заданию Заказчика услуги, указанные в пункте 1.2 настоящего договора, и сдать ее результат Заказчику, а Заказчик обязуется принять результат оказания услуг и оплатить его.", ConditionId = 6, NumLevelReference = 2, NumId = 1},
+                new SubCondition {Id=17, Text="Исполнитель обязуется оказать следующие услуги: subjectOfContract, именуемые в дальнейшем \"Услуги\".", ConditionId = 4, NumLevelReference = 2, NumId = 1},
+                new SubCondition {Id=18, Text="Исполнитель обязуется:", ConditionId = 5, NumLevelReference = 2, NumId = 1},
 
             });
 
             modelBuilder.Entity<SubConditionParagraph>().HasData(
             new SubConditionParagraph[]
             {
-                new SubConditionParagraph {Id=1, Text="Подрядчик обязуется выполнить Работу с надлежащим качеством, из своих материалов, своими силами и средствами.", SubConditionId = 9},
-                new SubConditionParagraph {Id=2, Text="Подрядчик обязуется выполнить Работу в срок до dateEnd г.", SubConditionId = 9},
+                new SubConditionParagraph {Id=1, Text="Подрядчик обязуется выполнить Работу с надлежащим качеством, из своих материалов, своими силами и средствами.", SubConditionId = 9, NumLevelReference = 3, NumId = 1},
+                new SubConditionParagraph {Id=2, Text="Подрядчик обязуется выполнить Работу в срок до dateEnd г.", SubConditionId = 9, NumLevelReference = 3, NumId = 1 },
 
-                new SubConditionParagraph {Id=3, Text="Исполнитель обязуется оказать услуги с надлежащим качеством, своими силами и средствами.", SubConditionId = 18},
-                new SubConditionParagraph {Id=4, Text="Исполнитель обязуется оказать услуги в срок до dateEnd г.", SubConditionId = 18}
+                new SubConditionParagraph {Id=3, Text="Исполнитель обязуется оказать услуги с надлежащим качеством, своими силами и средствами.", SubConditionId = 18, NumLevelReference = 3, NumId = 1},
+                new SubConditionParagraph {Id=4, Text="Исполнитель обязуется оказать услуги в срок до dateEnd г.", SubConditionId = 18, NumLevelReference = 3, NumId = 1}
             });
         }
     }

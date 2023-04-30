@@ -54,7 +54,7 @@
 <h2>Условия</h2>
 
 <table class="table table-sm table-hover" id="currentTable">
-    <tr><th onclick="sortTable(0)">Тип условия</th><th onclick="sortTable(1)">Описание</th><th onclick="sortTable(2)">Тип регулирования</th></tr>
+    <tr><th onclick="sortTable(0)">Наименование</th><th onclick="sortTable(1)">Текст</th></tr>
     <tr class="table-filters">
         <td>
             <input type="text" id="tableFilter" />
@@ -70,11 +70,8 @@
     @foreach (var item in Model.Conditions)
     {
         <tr class="table-data">
-            <td>@Model.TypesOfCondition.FirstOrDefault(p=>p.Value==item.TypeOfConditionId.ToString()).Text.ToString()</td>
-            <td>
-                @if (item.Name != null) @item.Name
-            </td>
-                <td>@Model.TypesOfStateReg.FirstOrDefault(p=>p.Value==item.TypeOfStateRegId.ToString()).Text.ToString()</td>
+            <td>@if (item.Name != null) @item.Name</td>
+            <td>@if (item.Text != null) @item.Text</td>
             <td align="right">
                  <a class="btn btn-outline-primary" role="button" asp-action="EditCondition" asp-controller="process" asp-route-id="@item.Id">Изменить</a>
             </td>

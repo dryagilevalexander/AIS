@@ -15,6 +15,7 @@ using AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using static AIS.Controllers.ProcessController;
+using DocumentFormat.OpenXml.Presentation;
 
 namespace AIS.Controllers
 {
@@ -398,6 +399,7 @@ namespace AIS.Controllers
 
         }
         #endregion
+
         #region [Contracts]
         public async Task<IActionResult> MyContracts()
         {
@@ -446,8 +448,6 @@ namespace AIS.Controllers
             {
                 return NotFound();
             }
-
-
         }
 
         public async Task<IActionResult> EditContract(int? id)
@@ -518,7 +518,6 @@ namespace AIS.Controllers
             }
         }
         #endregion
-
 
         #region[subTasks]
         [HttpGet]
@@ -706,6 +705,9 @@ namespace AIS.Controllers
         public async Task<IActionResult> CreateCommonContractTemplate()
         {
             CommonContractTemplateViewModel commonContractTemplateViewModel = new CommonContractTemplateViewModel();
+            var documentTypes = await _contractsService.GetTypesOfDocument();
+            commonContractTemplateViewModel.TypesOfDocument = from documentType in documentTypes select new SelectListItem { Text = documentType.Name, Value = documentType.Id.ToString() };
+
             return View(commonContractTemplateViewModel);
         }
 
@@ -727,6 +729,8 @@ namespace AIS.Controllers
         {
             if (id != null)
             {
+                var documentTypes = await _contractsService.GetTypesOfDocument();
+
                 CommonContractTemplate? commonContractTemplate = await _conditionsService.GetCommonContractTemplateWithContractTemplatesById(id.Value);
                 CommonContractTemplateViewModel commonContractTemplateViewModel = new CommonContractTemplateViewModel
                 {
@@ -735,8 +739,10 @@ namespace AIS.Controllers
                     Description = commonContractTemplate.Description,
                     Title= commonContractTemplate.Title,
                     Preamble = commonContractTemplate.Preamble,
-                    ContractTemplates = commonContractTemplate.ContractTemplates
+                    ContractTemplates = commonContractTemplate.ContractTemplates,
+                    TypeOfDocumentId = commonContractTemplate.TypeOfDocumentId,
                 };
+                commonContractTemplateViewModel.TypesOfDocument = from documentType in documentTypes select new SelectListItem { Text = documentType.Name, Value = documentType.Id.ToString() };
 
                 if (commonContractTemplate != null) return View(commonContractTemplateViewModel);
             }
@@ -768,8 +774,6 @@ namespace AIS.Controllers
                 return NotFound();
             }
         }
-
-
 
         public async Task<IActionResult> ContractTemplates()
         {
@@ -859,9 +863,10 @@ namespace AIS.Controllers
             if (id != null)
             {
                 ConditionViewModel conditionViewModel = new ConditionViewModel();
+                ContractTemplate contractTemplate = await _conditionsService.GetContractTemplateWithCommonContractTemplateById(id.Value);
+                int typeOfDocumentId = contractTemplate.CommonContractTemplate.TypeOfDocumentId;
                 conditionViewModel.ContractTemplateId = id.Value;
-                var typesOfCondition = await _conditionsService.GetTypesOfCondition();
-                conditionViewModel.TypesOfCondition = from typeOfCondition in typesOfCondition select new SelectListItem { Text = typeOfCondition.Name, Value = typeOfCondition.Id.ToString() };
+                conditionViewModel.TypeOfDocumentId = typeOfDocumentId;
                 var typesOfStateReg = await _contractsService.GetTypeOfStateRegs();
                 conditionViewModel.TypesOfStateReg = from typeOfStateReg in typesOfStateReg select new SelectListItem { Text = typeOfStateReg.Name, Value = typeOfStateReg.Id.ToString() };
                 return View(conditionViewModel);
@@ -888,13 +893,14 @@ namespace AIS.Controllers
             if (id != null)
             {
                 ConditionViewModel conditionViewModel = new ConditionViewModel();
-                Condition condition = await _conditionsService.GetCondition(id.Value);
+                Core.Condition condition = await _conditionsService.GetCondition(id.Value);
                 conditionViewModel.Id = condition.Id;
-                conditionViewModel.TypeOfConditionId = condition.TypeOfConditionId;
-                conditionViewModel.TypeOfStateRegId = condition.TypeOfStateRegId;
+                if(condition.TypeOfStateRegId != null) conditionViewModel.TypeOfStateRegId = condition.TypeOfStateRegId.Value;
                 conditionViewModel.Name = condition.Name;
                 conditionViewModel.Text = condition.Text;
                 conditionViewModel.ContractTemplateId = condition.ContractTemplateId;
+                conditionViewModel.NumLevelReference = condition.NumLevelReference;
+                conditionViewModel.NumId = condition.NumId;
                 conditionViewModel.SubConditions = condition.SubConditions;
                 var typesOfCondition = await _conditionsService.GetTypesOfCondition();
                 conditionViewModel.TypesOfCondition = from typeOfCondition in typesOfCondition select new SelectListItem { Text = typeOfCondition.Name, Value = typeOfCondition.Id.ToString() };
@@ -921,7 +927,7 @@ namespace AIS.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteCondition(int? id)
         {
-            Condition condition = await _conditionsService.GetCondition(id.Value);
+            Core.Condition condition = await _conditionsService.GetCondition(id.Value);
             int contractTemplateId = condition.ContractTemplateId;
             if (await _conditionsService.DeleteCondition(id) == true)
             {
@@ -969,6 +975,8 @@ namespace AIS.Controllers
                 subConditionViewModel.Name = subCondition.Name;
                 subConditionViewModel.Text = subCondition.Text;
                 subConditionViewModel.ConditionId = subCondition.ConditionId;
+                subConditionViewModel.NumLevelReference = subCondition.NumLevelReference;
+                subConditionViewModel.NumId = subCondition.NumId;
                 subConditionViewModel.SubConditionParagraphs = subCondition.SubConditionParagraphs;
                 return View(subConditionViewModel);
             }
@@ -1038,6 +1046,8 @@ namespace AIS.Controllers
                 SubConditionParagraph subConditionParagraph = await _conditionsService.GetSubConditionParagraph(id.Value);
                 subConditionParagraphViewModel.Id = subConditionParagraph.Id;
                 subConditionParagraphViewModel.Text = subConditionParagraph.Text;
+                subConditionParagraphViewModel.NumLevelReference = subConditionParagraph.NumLevelReference;
+                subConditionParagraphViewModel.NumId = subConditionParagraph.NumId;
                 subConditionParagraphViewModel.SubConditionId = subConditionParagraph.SubConditionId;
                 return View(subConditionParagraphViewModel);
             }

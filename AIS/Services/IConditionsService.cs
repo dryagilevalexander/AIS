@@ -16,6 +16,7 @@ namespace AIS.Services
         Task<ContractTemplate?> GetContractTemplateById(int id);
         Task<ContractTemplate?> GetContractTemplateWithConditionsById(int id);
         Task<ContractTemplate?> GetContractTemplateWithTypeOfContractById(int id);
+        Task<ContractTemplate?> GetContractTemplateWithCommonContractTemplateById(int id);
         Task<List<TypeOfCondition>> GetTypesOfCondition();
         Task<bool> DeleteContractTemplate(int? id);
         Task<List<Condition>> GetConditions();

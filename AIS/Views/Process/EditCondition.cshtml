@@ -10,7 +10,11 @@
 
         <div class="row">
             <div class="col-5 mb-3">
-                <select class="form-select" size="2" data-placeholder="Тип условия" id="TypeOfConditionId" asp-for="TypeOfConditionId" asp-items="@Model.TypesOfCondition">
+                <select class="form-select" size="2" data-placeholder="Уровень нумерации" id="NumLevelReference" asp-for="NumLevelReference">
+                    <option selected value="0">Без нумерации</option>
+                    <option value="1">Первый (1.)</option>
+                    <option value="2">Второй (1.1.)</option>
+                    <option value="3">Третий (1.1.1.)</option>
                 </select>
             </div>
             <div class="col-7"></div>
@@ -18,11 +22,28 @@
 
         <div class="row">
             <div class="col-5 mb-3">
+                <select class="form-select" size="2" data-placeholder="Группировка нумерации" id="NumId" asp-for="NumId">
+                    <option selected value="0">Отсутствует</option>
+                    <option value="1">Первая</option>
+                    <option value="2">Вторая</option>
+                    <option value="3">Третяя</option>
+                    <option value="4">Четвертая</option>
+                    <option value="5">Пятая</option>
+                </select>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        @if (Model.TypeOfDocumentId == 1)
+        {
+            <div class="row">
+                <div class="col-5 mb-3">
                     <select class="form-select" size="2" data-placeholder="Тип регулирования" id="TypeOfStateRegId" asp-for="TypeOfStateRegId" asp-items="@Model.TypesOfStateReg">
                 </select>
             </div>
             <div class="col-7"></div>
         </div>
+        }
         
         <div class="row">
             <div class="col-5 mb-3">

@@ -52,24 +52,46 @@ namespace AIS
                     createParagraph(wordDoc, "a3", "24", false, 0, 0, "center", false, "");
                 }
 
-                if (condit.TypeOfConditionId == 3)
+                if (condit.TypeOfConditionId == null)
                 {
-                    createParagraph(wordDoc, "a3", "24", true, 0, 1, "center", true, condit.Name);
+                    bool conditionIsNumbering = false;
+                    int conditionNumLevelReference = 0;
+                    if (condit.NumLevelReference != 0)
+                    {
+                        conditionIsNumbering = true;
+                        conditionNumLevelReference = condit.NumLevelReference - 1;
+                    }
+                    createParagraph(wordDoc, "a3", "24", conditionIsNumbering, conditionNumLevelReference, condit.NumId, "center", true, condit.Name);
                     if(condit.SubConditions!= null)
                     {
                         foreach (var item in condit.SubConditions)
                         {
-                            createParagraph(wordDoc, "a3", "24", true, 1, 1, "both", false, item.Text);
+                            bool subConditionIsNumbering = false;
+                            int subConditionNumLevelReference = 0;
+                            if (item.NumLevelReference != 0)
+                            {
+                                subConditionIsNumbering = true;
+                                subConditionNumLevelReference = item.NumLevelReference - 1;
+                            }
+                            createParagraph(wordDoc, "a3", "24", subConditionIsNumbering, subConditionNumLevelReference, item.NumId, "both", false, item.Text);
                             if (item.SubConditionParagraphs != null)
                             {
                                 foreach (var paragraph in item.SubConditionParagraphs)
                                 {
-                                    createParagraph(wordDoc, "a3", "24", true, 2, 1, "both", false, paragraph.Text);
+                                    bool subConditionParagraphIsNumbering = false;
+                                    int subConditionParagraphNumLevelReference = 0;
+                                    if (item.NumLevelReference != 0)
+                                    {
+                                        subConditionParagraphIsNumbering = true;
+                                        subConditionParagraphNumLevelReference = paragraph.NumLevelReference - 1;
+                                    }
+                                    createParagraph(wordDoc, "a3", "24", subConditionParagraphIsNumbering, subConditionParagraphNumLevelReference, paragraph.NumId, "both", false, paragraph.Text);
                                 }
                             }
                         }
                     }
                 }
+
                 createParagraph(wordDoc, "a3", "24", false, 0, 0, "center", false, "");
             }
 

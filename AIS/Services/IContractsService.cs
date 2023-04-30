@@ -19,5 +19,6 @@ namespace AIS.Services
         ContractModel CreateConditions(ContractModel contract);
         ContractTemplate GetContractTemplateId(int id);
         ContractModel SetContractRequisites(ContractModel contract, Partner mainOrganization, Partner contragent);
+        Task<IEnumerable<TypeOfDocument>> GetTypesOfDocument();
     }
 }

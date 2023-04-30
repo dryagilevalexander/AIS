@@ -41,18 +41,19 @@ namespace AIS.Services
         {
             try
             {
-               CommonContractTemplate commonContractTemplate = new CommonContractTemplate
-                {
-                    Name = cctvm.Name,
-                    Description = cctvm.Description,
-                    Title = cctvm.Title,
-                    Preamble = cctvm.Preamble
-                };
+                CommonContractTemplate commonContractTemplate = new CommonContractTemplate();
+
+                commonContractTemplate.Name = cctvm.Name;
+                commonContractTemplate.Description = cctvm.Description;
+                commonContractTemplate.Title = cctvm.Title;
+                if(cctvm.Preamble != null) commonContractTemplate.Preamble = cctvm.Preamble;
+                commonContractTemplate.TypeOfDocumentId = cctvm.TypeOfDocumentId;
 
                 db.CommonContractTemplates.Add(commonContractTemplate);
                 await db.SaveChangesAsync();
                 return true;
             }
+
             catch
             {
                 return false;
@@ -67,7 +68,8 @@ namespace AIS.Services
                 commonContractTemplate.Name = cctvm.Name;
                 commonContractTemplate.Description = cctvm.Description;
                 commonContractTemplate.Title = cctvm.Title;
-                commonContractTemplate.Preamble = cctvm.Preamble;
+                if (cctvm.Preamble != null) commonContractTemplate.Preamble = cctvm.Preamble;
+                commonContractTemplate.TypeOfDocumentId = cctvm.TypeOfDocumentId;
 
                 db.CommonContractTemplates.Update(commonContractTemplate);
                 await db.SaveChangesAsync();
@@ -132,14 +134,13 @@ namespace AIS.Services
         {
             try
             {
-                Condition condition = new Condition
-                {
-                    Name = cvm.Name,
-                    Text = cvm.Text,
-                    TypeOfConditionId = cvm.TypeOfConditionId,
-                    TypeOfStateRegId = cvm.TypeOfStateRegId,
-                    ContractTemplateId = cvm.ContractTemplateId
-                };
+                Condition condition = new Condition();
+
+                    condition.Name = cvm.Name;
+                    condition.Text = cvm.Text;
+                    if(cvm.TypeOfDocumentId == 1) condition.TypeOfStateRegId = cvm.TypeOfStateRegId;
+                    condition.ContractTemplateId = cvm.ContractTemplateId;
+                    condition.NumLevelReference = cvm.NumLevelReference;
 
                 db.Conditions.Add(condition);
                 await db.SaveChangesAsync();
@@ -158,9 +159,9 @@ namespace AIS.Services
                 Condition condition = await db.Conditions.FirstOrDefaultAsync(p => p.Id == cvm.Id);
                 condition.Name = cvm.Name;
                 condition.Text = cvm.Text;
-                condition.TypeOfConditionId = cvm.TypeOfConditionId;
-                condition.TypeOfStateRegId = cvm.TypeOfStateRegId;
+                if (cvm.TypeOfDocumentId == 1)  condition.TypeOfStateRegId = cvm.TypeOfStateRegId;
                 condition.ContractTemplateId = cvm.ContractTemplateId;
+                condition.NumLevelReference = cvm.NumLevelReference;
 
                 db.Conditions.Update(condition);
                 await db.SaveChangesAsync();
@@ -180,7 +181,9 @@ namespace AIS.Services
             {
                 Name = scvm.Name,
                 Text = scvm.Text,
-                ConditionId = scvm.ConditionId
+                ConditionId = scvm.ConditionId,
+                NumLevelReference = scvm.NumLevelReference,
+                NumId = scvm.NumId
 
             };
 
@@ -202,6 +205,8 @@ namespace AIS.Services
                 subCondition.Name = scvm.Name;
                 subCondition.Text = scvm.Text;
                 subCondition.ConditionId = scvm.ConditionId;
+                subCondition.NumLevelReference = scvm.NumLevelReference;
+                subCondition.NumId = scvm.NumId;
 
                 db.SubConditions.Update(subCondition);
                 await db.SaveChangesAsync();
@@ -232,7 +237,9 @@ namespace AIS.Services
                 SubConditionParagraph subConditionParagraph = new SubConditionParagraph
                 {
                     Text = scpvm.Text,
-                    SubConditionId = scpvm.SubConditionId
+                    SubConditionId = scpvm.SubConditionId,
+                    NumLevelReference = scpvm.NumLevelReference,
+                    NumId = scpvm.NumId
 
                 };
 
@@ -253,6 +260,8 @@ namespace AIS.Services
                 SubConditionParagraph subConditionParagraph = await db.SubConditionParagraphs.FirstOrDefaultAsync(p => p.Id == scpvm.Id);
                 subConditionParagraph.Text = scpvm.Text;
                 subConditionParagraph.SubConditionId = scpvm.SubConditionId;
+                subConditionParagraph.NumLevelReference = scpvm.NumLevelReference;
+                subConditionParagraph.NumId = scpvm.NumId;
 
                 db.SubConditionParagraphs.Update(subConditionParagraph);
                 await db.SaveChangesAsync();
@@ -296,6 +305,21 @@ namespace AIS.Services
             {
                 ContractTemplate? contractTemplate = await db.ContractTemplates
                     .Include(p => p.Conditions).ThenInclude(p => p.SubConditions).ThenInclude(p => p.SubConditionParagraphs)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+                return contractTemplate;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<ContractTemplate?> GetContractTemplateWithCommonContractTemplateById(int id)
+        {
+            try
+            {
+                ContractTemplate? contractTemplate = await db.ContractTemplates
+                    .Include(p => p.CommonContractTemplate)
                     .FirstOrDefaultAsync(p => p.Id == id);
                 return contractTemplate;
             }

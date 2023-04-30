@@ -1,5 +1,6 @@
 ﻿using AIS.ViewModels;
 using Core;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static AIS.Controllers.ProcessController;
@@ -188,6 +189,11 @@ namespace AIS.Services
             { 
             return false;
             }
+        }
+
+        public async Task <IEnumerable<TypeOfDocument>> GetTypesOfDocument()
+        {
+            return await db.TypesOfDocument.ToListAsync();
         }
 
         public async Task<Contract> GetContractByIdWithMyFiles(int id)
