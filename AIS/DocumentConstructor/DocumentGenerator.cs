@@ -17,7 +17,7 @@ namespace AIS
 {
     public class DocumentGenerator: IDocumentGenerator
     {
-        public void CreateContract(string filePath, ContractModel contract)
+        public void CreateContract(string filePath, DocumentModel contract)
         {
             //Создаем новый документ
             WordprocessingDocument wordDoc = WordprocessingDocument.Create(filePath, WordprocessingDocumentType.Document);
@@ -37,23 +37,9 @@ namespace AIS
             GenerateNumberingDefinitionsPart1Content(numberingDefinitionsPart);
 
             List<Condition> conditions = contract.Conditions;
+            
             foreach(var condit in conditions)
             {
-                if(condit.TypeOfConditionId==1)
-                {
-                    createParagraph(wordDoc, "a3", "24", false, 0, 0, "center", true, condit.Name);
-                    CreateDateAndPlaceTable(wordDoc, contract.PlaceOfContract, "__.__.202_");
-                    createParagraph(wordDoc, "a3", "24", false, 0, 0, "center", false, "");
-                }
-
-                if (condit.TypeOfConditionId == 2)
-                {
-                    createParagraph(wordDoc, "a3", "24", false, 0, 0, "both", false, condit.Text);
-                    createParagraph(wordDoc, "a3", "24", false, 0, 0, "center", false, "");
-                }
-
-                if (condit.TypeOfConditionId == null)
-                {
                     bool conditionIsNumbering = false;
                     int conditionNumLevelReference = 0;
                     if (condit.NumLevelReference != 0)
@@ -61,7 +47,7 @@ namespace AIS
                         conditionIsNumbering = true;
                         conditionNumLevelReference = condit.NumLevelReference - 1;
                     }
-                    createParagraph(wordDoc, "a3", "24", conditionIsNumbering, conditionNumLevelReference, condit.NumId, "center", true, condit.Name);
+                    createParagraph(wordDoc, "a3", "24", conditionIsNumbering, conditionNumLevelReference, condit.NumId, condit.Justification, true, condit.Title);
                     if(condit.SubConditions!= null)
                     {
                         foreach (var item in condit.SubConditions)
@@ -73,7 +59,7 @@ namespace AIS
                                 subConditionIsNumbering = true;
                                 subConditionNumLevelReference = item.NumLevelReference - 1;
                             }
-                            createParagraph(wordDoc, "a3", "24", subConditionIsNumbering, subConditionNumLevelReference, item.NumId, "both", false, item.Text);
+                            createParagraph(wordDoc, "a3", "24", subConditionIsNumbering, subConditionNumLevelReference, item.NumId, item.Justification, false, item.Text);
                             if (item.SubConditionParagraphs != null)
                             {
                                 foreach (var paragraph in item.SubConditionParagraphs)
@@ -85,18 +71,27 @@ namespace AIS
                                         subConditionParagraphIsNumbering = true;
                                         subConditionParagraphNumLevelReference = paragraph.NumLevelReference - 1;
                                     }
-                                    createParagraph(wordDoc, "a3", "24", subConditionParagraphIsNumbering, subConditionParagraphNumLevelReference, paragraph.NumId, "both", false, paragraph.Text);
+                                    createParagraph(wordDoc, "a3", "24", subConditionParagraphIsNumbering, subConditionParagraphNumLevelReference, paragraph.NumId, paragraph.Justification, false, paragraph.Text);
                                 }
                             }
                         }
                     }
-                }
 
                 createParagraph(wordDoc, "a3", "24", false, 0, 0, "center", false, "");
             }
 
-            createParagraph(wordDoc, "a3", "24", true, 0, 1, "center", true, "Реквизиты");
-            CreateTable(wordDoc, contract.CustomerProp, contract.ExecutorProp);
+            //Если тип документа "контракт", то вставляем реквизиты, иначе подпись руководителя
+            if(contract.TypeOfDocumentId == 1)
+            { 
+                createParagraph(wordDoc, "a3", "24", true, 0, 1, "center", true, "Реквизиты");
+                CreateTable(wordDoc, contract.CustomerProp, contract.ExecutorProp);
+            }
+            else
+            { 
+                string signature = "Директор mainOrganizationShortName ___________ mainOrganizationDirectorNameR";
+                createParagraph(wordDoc, "a3", "24", true, 0, 1, "center", true, signature);
+            }
+
             //Закрываем документ (автосохранение включено)
             wordDoc.Close();
 
@@ -105,7 +100,7 @@ namespace AIS
         }
 
         //Метод замены тегов значениями из модели контракта
-        private void ReplacingTags(ContractModel contract, string filePath)
+        private void ReplacingTags(DocumentModel contract, string filePath)
         {
                 using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(filePath, true))
                 {
@@ -116,89 +111,10 @@ namespace AIS
                     docText = sr.ReadToEnd();
                 }
 
-                string contractType = "";
-                string contractName = "";
-                string baseOfContract = "";
-                string paragraphBaseOfContract = "";
-                string executor = "";
-
-                //Получаем тип договора
-                switch (contract.ContractType)
-                {
-                    case 1:
-                        contractType = "подряда";
-                        break;
-                    case 2:
-                        contractType = "оказания услуг";
-                        break;
-                    case 3:
-                        contractType = "поставки";
-                        break;
-                    case 4:
-                        contractType = "аренды";
-                        break;
+                foreach(var replacementValue in contract.ReplacementDictionary)
+                { 
+                docText = docText.Replace(replacementValue.Key, replacementValue.Value);
                 }
-
-                switch (contract.ContractType)
-                {
-                    case 1:
-                        executor = "Подрядчик";
-                        break;
-                    case 2:
-                        executor = "Исполнитель";
-                        break;
-                    case 3:
-                        executor = "Поставщик";
-                        break;
-                    case 4:
-                        executor = "Арендатор";
-                        break;
-                }
-
-                //Получаем пункт основания заключения контракта (для 44-ФЗ)
-                if (contract.RegulationType == 1)
-                {
-                    switch (contract.RegulationParagraph)
-                    {
-                        case 1:
-                            paragraphBaseOfContract = "п. 4 ст. 93 ";
-                            break;
-                        case 2:
-                            paragraphBaseOfContract = "п. 8 ст. 93 ";
-                            break;
-                    }
-                }
-
-                //Получаем фактическое наименование контракта и основание заключения
-                switch (contract.RegulationType)
-                {
-                    case 1:
-                        contractName = "Контракт";
-                        baseOfContract = "на основании " + paragraphBaseOfContract + "федерального закона \"О контрактной системе в сфере закупок товаров, работ, услуг для обеспечения государственных и муниципальных нужд\" от 05.04.2013 N 44-ФЗ,";
-                        break;
-                    case 2:
-                        contractName = "Договор";
-                        baseOfContract = "на основании федерального закона \"О закупках товаров, работ, услуг отдельными видами юридических лиц\" от 18.07.2011 N 223-ФЗ,";
-                        break;
-                    case 3:
-                        contractName = "Договор";
-                        break;
-
-                }
-
-                docText = docText.Replace("договор", contractName);
-                docText = docText.Replace("contractType", contractType);
-                docText = docText.Replace("customerName", contract.Customer.Name);
-                docText = docText.Replace("executorName", contract.Executor.Name);
-                docText = docText.Replace("customerDirectorNameR", contract.Customer.DirectorNameR);
-                docText = docText.Replace("executorDirectorNameR", contract.Executor.DirectorNameR);
-                docText = docText.Replace("baseOfContract", baseOfContract);
-                docText = docText.Replace("subjectOfContract", contract.SubjectOfContract);
-                docText = docText.Replace("dateEnd", contract.DateEnd);
-                docText = docText.Replace("customerDirectorTypeNameR", contract.Customer.DirectorType.NameR);
-                docText = docText.Replace("executorDirectorTypeNameR", contract.Executor.DirectorType.NameR);
-                docText = docText.Replace("executor", executor);
-
 
                 //Записываем изменения
                 using (StreamWriter sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create)))

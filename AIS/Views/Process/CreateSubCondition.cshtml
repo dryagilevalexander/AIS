@@ -1,6 +1,6 @@
 ﻿@model AIS.ViewModels.SubConditionViewModel;
 
-<h2>Добавление подпункта условия контракта</h2>
+<h2>Добавление пункта</h2>
 
 <form  asp-action="createsubcondition" asp-controller="process" method="post">
     <div class="validation" asp-validation-summary="ModelOnly"></div>
@@ -36,6 +36,18 @@
 
         <div class="row">
             <div class="col-5 mb-3">
+                <select class="form-select" size="2" data-placeholder="Выравнивание текста" id="Justification" asp-for="Justification">
+                    <option value="left">Слева</option>
+                    <option value="center">По центру</option>
+                    <option value="right">Справа</option>
+                    <option value="both">Выравнивание по ширине</option>
+                </select>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="Наименование (в контракте не фигурирует)" aria-label="Наименование (в контракте не фигурирует)" asp-for="Name">
                 </div>
@@ -60,7 +72,13 @@
     <div class="row">
         <div class="col-5 mb-3">
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <input class="btn btn-primary" type="submit" value="Отправить" />
+                    <div>
+                        <a class="btn btn-secondary" role="button" asp-action="EditCondition" asp-controller="process" asp-route-id="@Model.ConditionId">Отмена</a>
+                    </div>
+                    <div class="col-1"></div>
+                    <div>
+                        <input class="btn btn-primary" type="submit" value="Отправить" />
+                    </div>
             </div>
         </div>
         <div class="col-7"></div>

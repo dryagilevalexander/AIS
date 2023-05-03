@@ -7,6 +7,7 @@ namespace AIS.Services
     {
         Task<IEnumerable<Partner>> GetPartnersEagerLoading();
         Task <IEnumerable<Partner>> GetPartners();
+        Task<IEnumerable<Partner>> GetPartnersByPartnerCategoryId(int id);
         Task<Partner?> GetPartner(int id);
         Task<Partner?> GetPartnerEagerLoading(int id);
         Task<bool> CreatePartner(PartnerViewModel partnerViewModel);

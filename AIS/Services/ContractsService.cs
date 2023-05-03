@@ -201,19 +201,13 @@ namespace AIS.Services
             return await db.Contracts.Include(u => u.MyFiles).FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        //Метод получения шаблона контракта с стандартными условиями для всех типов регулирования
-        public ContractTemplate GetContractTemplateId(int id)
-        {
-            return db.ContractTemplates.Include(p => p.Conditions).ThenInclude(p => p.SubConditions).ThenInclude(c => c.SubConditionParagraphs).FirstOrDefault(p => p.Id == id);
-        }
-
-        public CommonContractTemplate? GetCommonContractTemplateById(int id)
+        public RootTemplate? GetRootTemplateById(int id)
         {
             try
             {
-                CommonContractTemplate? commonContractTemplate = db.CommonContractTemplates
+                RootTemplate? RootTemplate = db.RootTemplates
                     .FirstOrDefault(p => p.Id == id);
-                return commonContractTemplate;
+                return RootTemplate;
             }
             catch
             {
@@ -221,69 +215,16 @@ namespace AIS.Services
             }
         }
 
-        //Метод установки условий контракта в модель контракта
-        public ContractModel CreateConditions(ContractModel contract)
-        {
-            List<Condition> conditions = new List<Condition>();
-
-            //Добавляем все условия из общего шаблона (заголовок, преамбула)
-
-            ContractTemplate contractTemplate = GetContractTemplateId(contract.ContractTemplateId);
-            
-            CommonContractTemplate commonTemplate = GetCommonContractTemplateById(contractTemplate.CommonContractTemplateId);
-
-            Condition title = new Condition
-            {
-                TypeOfConditionId = 1,
-                TypeOfStateRegId = 4,
-                Name = commonTemplate.Title
-            };
-
-            Condition preamble = new Condition
-            {
-                TypeOfConditionId = 2,
-                TypeOfStateRegId = 4,
-                Text = commonTemplate.Preamble
-            };
-
-            conditions.Add(title);
-            conditions.Add(preamble);
-
-            foreach (var condition in contractTemplate.Conditions)
-            {
-                //Добавляем все общие условия
-                if (condition.TypeOfStateRegId == 4)
-                {
-                    conditions.Add(condition);
-                }
-                //Если 44-ФЗ добавляем специфические условия для этого типа регулирования               
-                if (contract.RegulationType == 1)
-                {
-                    if (condition.TypeOfStateRegId == 1)
-                    {
-                        conditions.Add(condition);
-                    }
-                }
-            }
-            contract.Conditions = conditions;
-
-            return contract;  
-        }
-
         //Метод установки реквизитов контрагентов контракта
-        public ContractModel SetContractRequisites(ContractModel contract, Partner mainOrganization, Partner contragent)
+        public DocumentModel SetContractRequisites(DocumentModel contract, bool isCustomer, Partner mainOrganization, Partner contragent)
         {
-            if (contract.IsCustomer == true)
+            if (isCustomer == true)
             {
-                contract.Customer = mainOrganization;
-                contract.Executor = contragent;
                 contract.CustomerProp = GetRequisites(mainOrganization);
                 contract.ExecutorProp = GetRequisites(contragent);
             }
             else
             {
-                contract.Customer = contragent;
-                contract.Executor = mainOrganization;
                 contract.CustomerProp = GetRequisites(contragent);
                 contract.ExecutorProp = GetRequisites(mainOrganization);
             }

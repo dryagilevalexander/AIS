@@ -1,0 +1,84 @@
+﻿@model AIS.ViewModels.CancellationOfCourtOrderViewModel;
+
+<h2>Создание заявления об отмене судебного приказа</h2>
+<form asp-antiforgery="true" asp-action="createcancellationofcourtorder" asp-controller="process" method="post" enctype="multipart/form-data" id="formStatement">
+    <div class="validation" asp-validation-summary="ModelOnly"></div>
+    <div class="container">
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select class="form-select" size="2" data-placeholder="Суд" asp-for="CourtId" asp-items="@Model.Courts" id="CourtId">
+                </select>
+            </div>
+            <div class="col-7"><span asp-validation-for="CourtId"></span></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select class="form-select" size="2" data-placeholder="Взыскатель" asp-for="PartnerId" asp-items="@Model.MyPartners" id="PartnerId">
+                </select>
+            </div>
+            <div class="col-7"><span asp-validation-for="PartnerId"></span></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Номер дела" aria-label="Номер дела" asp-for="NumberOfСourtСase" id="NumberOfCourtCase">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="date" asp-format="{0:yyyy-MM-dd}" class="form-control" placeholder="Дата вынесения судебного приказа" aria-label="Дата вынесения судебного приказа" asp-for="DateOfOrder" id="DateOfOrder">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Предмет судебного приказа" aria-label="Предмет судебного приказа" asp-for="SubjectOfOrder" id="SubjectOfOrder">
+                </div>
+            </div>
+            <div class="col-7"><span asp-validation-for="SubjectOfOrder"></span></div>
+        </div>
+
+    <div class="container overflow-hidden">
+        <div class="input-group-lg mb-3" id="parentId">
+        </div>
+    </div>
+
+        <button type="button" class="btn btn-success" onclick="return ConstructStatement()">Заполнить документ</button>
+
+        <div class="row">
+            <div class="col-12 mb-3"></div>
+        </div>
+
+        <div class="container overflow-hidden">
+            <div class="input-group-lg mb-3 pb-10" id="projectDocumentLink">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <input class="btn btn-primary" type="submit" value="Отправить" />
+            </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+</form>
+
+@section scripts{
+    <script asp-src-include="~/js/DocConstructCancelCourtOrder.js"></script>
+    <script asp-src-include="~/js/Enclosures.js"></script>
+    <script asp-src-include="~/js/select.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

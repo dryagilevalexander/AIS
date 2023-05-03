@@ -40,6 +40,19 @@ namespace AIS.Services
             }
         }
 
+        public async Task<IEnumerable<Partner>> GetPartnersByPartnerCategoryId(int id)
+        {
+            try
+            {
+                IEnumerable<Partner> partners = await db.Partners.Where(p => p.PartnerCategoryId == id).ToListAsync();
+                return partners;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public async Task<Partner?> GetPartner(int id)
         {
             try 

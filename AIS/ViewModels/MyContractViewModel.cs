@@ -33,8 +33,8 @@ namespace AIS.ViewModels
         public IEnumerable<SelectListItem>? MyContractStatuses { get; set; }
         public bool IsCustomer { get; set; }
         public string PlaceOfContract { get; set; }
-        public int ContractTemplateId { get; set; }
-        public IEnumerable<SelectListItem>? ContractTemplates { get; set; }
+        public int DocumentTemplateId { get; set; }
+        public IEnumerable<SelectListItem>? DocumentTemplates { get; set; }
 
     }
 }

@@ -12,11 +12,13 @@ namespace Core
         public string? Address { get; set; }
         public string? Email { get; set; }
         public string? PhoneNumber { get; set; }
-        public string? INN {get; set; }
+        public string? INN { get; set; }
         public int? PartnerStatusId { get; set; }
         public PartnerStatus? PartnerStatus { get; set; }
         public int PartnerTypeId { get; set; }
         public PartnerType? PartnerType { get; set; }
+        public int PartnerCategoryId {get; set;}
+        public PartnerCategory PartnerCategory { get; set; }
         public List<Contract>? Contracts { get; set; }
         //ЮЛ
         public string? KPP { get; set; }

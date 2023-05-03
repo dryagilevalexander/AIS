@@ -8,7 +8,7 @@
     Cost;
     TypeOfStateRegId;
     ArticleOfLawId;
-    ContractTemplateId;
+    DocumentTemplateId;
     IsCustomer;
     PlaceOfContract;
 }
@@ -38,11 +38,11 @@ async function ConstructContract() {
     currentContract.Cost = document.getElementById('Cost').value;
     currentContract.TypeOfStateRegId = document.getElementById('TypeOfStateRegId').value;
     currentContract.ArticleOfLawId = document.getElementById('ArticleOfLawId').value;
-    currentContract.ContractTemplateId = document.getElementById('ContractTemplateId').value;
+    currentContract.DocumentTemplateId = document.getElementById('DocumentTemplateId').value;
     currentContract.IsCustomer = document.getElementById('IsCustomer').value;
     currentContract.PlaceOfContract = document.getElementById('PlaceOfContract').value;
 
-    let response = await fetch('/Process/ShadowConstructContract', {
+    let response = await fetch('/Process/ShadowConstructDocument', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json;charset=utf-8'

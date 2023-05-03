@@ -16,9 +16,7 @@ namespace AIS.Services
         Task<bool> EditContract(MyContractViewModel mcvm);
         Task<bool> DeleteContract(int? id);
         Task<Contract> GetContractByIdWithMyFiles(int id);
-        ContractModel CreateConditions(ContractModel contract);
-        ContractTemplate GetContractTemplateId(int id);
-        ContractModel SetContractRequisites(ContractModel contract, Partner mainOrganization, Partner contragent);
+        DocumentModel SetContractRequisites(DocumentModel contract, bool isCustomer, Partner mainOrganization, Partner contragent);
         Task<IEnumerable<TypeOfDocument>> GetTypesOfDocument();
     }
 }

@@ -5,25 +5,29 @@ namespace AIS.Services
 {
     public interface IConditionsService
     {
-        Task<List<CommonContractTemplate>> GetCommonContractTemplates();
-        Task<List<ContractTemplate>> GetContractTemplates();
-        Task<bool> CreateCommonContractTemplate(CommonContractTemplateViewModel cctvm);
-        Task<bool> EditCommonContractTemplate(CommonContractTemplateViewModel cctvm);
-        Task<bool> DeleteCommonContractTemplate(int? id);
-        Task<CommonContractTemplate> GetCommonContractTemplateWithContractTemplatesById(int id);
-        Task<bool> CreateContractTemplate(ContractTemplateViewModel ctvm);
-        Task<bool> EditContractTemplate(ContractTemplateViewModel ctvm);
-        Task<ContractTemplate?> GetContractTemplateById(int id);
-        Task<ContractTemplate?> GetContractTemplateWithConditionsById(int id);
-        Task<ContractTemplate?> GetContractTemplateWithTypeOfContractById(int id);
-        Task<ContractTemplate?> GetContractTemplateWithCommonContractTemplateById(int id);
-        Task<List<TypeOfCondition>> GetTypesOfCondition();
-        Task<bool> DeleteContractTemplate(int? id);
+        Task<List<RootTemplate>> GetRootTemplates();
+        Task<List<DocumentTemplate>> GetDocumentTemplates();
+        Task<bool> CreateRootTemplate(RootTemplateViewModel cctvm);
+        Task<bool> EditRootTemplate(RootTemplateViewModel cctvm);
+        Task<bool> DeleteRootTemplate(int? id);
+        Task<RootTemplate> GetRootTemplateById(int id);
+        Task<RootTemplate> GetRootTemplateWithDocumentTemplatesById(int id);
+        Task<bool> CreateDocumentTemplate(DocumentTemplateViewModel ctvm);
+        Task<bool> EditDocumentTemplate(DocumentTemplateViewModel ctvm);
+        Task<DocumentTemplate?> GetDocumentTemplateById(int id);
+        DocumentTemplate GetDocumentTemplateEagerLoadingById(int id);
+        Task<DocumentTemplate?> GetDocumentTemplateWithConditionsById(int id);
+        Task<DocumentTemplate?> GetDocumentTemplateWithTypeOfContractById(int id);
+        Task<DocumentTemplate?> GetDocumentTemplateWithRootTemplateById(int id);
+        Task<bool> DeleteDocumentTemplate(int? id);
         Task<List<Condition>> GetConditions();
         Task<Condition?> GetCondition(int id);
+        Task<int> GetNumberOfConditionsInDocumentTemplate(int id);
+        Task<Condition?> GetConditionByNumberInDocument(int number);
         Task<bool> CreateCondition(ConditionViewModel cvm);
         Task<bool> EditCondition(ConditionViewModel cvm);
         Task<bool> DeleteCondition(int? id);
+        Task<bool> SaveCondition(Condition condition);
         Task<bool> CreateSubCondition(SubConditionViewModel scvm);
         Task<bool> EditSubCondition(SubConditionViewModel scvm);
         Task<bool> DeleteSubCondition(int? id);

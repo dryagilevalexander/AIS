@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using static AIS.Controllers.ProcessController;
 using DocumentFormat.OpenXml.Presentation;
+using System.Linq;
 
 namespace AIS.Controllers
 {
@@ -417,11 +418,11 @@ namespace AIS.Controllers
             IEnumerable<Partner> myPartners = await _partnerService.GetPartnersWithoutOurOrganization();
             myContractViewModel.MyPartners = from myPartner in myPartners select new SelectListItem { Text = myPartner.ShortName, Value = myPartner.Id.ToString() };
             var typeOfContracts = await _contractsService.GetTypeOfContracts();
-            IEnumerable<ContractTemplate> contractTemplates = await _conditionsService.GetContractTemplates();
+            IEnumerable<DocumentTemplate> DocumentTemplates = await _conditionsService.GetDocumentTemplates();
             IEnumerable<TypeOfStateReg> typeOfStateRegs = await _contractsService.GetTypeOfStateRegs();
             IEnumerable<ArticleOfLaw> articleOfLaws = await _contractsService.GetArticleOfLaws();
             IEnumerable<MyContractStatus> myContractStatuses = await _contractsService.GetMyContractStatuses();
-            myContractViewModel.ContractTemplates = from contractTemplate in contractTemplates select new SelectListItem { Text = contractTemplate.Name, Value = contractTemplate.Id.ToString() };
+            myContractViewModel.DocumentTemplates = from DocumentTemplate in DocumentTemplates select new SelectListItem { Text = DocumentTemplate.Name, Value = DocumentTemplate.Id.ToString() };
             myContractViewModel.TypeOfStateRegs = from typeOfStateReg in typeOfStateRegs select new SelectListItem { Text = typeOfStateReg.Name, Value = typeOfStateReg.Id.ToString() };
             myContractViewModel.ArticleOfLaws = from articleOfLaw in articleOfLaws select new SelectListItem { Text = articleOfLaw.Name, Value = articleOfLaw.Id.ToString() };
             myContractViewModel.TypeOfContracts = from typeOfContract in typeOfContracts select new SelectListItem { Text = typeOfContract.Name, Value = typeOfContract.Id.ToString() };
@@ -437,8 +438,8 @@ namespace AIS.Controllers
             // {
             //     return View(mcvm);
             // }
-            ContractTemplate contractTemplate = await _conditionsService.GetContractTemplateWithTypeOfContractById(Convert.ToInt32(mcvm.ContractTemplateId));
-            int typeOfContractId = contractTemplate.TypeOfContractId;
+            DocumentTemplate DocumentTemplate = await _conditionsService.GetDocumentTemplateWithTypeOfContractById(Convert.ToInt32(mcvm.DocumentTemplateId));
+            int typeOfContractId = DocumentTemplate.TypeOfContractId.Value;
 
             if (await _contractsService.CreateContract(mcvm, typeOfContractId) == true)
             {
@@ -697,26 +698,26 @@ namespace AIS.Controllers
         #endregion
 
         #region[DocumentGenerator]
-        public async Task<IActionResult> CommonContractTemplates()
+        public async Task<IActionResult> RootTemplates()
         {
-            return View(await _conditionsService.GetCommonContractTemplates());
+            return View(await _conditionsService.GetRootTemplates());
         }
 
-        public async Task<IActionResult> CreateCommonContractTemplate()
+        public async Task<IActionResult> CreateRootTemplate()
         {
-            CommonContractTemplateViewModel commonContractTemplateViewModel = new CommonContractTemplateViewModel();
+            RootTemplateViewModel RootTemplateViewModel = new RootTemplateViewModel();
             var documentTypes = await _contractsService.GetTypesOfDocument();
-            commonContractTemplateViewModel.TypesOfDocument = from documentType in documentTypes select new SelectListItem { Text = documentType.Name, Value = documentType.Id.ToString() };
+            RootTemplateViewModel.TypesOfDocument = from documentType in documentTypes select new SelectListItem { Text = documentType.Name, Value = documentType.Id.ToString() };
 
-            return View(commonContractTemplateViewModel);
+            return View(RootTemplateViewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCommonContractTemplate(CommonContractTemplateViewModel cctvm)
+        public async Task<IActionResult> CreateRootTemplate(RootTemplateViewModel cctvm)
         {
-            if (await _conditionsService.CreateCommonContractTemplate(cctvm) == true)
+            if (await _conditionsService.CreateRootTemplate(cctvm) == true)
             {
-                return RedirectToAction("CommonContractTemplates");
+                return RedirectToAction("RootTemplates");
             }
             else
             {
@@ -724,37 +725,35 @@ namespace AIS.Controllers
             }
         }
 
-
-        public async Task<IActionResult> EditCommonContractTemplate(int? id)
+        [HttpGet]
+        public async Task<IActionResult> EditRootTemplate(int? id)
         {
             if (id != null)
             {
                 var documentTypes = await _contractsService.GetTypesOfDocument();
 
-                CommonContractTemplate? commonContractTemplate = await _conditionsService.GetCommonContractTemplateWithContractTemplatesById(id.Value);
-                CommonContractTemplateViewModel commonContractTemplateViewModel = new CommonContractTemplateViewModel
+                RootTemplate? RootTemplate = await _conditionsService.GetRootTemplateWithDocumentTemplatesById(id.Value);
+                RootTemplateViewModel RootTemplateViewModel = new RootTemplateViewModel
                 {
-                    Id = commonContractTemplate.Id,
-                    Name = commonContractTemplate.Name,
-                    Description = commonContractTemplate.Description,
-                    Title= commonContractTemplate.Title,
-                    Preamble = commonContractTemplate.Preamble,
-                    ContractTemplates = commonContractTemplate.ContractTemplates,
-                    TypeOfDocumentId = commonContractTemplate.TypeOfDocumentId,
+                    Id = RootTemplate.Id,
+                    Name = RootTemplate.Name,
+                    Description = RootTemplate.Description,
+                    DocumentTemplates = RootTemplate.DocumentTemplates,
+                    TypeOfDocumentId = RootTemplate.TypeOfDocumentId,
                 };
-                commonContractTemplateViewModel.TypesOfDocument = from documentType in documentTypes select new SelectListItem { Text = documentType.Name, Value = documentType.Id.ToString() };
+                RootTemplateViewModel.TypesOfDocument = from documentType in documentTypes select new SelectListItem { Text = documentType.Name, Value = documentType.Id.ToString() };
 
-                if (commonContractTemplate != null) return View(commonContractTemplateViewModel);
+                if (RootTemplate != null) return View(RootTemplateViewModel);
             }
             return NotFound();
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditCommonContractTemplate(CommonContractTemplateViewModel cctvm)
+        public async Task<IActionResult> EditRootTemplate(RootTemplateViewModel cctvm)
         {
-            if (await _conditionsService.EditCommonContractTemplate(cctvm) == true)
+            if (await _conditionsService.EditRootTemplate(cctvm) == true)
             {
-                return RedirectToAction("CommonContractTemplates");
+                return RedirectToAction("RootTemplates");
             }
             else
             {
@@ -763,11 +762,11 @@ namespace AIS.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteCommonContractTemplate(int? id)
+        public async Task<IActionResult> DeleteRootTemplate(int? id)
         {
-            if (await _conditionsService.DeleteCommonContractTemplate(id) == true)
+            if (await _conditionsService.DeleteRootTemplate(id) == true)
             {
-                return RedirectToAction("CommonContractTemplates");
+                return RedirectToAction("RootTemplates");
             }
             else
             {
@@ -775,26 +774,28 @@ namespace AIS.Controllers
             }
         }
 
-        public async Task<IActionResult> ContractTemplates()
+        public async Task<IActionResult> DocumentTemplates()
         {
-            return View(await _conditionsService.GetContractTemplates());
+            return View(await _conditionsService.GetDocumentTemplates());
         }
 
-        public async Task<IActionResult> CreateContractTemplate(int? id)
+        public async Task<IActionResult> CreateDocumentTemplate(int? id)
         {
-            ContractTemplateViewModel contractTemplateViewModel = new ContractTemplateViewModel();
-            contractTemplateViewModel.CommonContractTemplateId = id.Value;
+            DocumentTemplateViewModel DocumentTemplateViewModel = new DocumentTemplateViewModel();
+            DocumentTemplateViewModel.RootTemplateId = id.Value;
+            RootTemplate rootTemplate = await _conditionsService.GetRootTemplateById(id.Value);
+            DocumentTemplateViewModel.TypeOfDocumentId = rootTemplate.TypeOfDocumentId;
             var typesOfContract = await _contractsService.GetTypeOfContracts();
-            contractTemplateViewModel.TypesOfContract = from typeOfContract in typesOfContract select new SelectListItem { Text = typeOfContract.Name, Value = typeOfContract.Id.ToString() };
-            return View(contractTemplateViewModel);
+            DocumentTemplateViewModel.TypesOfContract = from typeOfContract in typesOfContract select new SelectListItem { Text = typeOfContract.Name, Value = typeOfContract.Id.ToString() };
+            return View(DocumentTemplateViewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateContractTemplate(ContractTemplateViewModel ctvm)
+        public async Task<IActionResult> CreateDocumentTemplate(DocumentTemplateViewModel ctvm)
         {
-            if (await _conditionsService.CreateContractTemplate(ctvm) == true)
+            if (await _conditionsService.CreateDocumentTemplate(ctvm) == true)
             {
-                return RedirectToAction("EditCommonContractTemplate", new { id = ctvm.CommonContractTemplateId });
+                return RedirectToAction("EditRootTemplate", new { id = ctvm.RootTemplateId });
             }
             else
             {
@@ -803,39 +804,40 @@ namespace AIS.Controllers
         }
 
 
-        public async Task<IActionResult> EditContractTemplate(int? id)
+        public async Task<IActionResult> EditDocumentTemplate(int? id)
         {
             if (id != null)
             {
-                ContractTemplate? contractTemplate = await _conditionsService.GetContractTemplateWithConditionsById(id.Value);
+                DocumentTemplate? DocumentTemplate = await _conditionsService.GetDocumentTemplateWithConditionsById(id.Value);
                 var typesOfContract = await _contractsService.GetTypeOfContracts();
-                var typesOfCondition = await _conditionsService.GetTypesOfCondition();
                 var typesOfStateReg = await _contractsService.GetTypeOfStateRegs();
-                ContractTemplateViewModel contractTemplateViewModel = new ContractTemplateViewModel
+                var conditions = DocumentTemplate.Conditions;
+                conditions = conditions.OrderBy(x => x.NumberInDocument).ToList<Core.Condition>();
+                DocumentTemplateViewModel DocumentTemplateViewModel = new DocumentTemplateViewModel
                 {
-                    Id = contractTemplate.Id,
-                    Name = contractTemplate.Name,
-                    Description = contractTemplate.Description,
-                    TypeOfContractId = contractTemplate.TypeOfContractId,
-                    Conditions = contractTemplate.Conditions
+                    Id = DocumentTemplate.Id,
+                    Name = DocumentTemplate.Name,
+                    Description = DocumentTemplate.Description,
+                    Conditions = conditions
                 };
+                if (DocumentTemplate.TypeOfContractId != null) DocumentTemplateViewModel.TypeOfContractId = DocumentTemplate.TypeOfContractId.Value;
 
-                contractTemplateViewModel.TypesOfCondition = from typeOfCondition in typesOfCondition select new SelectListItem { Text = typeOfCondition.Name, Value = typeOfCondition.Id.ToString() };
-                contractTemplateViewModel.TypesOfContract = from typeOfContract in typesOfContract select new SelectListItem { Text = typeOfContract.Name, Value = typeOfContract.Id.ToString() };
-                contractTemplateViewModel.TypesOfStateReg = from typeOfStateReg in typesOfStateReg select new SelectListItem { Text = typeOfStateReg.Name, Value = typeOfStateReg.Id.ToString() };
+                DocumentTemplateViewModel.RootTemplateId = DocumentTemplate.RootTemplateId;
+                DocumentTemplateViewModel.TypesOfContract = from typeOfContract in typesOfContract select new SelectListItem { Text = typeOfContract.Name, Value = typeOfContract.Id.ToString() };
+                DocumentTemplateViewModel.TypesOfStateReg = from typeOfStateReg in typesOfStateReg select new SelectListItem { Text = typeOfStateReg.Name, Value = typeOfStateReg.Id.ToString() };
 
 
-                if (contractTemplate != null) return View(contractTemplateViewModel);
+                if (DocumentTemplate != null) return View(DocumentTemplateViewModel);
             }
             return NotFound();
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditContractTemplate(ContractTemplateViewModel ctvm)
+        public async Task<IActionResult> EditDocumentTemplate(DocumentTemplateViewModel ctvm)
         {
-            if (await _conditionsService.EditContractTemplate(ctvm) == true)
+            if (await _conditionsService.EditDocumentTemplate(ctvm) == true)
             {
-                return RedirectToAction("EditCommonContractTemplate", new { id = ctvm.CommonContractTemplateId });
+                return RedirectToAction("EditRootTemplate", new { id = ctvm.RootTemplateId });
             }
             else
             {
@@ -844,13 +846,13 @@ namespace AIS.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteContractTemplate(int? id)
+        public async Task<IActionResult> DeleteDocumentTemplate(int? id)
         {
-            ContractTemplate contractTemplate = await _conditionsService.GetContractTemplateById(id.Value);
-            int commonContractTemplateId = contractTemplate.CommonContractTemplateId;
-            if (await _conditionsService.DeleteContractTemplate(id) == true)
+            DocumentTemplate DocumentTemplate = await _conditionsService.GetDocumentTemplateById(id.Value);
+            int RootTemplateId = DocumentTemplate.RootTemplateId;
+            if (await _conditionsService.DeleteDocumentTemplate(id) == true)
             {
-                return RedirectToAction("EditCommonContractTemplate", new { id = commonContractTemplateId });
+                return RedirectToAction("EditRootTemplate", new { id = RootTemplateId });
             }
             else
             {
@@ -862,10 +864,11 @@ namespace AIS.Controllers
         {
             if (id != null)
             {
+
                 ConditionViewModel conditionViewModel = new ConditionViewModel();
-                ContractTemplate contractTemplate = await _conditionsService.GetContractTemplateWithCommonContractTemplateById(id.Value);
-                int typeOfDocumentId = contractTemplate.CommonContractTemplate.TypeOfDocumentId;
-                conditionViewModel.ContractTemplateId = id.Value;
+                DocumentTemplate DocumentTemplate = await _conditionsService.GetDocumentTemplateWithRootTemplateById(id.Value);
+                int typeOfDocumentId = DocumentTemplate.RootTemplate.TypeOfDocumentId;
+                conditionViewModel.DocumentTemplateId = id.Value;
                 conditionViewModel.TypeOfDocumentId = typeOfDocumentId;
                 var typesOfStateReg = await _contractsService.GetTypeOfStateRegs();
                 conditionViewModel.TypesOfStateReg = from typeOfStateReg in typesOfStateReg select new SelectListItem { Text = typeOfStateReg.Name, Value = typeOfStateReg.Id.ToString() };
@@ -879,7 +882,7 @@ namespace AIS.Controllers
         {
             if (await _conditionsService.CreateCondition(cvm) == true)
             {
-                return RedirectToAction("EditContractTemplate", new {id = cvm.ContractTemplateId});
+                return RedirectToAction("EditDocumentTemplate", new {id = cvm.DocumentTemplateId});
             }
             else
             {
@@ -894,16 +897,18 @@ namespace AIS.Controllers
             {
                 ConditionViewModel conditionViewModel = new ConditionViewModel();
                 Core.Condition condition = await _conditionsService.GetCondition(id.Value);
+                DocumentTemplate DocumentTemplate = await _conditionsService.GetDocumentTemplateWithRootTemplateById(condition.DocumentTemplateId);
                 conditionViewModel.Id = condition.Id;
                 if(condition.TypeOfStateRegId != null) conditionViewModel.TypeOfStateRegId = condition.TypeOfStateRegId.Value;
+                conditionViewModel.Title = condition.Title;
                 conditionViewModel.Name = condition.Name;
-                conditionViewModel.Text = condition.Text;
-                conditionViewModel.ContractTemplateId = condition.ContractTemplateId;
+                conditionViewModel.DocumentTemplateId = condition.DocumentTemplateId;
+                int typeOfDocumentId = DocumentTemplate.RootTemplate.TypeOfDocumentId;
+                conditionViewModel.TypeOfDocumentId = typeOfDocumentId;
                 conditionViewModel.NumLevelReference = condition.NumLevelReference;
                 conditionViewModel.NumId = condition.NumId;
+                conditionViewModel.Justification = condition.Justification;
                 conditionViewModel.SubConditions = condition.SubConditions;
-                var typesOfCondition = await _conditionsService.GetTypesOfCondition();
-                conditionViewModel.TypesOfCondition = from typeOfCondition in typesOfCondition select new SelectListItem { Text = typeOfCondition.Name, Value = typeOfCondition.Id.ToString() };
                 var typesOfStateReg = await _contractsService.GetTypeOfStateRegs();
                 conditionViewModel.TypesOfStateReg = from typeOfStateReg in typesOfStateReg select new SelectListItem { Text = typeOfStateReg.Name, Value = typeOfStateReg.Id.ToString() };
                 return View(conditionViewModel);
@@ -916,7 +921,7 @@ namespace AIS.Controllers
         {
             if (await _conditionsService.EditCondition(cvm) == true)
             {
-                return RedirectToAction("EditContractTemplate", new { id = cvm.ContractTemplateId });
+                return RedirectToAction("EditDocumentTemplate", new { id = cvm.DocumentTemplateId });
             }
             else
             {
@@ -925,19 +930,52 @@ namespace AIS.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> LiftUpCondition(int? id)
+        {
+            Core.Condition condition = await _conditionsService.GetCondition(id.Value);
+            if(condition.NumberInDocument != 1)
+            { 
+            Core.Condition lowerDownCondition = await _conditionsService.GetConditionByNumberInDocument(condition.NumberInDocument-1);
+                condition.NumberInDocument = lowerDownCondition.NumberInDocument;
+                lowerDownCondition.NumberInDocument = lowerDownCondition.NumberInDocument + 1;
+                _conditionsService.SaveCondition(condition);
+                _conditionsService.SaveCondition(lowerDownCondition);
+            }
+            return RedirectToAction("EditDocumentTemplate", new { id = condition.DocumentTemplateId });
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> LowerDownCondition(int? id)
+        {
+            Core.Condition condition = await _conditionsService.GetCondition(id.Value);
+            Core.Condition liftUpCondition = await _conditionsService.GetConditionByNumberInDocument(condition.NumberInDocument + 1);
+            if(liftUpCondition != null)
+            {
+                condition.NumberInDocument = liftUpCondition.NumberInDocument;
+                liftUpCondition.NumberInDocument = liftUpCondition.NumberInDocument - 1;
+                _conditionsService.SaveCondition(condition);
+                _conditionsService.SaveCondition(liftUpCondition);
+
+            }
+            return RedirectToAction("EditDocumentTemplate", new { id = condition.DocumentTemplateId });
+        }
+
+        [HttpPost]
         public async Task<IActionResult> DeleteCondition(int? id)
         {
             Core.Condition condition = await _conditionsService.GetCondition(id.Value);
-            int contractTemplateId = condition.ContractTemplateId;
+            int DocumentTemplateId = condition.DocumentTemplateId;
             if (await _conditionsService.DeleteCondition(id) == true)
             {
-                return RedirectToAction("EditContractTemplate", new { id = contractTemplateId });
+                return RedirectToAction("EditDocumentTemplate", new { id = DocumentTemplateId });
             }
             else
             {
                 return NotFound();
             }
         }
+
 
         [HttpGet]
         public async Task<IActionResult> CreateSubCondition(int? id)
@@ -977,6 +1015,7 @@ namespace AIS.Controllers
                 subConditionViewModel.ConditionId = subCondition.ConditionId;
                 subConditionViewModel.NumLevelReference = subCondition.NumLevelReference;
                 subConditionViewModel.NumId = subCondition.NumId;
+                subConditionViewModel.Justification = subCondition.Justification;
                 subConditionViewModel.SubConditionParagraphs = subCondition.SubConditionParagraphs;
                 return View(subConditionViewModel);
             }
@@ -1048,6 +1087,7 @@ namespace AIS.Controllers
                 subConditionParagraphViewModel.Text = subConditionParagraph.Text;
                 subConditionParagraphViewModel.NumLevelReference = subConditionParagraph.NumLevelReference;
                 subConditionParagraphViewModel.NumId = subConditionParagraph.NumId;
+                subConditionParagraphViewModel.Justification = subConditionParagraph.Justification;
                 subConditionParagraphViewModel.SubConditionId = subConditionParagraph.SubConditionId;
                 return View(subConditionParagraphViewModel);
             }
@@ -1093,44 +1133,182 @@ namespace AIS.Controllers
             public string Cost { get; set; }
             public string TypeOfStateRegId { get; set; }
             public string ArticleOfLawId { get; set; }
-            public string ContractTemplateId { get; set; }
+            public string DocumentTemplateId { get; set; }
             public string IsCustomer { get; set; }
             public string PlaceOfContract { get; set; }
         }
 
         [HttpPost]
-        public async Task<string> ShadowConstructContract([FromBody] JsonContractData jsonContractData)
+        public async Task<string> ShadowConstructDocument([FromBody] JsonContractData jsonContractData)
         {
             bool isCustomer;
-            ContractTemplate contractTemplate = await _conditionsService.GetContractTemplateWithTypeOfContractById(Convert.ToInt32(jsonContractData.ContractTemplateId));
-            int typeOfContract = contractTemplate.TypeOfContractId;
+            Dictionary <string, string> replacementDictionary = new Dictionary<string, string>();
+            DocumentTemplate DocumentTemplate = await _conditionsService.GetDocumentTemplateWithTypeOfContractById(Convert.ToInt32(jsonContractData.DocumentTemplateId));
+
+            RootTemplate RootTemplate = await _conditionsService.GetRootTemplateWithDocumentTemplatesById(DocumentTemplate.RootTemplateId);
+            int typeOfDocumentId = RootTemplate.TypeOfDocumentId;
             if (jsonContractData.IsCustomer == "true") isCustomer = true;
             else isCustomer = false;
-            ContractModel contract = new ContractModel()
+            if (jsonContractData.ArticleOfLawId == "") jsonContractData.ArticleOfLawId = "0";
+            DocumentModel contract = new DocumentModel();
+            contract.TypeOfDocumentId = typeOfDocumentId;
+
+            List<Core.Condition> conditions = new List<Core.Condition>();
+
+            DocumentTemplate documentTemplate = _conditionsService.GetDocumentTemplateEagerLoadingById(Convert.ToInt32(jsonContractData.DocumentTemplateId));
+            int typeOfContract = documentTemplate.TypeOfContractId.Value;
+            foreach (var condition in DocumentTemplate.Conditions)
             {
-                ContractType = typeOfContract,
-                ContractTemplateId = Convert.ToInt32(jsonContractData.ContractTemplateId),
-                IsCustomer = isCustomer,
-                RegulationType = Convert.ToInt32(jsonContractData.TypeOfStateRegId),
-                RegulationParagraph = Convert.ToInt32(jsonContractData.ArticleOfLawId),
-                SubjectOfContract = jsonContractData.SubjectOfContract,
-                PlaceOfContract = jsonContractData.PlaceOfContract,
-                DateStart = jsonContractData.DateStart,
-                DateEnd = jsonContractData.DateEnd
-            };
+                //Добавляем все общие условия
+                if (condition.TypeOfStateRegId == 4)
+                {
+                    conditions.Add(condition);
+                }
+                //Если 44-ФЗ добавляем специфические условия для этого типа регулирования               
+                if (Convert.ToInt32(jsonContractData.TypeOfStateRegId) == 1)
+                {
+                    if (condition.TypeOfStateRegId == 1)
+                    {
+                        conditions.Add(condition);
+                    }
+                }
+            }
+
+            conditions = conditions.OrderBy(x => x.NumberInDocument).ToList<Core.Condition>();
+            contract.Conditions = conditions;
+
+            string contractType = "";
+            string contractName = "";
+            string baseOfContract = "";
+            string paragraphBaseOfContract = "";
+            string executor = "";
+
+            //Получаем тип договора
+            switch (typeOfContract)
+            {
+                case 1:
+                    contractType = "подряда";
+                    executor = "Подрядчик";
+                    break;
+                case 2:
+                    contractType = "оказания услуг";
+                    executor = "Исполнитель";
+                    break;
+                case 3:
+                    contractType = "поставки";
+                    executor = "Поставщик";
+                    break;
+                case 4:
+                    contractType = "аренды";
+                    executor = "Арендатор";
+                    break;
+            }
+
+            //Получаем пункт основания заключения контракта (для 44-ФЗ)
+            if (Convert.ToInt32(jsonContractData.TypeOfStateRegId) == 1)
+            {
+                switch (Convert.ToInt32(jsonContractData.ArticleOfLawId))
+                {
+                    case 1:
+                        paragraphBaseOfContract = "п. 4 ст. 93 ";
+                        break;
+                    case 2:
+                        paragraphBaseOfContract = "п. 8 ст. 93 ";
+                        break;
+                }
+            }
+
+            //Получаем фактическое наименование контракта и основание заключения
+            switch (Convert.ToInt32(jsonContractData.TypeOfStateRegId))
+            {
+                case 1:
+                    contractName = "Контракт";
+                    baseOfContract = "на основании " + paragraphBaseOfContract + "федерального закона \"О контрактной системе в сфере закупок товаров, работ, услуг для обеспечения государственных и муниципальных нужд\" от 05.04.2013 N 44-ФЗ,";
+                    break;
+                case 2:
+                    contractName = "Договор";
+                    baseOfContract = "на основании федерального закона \"О закупках товаров, работ, услуг отдельными видами юридических лиц\" от 18.07.2011 N 223-ФЗ,";
+                    break;
+                case 3:
+                    contractName = "Договор";
+                    break;
+
+            }
+
+
+            
+
             Partner contragent = await _partnerService.GetPartner(Convert.ToInt32(jsonContractData.PartnerId));
             Partner mainOrganization = await _partnerService.GetOurOrganization();
-            contract = _contractsService.CreateConditions(contract);
-            contract = _contractsService.SetContractRequisites(contract, mainOrganization, contragent);
+
+
+
+            contract = _contractsService.SetContractRequisites(contract, isCustomer, mainOrganization, contragent);
+
+            replacementDictionary.Add("договор", contractName);
+            replacementDictionary.Add("contractType", contractType);
+            if(isCustomer == true)
+            {
+                replacementDictionary.Add("customerName", mainOrganization.Name);
+                replacementDictionary.Add("executorName", contragent.Name);
+                replacementDictionary.Add("customerShortName", mainOrganization.ShortName);
+                replacementDictionary.Add("executorShortName", contragent.ShortName);
+                replacementDictionary.Add("customerDirectorNameR", mainOrganization.DirectorNameR);
+                replacementDictionary.Add("executorDirectorNameR", contragent.DirectorNameR);
+                replacementDictionary.Add("customerDirectorTypeNameR", mainOrganization.DirectorType.NameR);
+                replacementDictionary.Add("executorDirectorTypeNameR", contragent.DirectorType.NameR);
+            }
+            else
+            {
+                replacementDictionary.Add("customerName", contragent.Name);
+                replacementDictionary.Add("executorName", mainOrganization.Name);
+                replacementDictionary.Add("customerDirectorNameR", contragent.DirectorNameR);
+                replacementDictionary.Add("executorDirectorNameR", mainOrganization.DirectorNameR);
+                replacementDictionary.Add("customerDirectorTypeNameR", contragent.DirectorType.NameR);
+                replacementDictionary.Add("executorDirectorTypeNameR", mainOrganization.DirectorType.NameR);
+            }
+
+
+            replacementDictionary.Add("place", jsonContractData.PlaceOfContract);
+
+            replacementDictionary.Add("baseOfContract", baseOfContract);
+            replacementDictionary.Add("subjectOfContract", jsonContractData.SubjectOfContract);
+            replacementDictionary.Add("dateEnd", jsonContractData.DateEnd);
+            replacementDictionary.Add("executor", executor);
+            replacementDictionary.Add("cost", jsonContractData.Cost);
+
+            contract.ReplacementDictionary = replacementDictionary;
+            
             string fileName = Guid.NewGuid().ToString();
             fileName = fileName + ".docx";
             string path = _appEnvironment.WebRootPath + "\\files\\Output\\" + fileName;
             new DocumentGenerator().CreateContract(path, contract);
 
-
             return path;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> CreateCancellationOfCourtOrder()
+        {
+                CancellationOfCourtOrderViewModel ccovm = new CancellationOfCourtOrderViewModel();
+                var courts = await _partnerService.GetPartnersByPartnerCategoryId(2);
+                ccovm.Courts = from court in courts select new SelectListItem { Text = court.Name, Value = court.Id.ToString() };
+                var  partners= await _partnerService.GetPartners();
+                ccovm.MyPartners = from partner in partners select new SelectListItem { Text = partner.Name, Value = partner.Id.ToString() };
+
+            return View(ccovm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateCancellationOfCourtOrder(CancellationOfCourtOrderViewModel ccovm)
+        {
+            return RedirectToAction("MyTasks");
+        }
+
+        public IActionResult Templates()
+        {
+            return View();
+        }
         #endregion
 
         #region[pref]

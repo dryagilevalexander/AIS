@@ -12,6 +12,7 @@ namespace Core
         public string? Text { get; set; }
         public int NumLevelReference { get; set; }
         public int NumId { get; set; }
+        public string Justification { get; set; }
         public int SubConditionId {get; set;}
         public SubCondition SubCondition { get; set; }
     }

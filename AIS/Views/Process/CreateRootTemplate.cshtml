@@ -1,0 +1,62 @@
+﻿@model AIS.ViewModels.RootTemplateViewModel;
+
+<h2>Добавление корневого шаблона документа</h2>
+
+<form  asp-action="createRoottemplate" asp-controller="process" method="post" enctype="multipart/form-data" id="formContract">
+    <div class="validation" asp-validation-summary="ModelOnly"></div>
+    <div class="container">
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select class="form-select" size="2" data-placeholder="Тип документа" id="TypeOfDocumentId" asp-for="TypeOfDocumentId" asp-items="@Model.TypesOfDocument">
+                </select>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Имя шаблона" aria-label="Имя шаблона" asp-for="Name">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Описание" aria-label="Описание" asp-for="Description">
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+    </div>
+
+        <div class="row">
+            <div class="col-12 mb-3"></div>
+        </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <div>
+                    <a class="btn btn-secondary" role="button" asp-action="RootTemplates" asp-controller="process">Отмена</a>
+                </div>
+                <div class="col-1"></div>
+                <div>
+                <input class="btn btn-primary" type="submit" value="Отправить" />
+                </div>
+            </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+</form>
+
+@section scripts{
+    <script asp-src-include="~/js/select.js"></script>
+}
+
+
+

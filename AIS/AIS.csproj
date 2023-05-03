@@ -17,7 +17,6 @@
   <ItemGroup>
     <PackageReference Include="AspNetCore.Unobtrusive.Ajax" Version="2.0.0" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.20.0" />
-    <PackageReference Include="HtmlToOpenXml" Version="1.6.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.15" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.14" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.3">
@@ -32,8 +31,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
-    <ProjectReference Include="..\Xceed.Document.NET\Xceed.Document.NET.csproj" />
-    <ProjectReference Include="..\Xceed.Words.NET\Xceed.Words.NET.csproj" />
   </ItemGroup>
 
   <ItemGroup>

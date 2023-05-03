@@ -17,39 +17,43 @@ namespace AIS.Services
             _appEnvironment = appEnvironment;
         }
 
-        public async Task<List<CommonContractTemplate>> GetCommonContractTemplates()
+        public async Task<List<RootTemplate>> GetRootTemplates()
         {
-            return await db.CommonContractTemplates.ToListAsync();
+            return await db.RootTemplates.ToListAsync();
         }
 
-        public async Task<CommonContractTemplate> GetCommonContractTemplateWithContractTemplatesById(int id)
+        public async Task<RootTemplate> GetRootTemplateById(int id)
         {
-            return await db.CommonContractTemplates.Include(p => p.ContractTemplates).FirstOrDefaultAsync(p => p.Id == id);
+            return await db.RootTemplates.FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<List<ContractTemplate>> GetContractTemplates()
+        public async Task<RootTemplate> GetRootTemplateWithDocumentTemplatesById(int id)
         {
-            return await db.ContractTemplates.ToListAsync();
+            return await db.RootTemplates.Include(p => p.DocumentTemplates).FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<List<TypeOfCondition>> GetTypesOfCondition()
+        public async Task<List<DocumentTemplate>> GetDocumentTemplates()
         {
-            return await db.TypesOfCondition.ToListAsync();
+            return await db.DocumentTemplates.ToListAsync();
         }
 
-        public async Task<bool> CreateCommonContractTemplate(CommonContractTemplateViewModel cctvm)
+        //Метод получения шаблона контракта с стандартными условиями для всех типов регулирования
+        public DocumentTemplate GetDocumentTemplateEagerLoadingById(int id)
+        {
+            return db.DocumentTemplates.Include(p => p.Conditions).ThenInclude(p => p.SubConditions).ThenInclude(c => c.SubConditionParagraphs).FirstOrDefault(p => p.Id == id);
+        }
+
+        public async Task<bool> CreateRootTemplate(RootTemplateViewModel cctvm)
         {
             try
             {
-                CommonContractTemplate commonContractTemplate = new CommonContractTemplate();
+                RootTemplate RootTemplate = new RootTemplate();
 
-                commonContractTemplate.Name = cctvm.Name;
-                commonContractTemplate.Description = cctvm.Description;
-                commonContractTemplate.Title = cctvm.Title;
-                if(cctvm.Preamble != null) commonContractTemplate.Preamble = cctvm.Preamble;
-                commonContractTemplate.TypeOfDocumentId = cctvm.TypeOfDocumentId;
+                RootTemplate.Name = cctvm.Name;
+                RootTemplate.Description = cctvm.Description;
+                RootTemplate.TypeOfDocumentId = cctvm.TypeOfDocumentId;
 
-                db.CommonContractTemplates.Add(commonContractTemplate);
+                db.RootTemplates.Add(RootTemplate);
                 await db.SaveChangesAsync();
                 return true;
             }
@@ -60,18 +64,16 @@ namespace AIS.Services
             }
         }
 
-        public async Task<bool> EditCommonContractTemplate(CommonContractTemplateViewModel cctvm)
+        public async Task<bool> EditRootTemplate(RootTemplateViewModel cctvm)
         {
             try
             {
-                CommonContractTemplate commonContractTemplate = await db.CommonContractTemplates.FirstOrDefaultAsync(p => p.Id == cctvm.Id);
-                commonContractTemplate.Name = cctvm.Name;
-                commonContractTemplate.Description = cctvm.Description;
-                commonContractTemplate.Title = cctvm.Title;
-                if (cctvm.Preamble != null) commonContractTemplate.Preamble = cctvm.Preamble;
-                commonContractTemplate.TypeOfDocumentId = cctvm.TypeOfDocumentId;
+                RootTemplate RootTemplate = await db.RootTemplates.FirstOrDefaultAsync(p => p.Id == cctvm.Id);
+                RootTemplate.Name = cctvm.Name;
+                RootTemplate.Description = cctvm.Description;
+                RootTemplate.TypeOfDocumentId = cctvm.TypeOfDocumentId;
 
-                db.CommonContractTemplates.Update(commonContractTemplate);
+                db.RootTemplates.Update(RootTemplate);
                 await db.SaveChangesAsync();
                 return true;
             }
@@ -81,12 +83,12 @@ namespace AIS.Services
             }
         }
 
-        public async Task<bool> DeleteCommonContractTemplate(int? id)
+        public async Task<bool> DeleteRootTemplate(int? id)
         {
             if (id != null)
             {
-                CommonContractTemplate commonContractTemplate = await db.CommonContractTemplates.FirstOrDefaultAsync(p => p.Id == id);
-                db.CommonContractTemplates.Remove(commonContractTemplate);
+                RootTemplate RootTemplate = await db.RootTemplates.FirstOrDefaultAsync(p => p.Id == id);
+                db.RootTemplates.Remove(RootTemplate);
                 await db.SaveChangesAsync();
                 return true;
             }
@@ -94,33 +96,33 @@ namespace AIS.Services
         }
 
 
-        public async Task<bool> CreateContractTemplate(ContractTemplateViewModel ctvm)
+        public async Task<bool> CreateDocumentTemplate(DocumentTemplateViewModel ctvm)
         {
 
-                ContractTemplate contractTemplate = new ContractTemplate
+                DocumentTemplate documentTemplate = new DocumentTemplate
                 {
                     Name = ctvm.Name,
                     Description = ctvm.Description,
-                    TypeOfContractId = ctvm.TypeOfContractId,
-                    CommonContractTemplateId = ctvm.CommonContractTemplateId
+                    RootTemplateId = ctvm.RootTemplateId,
+                    TypeOfDocumentId = ctvm.TypeOfDocumentId
                 };
+            if (ctvm.TypeOfContractId != null) documentTemplate.TypeOfContractId = ctvm.TypeOfContractId;
 
-                db.ContractTemplates.Add(contractTemplate);
+                db.DocumentTemplates.Add(documentTemplate);
                 await db.SaveChangesAsync();
                 return true;
-
         }
 
-        public async Task<bool> EditContractTemplate(ContractTemplateViewModel ctvm)
+        public async Task<bool> EditDocumentTemplate(DocumentTemplateViewModel ctvm)
         {
             try
             {
-                ContractTemplate contractTemplate = await db.ContractTemplates.FirstOrDefaultAsync(p => p.Id == ctvm.Id);
-                contractTemplate.Name = ctvm.Name;
-                contractTemplate.Description = ctvm.Description;
-                contractTemplate.TypeOfContractId = ctvm.TypeOfContractId;
+                DocumentTemplate DocumentTemplate = await db.DocumentTemplates.FirstOrDefaultAsync(p => p.Id == ctvm.Id);
+                DocumentTemplate.Name = ctvm.Name;
+                DocumentTemplate.Description = ctvm.Description;
+                DocumentTemplate.TypeOfContractId = ctvm.TypeOfContractId;
 
-                db.ContractTemplates.Update(contractTemplate);
+                db.DocumentTemplates.Update(DocumentTemplate);
                 await db.SaveChangesAsync();
                 return true;
             }
@@ -136,11 +138,14 @@ namespace AIS.Services
             {
                 Condition condition = new Condition();
 
+                    condition.Title = cvm.Title;
                     condition.Name = cvm.Name;
-                    condition.Text = cvm.Text;
-                    if(cvm.TypeOfDocumentId == 1) condition.TypeOfStateRegId = cvm.TypeOfStateRegId;
-                    condition.ContractTemplateId = cvm.ContractTemplateId;
+                    if (cvm.TypeOfDocumentId == 1) condition.TypeOfStateRegId = cvm.TypeOfStateRegId;
+                    condition.DocumentTemplateId = cvm.DocumentTemplateId;
                     condition.NumLevelReference = cvm.NumLevelReference;
+                    condition.Justification = cvm.Justification;
+                    int numberOfConditions = await GetNumberOfConditionsInDocumentTemplate(condition.DocumentTemplateId);
+                    condition.NumberInDocument = numberOfConditions + 1;
 
                 db.Conditions.Add(condition);
                 await db.SaveChangesAsync();
@@ -157,12 +162,27 @@ namespace AIS.Services
             try
             {
                 Condition condition = await db.Conditions.FirstOrDefaultAsync(p => p.Id == cvm.Id);
+                condition.Title = cvm.Title;
                 condition.Name = cvm.Name;
-                condition.Text = cvm.Text;
                 if (cvm.TypeOfDocumentId == 1)  condition.TypeOfStateRegId = cvm.TypeOfStateRegId;
-                condition.ContractTemplateId = cvm.ContractTemplateId;
+                condition.DocumentTemplateId = cvm.DocumentTemplateId;
                 condition.NumLevelReference = cvm.NumLevelReference;
+                condition.NumId = cvm.NumId;
+                condition.Justification = cvm.Justification;
+                db.Conditions.Update(condition);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
+        public async Task<bool> SaveCondition(Condition condition)
+        {
+            try
+            {
                 db.Conditions.Update(condition);
                 await db.SaveChangesAsync();
                 return true;
@@ -178,14 +198,14 @@ namespace AIS.Services
             try
             {
                 SubCondition subCondition = new SubCondition
-            {
+                {
                 Name = scvm.Name,
                 Text = scvm.Text,
                 ConditionId = scvm.ConditionId,
                 NumLevelReference = scvm.NumLevelReference,
-                NumId = scvm.NumId
-
-            };
+                NumId = scvm.NumId,
+                Justification = scvm.Justification
+                };
 
             db.SubConditions.Add(subCondition);
                 await db.SaveChangesAsync();
@@ -207,6 +227,7 @@ namespace AIS.Services
                 subCondition.ConditionId = scvm.ConditionId;
                 subCondition.NumLevelReference = scvm.NumLevelReference;
                 subCondition.NumId = scvm.NumId;
+                subCondition.Justification = scvm.Justification;
 
                 db.SubConditions.Update(subCondition);
                 await db.SaveChangesAsync();
@@ -239,8 +260,8 @@ namespace AIS.Services
                     Text = scpvm.Text,
                     SubConditionId = scpvm.SubConditionId,
                     NumLevelReference = scpvm.NumLevelReference,
-                    NumId = scpvm.NumId
-
+                    NumId = scpvm.NumId,
+                    Justification = scpvm.Justification
                 };
 
                 db.SubConditionParagraphs.Add(subConditionParagraph);
@@ -262,6 +283,7 @@ namespace AIS.Services
                 subConditionParagraph.SubConditionId = scpvm.SubConditionId;
                 subConditionParagraph.NumLevelReference = scpvm.NumLevelReference;
                 subConditionParagraph.NumId = scpvm.NumId;
+                subConditionParagraph.Justification = scpvm.Justification;
 
                 db.SubConditionParagraphs.Update(subConditionParagraph);
                 await db.SaveChangesAsync();
@@ -285,13 +307,13 @@ namespace AIS.Services
             return false;
         }
 
-        public async Task<ContractTemplate?> GetContractTemplateById(int id)
+        public async Task<DocumentTemplate?> GetDocumentTemplateById(int id)
         {
             try
             {
-                ContractTemplate? contractTemplate = await db.ContractTemplates
+                DocumentTemplate? DocumentTemplate = await db.DocumentTemplates
                     .FirstOrDefaultAsync(p => p.Id == id);
-                return contractTemplate;
+                return DocumentTemplate;
             }
             catch
             {
@@ -299,14 +321,14 @@ namespace AIS.Services
             }
         }
 
-        public async Task<ContractTemplate?> GetContractTemplateWithConditionsById(int id)
+        public async Task<DocumentTemplate?> GetDocumentTemplateWithConditionsById(int id)
         {
             try
             {
-                ContractTemplate? contractTemplate = await db.ContractTemplates
+                DocumentTemplate? DocumentTemplate = await db.DocumentTemplates
                     .Include(p => p.Conditions).ThenInclude(p => p.SubConditions).ThenInclude(p => p.SubConditionParagraphs)
                     .FirstOrDefaultAsync(p => p.Id == id);
-                return contractTemplate;
+                return DocumentTemplate;
             }
             catch
             {
@@ -314,14 +336,14 @@ namespace AIS.Services
             }
         }
 
-        public async Task<ContractTemplate?> GetContractTemplateWithCommonContractTemplateById(int id)
+        public async Task<DocumentTemplate?> GetDocumentTemplateWithRootTemplateById(int id)
         {
             try
             {
-                ContractTemplate? contractTemplate = await db.ContractTemplates
-                    .Include(p => p.CommonContractTemplate)
+                DocumentTemplate? DocumentTemplate = await db.DocumentTemplates
+                    .Include(p => p.RootTemplate)
                     .FirstOrDefaultAsync(p => p.Id == id);
-                return contractTemplate;
+                return DocumentTemplate;
             }
             catch
             {
@@ -329,14 +351,14 @@ namespace AIS.Services
             }
         }
 
-        public async Task<ContractTemplate?> GetContractTemplateWithTypeOfContractById(int id)
+        public async Task<DocumentTemplate?> GetDocumentTemplateWithTypeOfContractById(int id)
         {
             try
             {
-                ContractTemplate? contractTemplate = await db.ContractTemplates
+                DocumentTemplate? DocumentTemplate = await db.DocumentTemplates
                     .Include(p => p.TypeOfContract)
                     .FirstOrDefaultAsync(p => p.Id == id);
-                return contractTemplate;
+                return DocumentTemplate;
             }
             catch
             {
@@ -344,12 +366,12 @@ namespace AIS.Services
             }
         }
 
-        public async Task<bool> DeleteContractTemplate(int? id)
+        public async Task<bool> DeleteDocumentTemplate(int? id)
         {
             if (id != null)
             {
-                ContractTemplate contractTemplate = await db.ContractTemplates.FirstOrDefaultAsync(p => p.Id == id);
-                db.ContractTemplates.Remove(contractTemplate);
+                DocumentTemplate DocumentTemplate = await db.DocumentTemplates.FirstOrDefaultAsync(p => p.Id == id);
+                db.DocumentTemplates.Remove(DocumentTemplate);
                 await db.SaveChangesAsync();
                 return true;
             }
@@ -362,18 +384,10 @@ namespace AIS.Services
             return await db.Conditions.Include(p => p.SubConditions).ToListAsync();
         }
 
-        public async Task<bool> CreateCondition(Condition condition)
+        public async Task<int> GetNumberOfConditionsInDocumentTemplate(int id)
         {
-            try
-            {
-                db.Conditions.Add(condition);
-                await db.SaveChangesAsync();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+             DocumentTemplate DocumentTemplate = await db.DocumentTemplates.Include(p => p.Conditions).FirstOrDefaultAsync(p => p.Id == id);
+             return DocumentTemplate.Conditions.Count();
         }
 
         public async Task<Condition?> GetCondition(int id)
@@ -383,6 +397,20 @@ namespace AIS.Services
                 Condition? condition = await db.Conditions
                     .Include(p=>p.SubConditions).ThenInclude(p => p.SubConditionParagraphs)
                     .FirstOrDefaultAsync(p => p.Id == id);
+                return condition;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<Condition?> GetConditionByNumberInDocument(int number)
+        {
+            try
+            {
+                Condition? condition = await db.Conditions
+                    .FirstOrDefaultAsync(p => p.NumberInDocument == number);
                 return condition;
             }
             catch
