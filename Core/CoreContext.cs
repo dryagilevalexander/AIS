@@ -202,21 +202,27 @@ new TypeOfContract[]
             new Condition[]
             {
                 new Condition {Id = 1, NumberInDocument = 1, Name = "Заголовок договора", Title = "\"Договор contractType № __\"", DocumentTemplateId = 1, TypeOfStateRegId = 4, NumLevelReference = 0, NumId = 0, Justification = "center" },
-                new Condition {Id = 2, NumberInDocument = 2, Name = "Предмет договора", Title = "Предмет договора", DocumentTemplateId =  1, TypeOfStateRegId = 4, NumLevelReference = 1, NumId = 1, Justification = "center"},
-                new Condition {Id = 3, NumberInDocument = 3, Name = "Права и обязанности сторон", Title = "Права и обязанности сторон", DocumentTemplateId = 1, TypeOfStateRegId = 4, NumLevelReference = 1, NumId = 1, Justification = "center"},
-                new Condition {Id = 4, NumberInDocument = 4, Name = "Ответственность сторон", Title = "Ответственность сторон", DocumentTemplateId = 1, TypeOfStateRegId = 1, NumLevelReference = 1, NumId = 1, Justification = "center"},
+                new Condition {Id = 2, NumberInDocument = 3, Name = "Предмет договора", Title = "Предмет договора", DocumentTemplateId =  1, TypeOfStateRegId = 4, NumLevelReference = 1, NumId = 1, Justification = "center"},
+                new Condition {Id = 3, NumberInDocument = 4, Name = "Права и обязанности сторон", Title = "Права и обязанности сторон", DocumentTemplateId = 1, TypeOfStateRegId = 4, NumLevelReference = 1, NumId = 1, Justification = "center"},
+                new Condition {Id = 4, NumberInDocument = 6, Name = "Ответственность сторон", Title = "Ответственность сторон", DocumentTemplateId = 1, TypeOfStateRegId = 1, NumLevelReference = 1, NumId = 1, Justification = "center"},
 
                 new Condition {Id = 5, NumberInDocument = 1, Name = "Заголовок договора", Title = "\"Договор contractType № __\"", DocumentTemplateId = 2, TypeOfStateRegId = 4, NumLevelReference = 0, NumId = 0, Justification = "center" },
-                new Condition {Id = 6, NumberInDocument = 2, Name = "Предмет договора", Title = "Предмет договора", DocumentTemplateId =  2, TypeOfStateRegId = 4, NumLevelReference = 1, NumId = 1, Justification = "center"},
-                new Condition {Id = 7, NumberInDocument = 3, Name = "Права и обязанности сторон", Title = "Права и обязанности сторон", DocumentTemplateId = 2, TypeOfStateRegId = 4, NumLevelReference = 1, NumId = 1, Justification = "center"},
-                new Condition {Id = 8, NumberInDocument = 4, Name = "Ответственность сторон", Title = "Ответственность сторон", DocumentTemplateId = 2, TypeOfStateRegId = 1, NumLevelReference = 1, NumId = 1, Justification = "center"},
+                new Condition {Id = 6, NumberInDocument = 3, Name = "Предмет договора", Title = "Предмет договора", DocumentTemplateId =  2, TypeOfStateRegId = 4, NumLevelReference = 1, NumId = 1, Justification = "center"},
+                new Condition {Id = 7, NumberInDocument = 4, Name = "Права и обязанности сторон", Title = "Права и обязанности сторон", DocumentTemplateId = 2, TypeOfStateRegId = 4, NumLevelReference = 1, NumId = 1, Justification = "center"},
+                new Condition {Id = 8, NumberInDocument = 6, Name = "Ответственность сторон", Title = "Ответственность сторон", DocumentTemplateId = 2, TypeOfStateRegId = 1, NumLevelReference = 1, NumId = 1, Justification = "center"},
+
+                new Condition {Id = 10, NumberInDocument = 5, Name = "Цена договора и порядок расчетов", Title = "Цена договора и порядок расчетов", DocumentTemplateId = 1, TypeOfStateRegId = 4, NumLevelReference = 1, NumId = 1, Justification = "center"},
+                new Condition {Id = 11, NumberInDocument = 5, Name = "Цена договора и порядок расчетов", Title = "Цена договора и порядок расчетов", DocumentTemplateId = 2, TypeOfStateRegId = 4, NumLevelReference = 1, NumId = 1, Justification = "center"},
+
+                new Condition {Id = 12, NumberInDocument = 2, Name = "Преамбула", DocumentTemplateId = 1, TypeOfStateRegId = 4, NumLevelReference = 0, NumId = 0, Justification = "center"},
+                new Condition {Id = 13, NumberInDocument = 2, Name = "Преамбула", DocumentTemplateId = 2, TypeOfStateRegId = 4, NumLevelReference = 0, NumId = 0, Justification = "center"}
 
             }); ;
 
             modelBuilder.Entity<SubCondition>().HasData(
             new SubCondition[]
             {
-                new SubCondition {Id=1, Text="\"customerName именуемое в дальнейшем \"Заказчик\", в лице customerDirectorTypeNameR customerDirectorNameR, действующего на основании Устава, с одной стороны, и executorName, именуемое в дальнейшем \"executor\", в лице executorDirectorTypeNameR executorDirectorNameR, действующего на основании Устава, с другой стороны, baseOfContract заключили настоящий договор о нижеследующем:\"", ConditionId = 1, NumLevelReference = 0, NumId = 0, Justification = "both"},
+                new SubCondition {Id=1, Text="customerName именуемое в дальнейшем \"Заказчик\", в лице customerDirectorTypeNameR customerDirectorNameR, действующего на основании Устава, с одной стороны, и executorName, именуемое в дальнейшем \"executor\", в лице executorDirectorTypeNameR executorDirectorNameR, действующего на основании Устава, с другой стороны, baseOfContract заключили настоящий договор о нижеследующем:", ConditionId = 12, NumLevelReference = 0, NumId = 0, Justification = "both"},
                 new SubCondition {Id=2, Text="За неисполнение или ненадлежащее исполнение Контракта Стороны несут ответственность в соответствии с законодательством Российской Федерации и условиями Контракта.", ConditionId = 4, NumLevelReference = 2, NumId = 1, Justification = "both"},
                 new SubCondition {Id=3, Text="В случае полного (частичного) неисполнения условий Контракта одной из Сторон эта Сторона обязана возместить другой Стороне причиненные убытки в части, непокрытой неустойкой.", ConditionId = 4, NumLevelReference = 2, NumId = 1, Justification = "both"},
                 new SubCondition {Id=4, Text="В случае просрочки исполнения Подрядчиком обязательств, предусмотренных Контрактом, Подрядчик уплачивает Заказчику пени. Пеня начисляется за каждый день просрочки исполнения Подрядчиком обязательства, предусмотренного Контрактом, начиная со дня, следующего после дня истечения установленного Контрактом срока исполнения обязательства. Размер пени составляет одна трехсотая действующей на дату уплаты пени ключевой ставки Центрального банка Российской Федерации от цены Контракта (отдельного этапа исполнения Контракта), уменьшенной на сумму, пропорциональную объему обязательств, предусмотренных Контрактом (соответствующим отдельным этапом исполнения Контракта) и фактически исполненных Подрядчиком.", ConditionId = 4, NumLevelReference = 2, NumId = 1, Justification = "both"},
@@ -227,7 +233,7 @@ new TypeOfContract[]
                 new SubCondition {Id=9, Text="Подрядчик обязуется выполнить следующую работу: subjectOfContract, именуемую в дальнейшем \"Работа\".", ConditionId = 2, NumLevelReference = 2, NumId = 1, Justification = "both"},
                 new SubCondition {Id=10, Text="Подрядчик обязуется:", ConditionId = 3, NumLevelReference = 2, NumId = 1, Justification = "both"},
 
-                new SubCondition {Id=11, Text="\"customerName именуемое в дальнейшем \"Заказчик\", в лице customerDirectorTypeNameR customerDirectorNameR, действующего на основании Устава, с одной стороны, и executorName, именуемое в дальнейшем \"executor\", в лице executorDirectorTypeNameR executorDirectorNameR, действующего на основании Устава, с другой стороны, baseOfContract заключили настоящий договор о нижеследующем:\"", ConditionId = 5, NumLevelReference = 0, NumId = 0, Justification = "both"},
+                new SubCondition {Id=11, Text="customerName именуемое в дальнейшем \"Заказчик\", в лице customerDirectorTypeNameR customerDirectorNameR, действующего на основании Устава, с одной стороны, и executorName, именуемое в дальнейшем \"executor\", в лице executorDirectorTypeNameR executorDirectorNameR, действующего на основании Устава, с другой стороны, baseOfContract заключили настоящий договор о нижеследующем:", ConditionId = 13, NumLevelReference = 0, NumId = 0, Justification = "both"},
                 new SubCondition {Id=12, Text="За неисполнение или ненадлежащее исполнение Контракта Стороны несут ответственность в соответствии с законодательством Российской Федерации и условиями Контракта.", ConditionId = 8, NumLevelReference = 2, NumId = 1, Justification = "both"},
                 new SubCondition {Id=13, Text="В случае полного (частичного) неисполнения условий Контракта одной из Сторон эта Сторона обязана возместить другой Стороне причиненные убытки в части, непокрытой неустойкой.", ConditionId = 8, NumLevelReference = 2, NumId = 1, Justification = "both"},
                 new SubCondition {Id=14, Text="В случае просрочки исполнения Исполнителем обязательств, предусмотренных Контрактом, Исполнитель уплачивает Заказчику пени. Пеня начисляется за каждый день просрочки исполнения Исполнителем обязательства, предусмотренного Контрактом, начиная со дня, следующего после дня истечения установленного Контрактом срока исполнения обязательства. Размер пени составляет одна трехсотая действующей на дату уплаты пени ключевой ставки Центрального банка Российской Федерации от цены Контракта (отдельного этапа исполнения Контракта), уменьшенной на сумму, пропорциональную объему обязательств, предусмотренных Контрактом (соответствующим отдельным этапом исполнения Контракта) и фактически исполненных Исполнителем.", ConditionId = 8, NumLevelReference = 2, NumId = 1, Justification = "both"},
@@ -237,6 +243,15 @@ new TypeOfContract[]
                 new SubCondition {Id=18, Text="Исполнитель обязуется оказать по заданию Заказчика услуги, указанные в пункте 1.2 настоящего договора, и сдать ее результат Заказчику, а Заказчик обязуется принять результат оказания услуг и оплатить его.", ConditionId = 6, NumLevelReference = 2, NumId = 1, Justification = "both"},
                 new SubCondition {Id=19, Text="Исполнитель обязуется оказать следующие услуги: subjectOfContract, именуемые в дальнейшем \"Услуги\".", ConditionId = 6, NumLevelReference = 2, NumId = 1, Justification = "both"},
                 new SubCondition {Id=20, Text="Исполнитель обязуется:", ConditionId = 7, NumLevelReference = 2, NumId = 1, Justification = "both"},
+
+                new SubCondition {Id=21, Text="place                                                 __.__.202_ г.", ConditionId = 1, NumLevelReference = 0, NumId = 0, Justification = "center"},
+                new SubCondition {Id=22, Text="place                                                 __.__.202_ г.", ConditionId = 5, NumLevelReference = 0, NumId = 0, Justification = "center"},
+
+                new SubCondition {Id=23, Text="Цена настоящего договора составляет cost руб.", ConditionId = 10, NumLevelReference = 2, NumId = 1, Justification = "both"},
+                new SubCondition {Id=24, Text="Уплата Заказчиком Исполнителю цены договора осуществляется путем перечисления средств на расчетный счет Исполнителя, указанный в настоящем договоре.", ConditionId = 10, NumLevelReference = 2, NumId = 1, Justification = "both"},
+
+                new SubCondition {Id=25, Text="Цена настоящего договора составляет cost руб.", ConditionId = 11, NumLevelReference = 2, NumId = 1, Justification = "both"},
+                new SubCondition {Id=26, Text="Уплата Заказчиком Исполнителю цены договора осуществляется путем перечисления средств на расчетный счет Исполнителя, указанный в настоящем договоре.", ConditionId = 11, NumLevelReference = 2, NumId = 1, Justification = "both"}
 
             });
 
