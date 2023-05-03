@@ -1268,7 +1268,6 @@ namespace AIS.Controllers
                 replacementDictionary.Add("executorDirectorTypeNameR", mainOrganization.DirectorType.NameR);
             }
 
-
             replacementDictionary.Add("place", jsonContractData.PlaceOfContract);
 
             replacementDictionary.Add("baseOfContract", baseOfContract);
