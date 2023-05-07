@@ -2,7 +2,7 @@
 
 <h2>Редактирование корневого шаблона документа</h2>
 <form asp-action="editRoottemplate" asp-controller="process" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
-
+<div class="validation" asp-validation-summary="ModelOnly"></div>
     <div class="container">
 
         <div class="row">
@@ -10,7 +10,7 @@
                 <select class="form-select" size="2" data-placeholder="Тип документа" id="TypeOfDocumentId" asp-for="TypeOfDocumentId" asp-items="@Model.TypesOfDocument">
                 </select>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="TypeOfDocumentId"></span></div>
         </div>
 
         <div class="row">
@@ -19,7 +19,7 @@
                     <input type="text" class="form-control" placeholder="Имя шаблона" aria-label="Имя шаблона" asp-for="Name">
                 </div>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="Name"></span></div>
         </div>
 
         <div class="row">
@@ -28,7 +28,7 @@
                     <input type="text" class="form-control" placeholder="Описание" aria-label="Описание" asp-for="Description">
                 </div>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="Description"></span></div>
         </div>
 
         <div class="row">
@@ -80,7 +80,7 @@
                 @if (item.Description != null) @item.Description
             </td>
             <td align="right">
-                 <a class="btn btn-outline-primary" role="button" asp-action="EditDocumentTemplate" asp-controller="process" asp-route-id="@item.Id">Изменить</a>
+                    <a class="btn btn-outline-primary" role="button" asp-action="EditDocumentTemplate" asp-controller="Process" asp-route-id="@item.Id">Изменить</a>
             </td>
             <td align="left">
                 <form asp-controller="process" asp-action="DeleteDocumentTemplate" method="post" asp-route-id="@item.Id">
@@ -100,6 +100,8 @@
 
 <script asp-src-include="~/js/tables.js"></script>
 <script asp-src-include="~/js/select.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 }
 
 

@@ -7,8 +7,8 @@ namespace AIS.Services
     {
         Task<IEnumerable<Employee>> GetEmployeers();
         Task<Employee?> GetEmployee(int id);
-        Task<bool> CreateEmployee(Employee employee);
-        Task<bool> EditEmployee(Employee employee);
+        Task<bool> CreateEmployee(EmployeeViewModel evm);
+        Task<bool> EditEmployee(EmployeeViewModel evm);
         Task<bool> DeleteEmployee(int? id);
     }
 }

@@ -27,11 +27,11 @@ namespace AIS.Services
             }
         }
 
-        public async Task <IEnumerable<Partner>> GetPartners()
+        public async Task <IEnumerable<PartnerOrganization>> GetPartnersOrganizations()
         {
             try
             {
-                IEnumerable<Partner> partners = await db.Partners.ToListAsync();
+                IEnumerable<PartnerOrganization> partners = await db.PartnersOrganizations.ToListAsync();
                 return partners;
             }
             catch
@@ -40,11 +40,11 @@ namespace AIS.Services
             }
         }
 
-        public async Task<IEnumerable<Partner>> GetPartnersByPartnerCategoryId(int id)
+        public async Task<IEnumerable<PartnerOrganization>> GetPartnersByPartnerCategoryId(int id)
         {
             try
             {
-                IEnumerable<Partner> partners = await db.Partners.Where(p => p.PartnerCategoryId == id).ToListAsync();
+                IEnumerable<PartnerOrganization> partners = await db.PartnersOrganizations.Where(p => p.PartnerCategoryId == id).ToListAsync();
                 return partners;
             }
             catch
@@ -53,11 +53,11 @@ namespace AIS.Services
             }
         }
 
-        public async Task<Partner?> GetPartner(int id)
+        public async Task<PartnerOrganization?> GetPartner(int id)
         {
             try 
             { 
-            Partner? partner = await db.Partners.Include(p => p.DirectorType).FirstOrDefaultAsync(p => p.Id == id);
+            PartnerOrganization? partner = await db.PartnersOrganizations.Include(p => p.DirectorType).FirstOrDefaultAsync(p => p.Id == id);
             return partner;
             }
             catch
@@ -78,44 +78,17 @@ namespace AIS.Services
                 return null;
             }
         }
-
-        public async Task<bool> CreatePartner(PartnerViewModel partnerViewModel)
+        public async Task<bool> CreatePartnerOrganization(PartnerOrganization partner)
         {
-            try 
+            try
             {
-                Partner partner = new Partner
-                {
-                    Name = partnerViewModel.Name,
-                    ShortName = partnerViewModel.ShortName,
-                    Address = partnerViewModel.Address,
-                    Email = partnerViewModel.Email,
-                    PhoneNumber = partnerViewModel.PhoneNumber,
-                    INN = partnerViewModel.INN,
-                    KPP = partnerViewModel.KPP,
-                    OGRN = partnerViewModel.OGRN,
-                    Bank = partnerViewModel.Bank,
-                    Account = partnerViewModel.Account,
-                    CorrespondentAccount = partnerViewModel.CorrespondentAccount,
-                    BIK = partnerViewModel.BIK,
-                    DirectorTypeId = partnerViewModel.DirectorTypeId,
-                    DirectorName = partnerViewModel.DirectorName,
-                    PartnerStatusId = partnerViewModel.PartnerStatusId,
-                    PartnerTypeId = partnerViewModel.PartnerTypeId,
-                    PassportSeries = partnerViewModel.PassportSeries,
-                    PassportNumber = partnerViewModel.PassportNumber,
-                    PassportDateOfIssue = partnerViewModel.PassportDateOfIssue,
-                    PassportDateOfBirth = partnerViewModel.PassportDateOfBirth,
-                    PassportPlaseOfIssue = partnerViewModel.PassportPlaseOfIssue,
-                    PassportDivisionCode = partnerViewModel.PassportDivisionCode
-                };
-
-            db.Partners.Add(partner);
-            await db.SaveChangesAsync();
-            return true;
+                db.PartnersOrganizations.Add(partner);
+                await db.SaveChangesAsync();
+                return true;
             }
             catch
             {
-            return false;
+                return false;
             }
         }
 
@@ -143,18 +116,18 @@ namespace AIS.Services
                 List<Employee> employeers = await db.Employeers.ToListAsync();
                 foreach (var employee in employeers)
                 {
-                    if (employee.Partner is not null)
+                    if (employee.PartnerOrganization is not null)
                     {
-                        if (employee.Partner.Id == id)
+                        if (employee.PartnerOrganization.Id == id)
                         {
-                            employee.Partner = null;
+                            employee.PartnerOrganization = null;
                             db.Employeers.Update(employee);
                             await db.SaveChangesAsync();
                         }
                     }
                 }
 
-                List<Contract> Contracts = await db.Contracts.Where(p=>p.PartnerId==id).ToListAsync();
+                List<Contract> Contracts = await db.Contracts.Where(p=>p.PartnerOrganizationId==id).ToListAsync();
                 foreach (var contract in Contracts)
                 {
                             db.Contracts.Remove(contract);
@@ -205,9 +178,9 @@ namespace AIS.Services
             }
         }
 
-        public async Task<IEnumerable<Partner>> GetPartnersWithoutOurOrganization()
+        public async Task<IEnumerable<PartnerOrganization>> GetPartnersWithoutOurOrganization()
         {
-                return db.Partners.Where(p => p.PartnerStatusId != 1).ToList();
+                return db.PartnersOrganizations.Where(p => p.PartnerStatusId != 1).ToList();
         }
 
 
@@ -216,9 +189,9 @@ namespace AIS.Services
             return await db.PartnerTypes.FirstOrDefaultAsync(p => p.Id == id.Value);
         }
 
-        public async Task<Partner> GetOurOrganization()
+        public async Task<PartnerOrganization> GetOurOrganization()
         {
-            return db.Partners.Include(p => p.DirectorType).FirstOrDefault(p => p.PartnerStatusId == 1);
+            return db.PartnersOrganizations.Include(p => p.DirectorType).FirstOrDefault(p => p.PartnerStatusId == 1);
         }
 
         public async Task<DirectorType?> GetDirectorTypeById(int? id)
@@ -226,9 +199,9 @@ namespace AIS.Services
             return await db.DirectorTypes.FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public Partner GetMainOrganization()
+        public PartnerOrganization GetMainOrganization()
         {
-            return db.Partners.Include(p => p.DirectorType).FirstOrDefault(p => p.PartnerStatusId == 1);
+            return db.PartnersOrganizations.Include(p => p.DirectorType).FirstOrDefault(p => p.PartnerStatusId == 1);
         }
     }
 }

@@ -6,18 +6,18 @@ namespace AIS.Services
     public interface IPartnerService
     {
         Task<IEnumerable<Partner>> GetPartnersEagerLoading();
-        Task <IEnumerable<Partner>> GetPartners();
-        Task<IEnumerable<Partner>> GetPartnersByPartnerCategoryId(int id);
-        Task<Partner?> GetPartner(int id);
+        Task <IEnumerable<PartnerOrganization>> GetPartnersOrganizations();
+        Task<IEnumerable<PartnerOrganization>> GetPartnersByPartnerCategoryId(int id);
+        Task<PartnerOrganization?> GetPartner(int id);
         Task<Partner?> GetPartnerEagerLoading(int id);
-        Task<bool> CreatePartner(PartnerViewModel partnerViewModel);
+        Task<bool> CreatePartnerOrganization(PartnerOrganization partner);
         Task<bool> EditPartner(Partner partner);
         Task<bool> DeletePartner(int? id);
         Task<IEnumerable<DirectorType>> GetDirectorTypes();
         Task<IEnumerable<PartnerStatus>> GetPartnerStatuses();
         Task<IEnumerable<PartnerType>> GetPartnerTypes();
-        Task<IEnumerable<Partner>> GetPartnersWithoutOurOrganization();
-        Task<Partner> GetOurOrganization();
+        Task<IEnumerable<PartnerOrganization>> GetPartnersWithoutOurOrganization();
+        Task<PartnerOrganization> GetOurOrganization();
         Task<DirectorType?> GetDirectorTypeById(int? id);
         Task<PartnerType> GetPartnerTypeById(int? id);
     }

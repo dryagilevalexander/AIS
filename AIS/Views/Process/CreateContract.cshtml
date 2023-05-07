@@ -28,7 +28,7 @@
                 <select class="form-select" size="2" data-placeholder="Шаблон договора" asp-for="DocumentTemplateId" asp-items="@Model.DocumentTemplates" id="DocumentTemplateId">
                 </select>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="DocumentTemplateId"></span></div>
         </div>
 
         <div class="row">
@@ -37,7 +37,7 @@
                     <input type="text" class="form-control" placeholder="Место заключения договора" aria-label="Место заключения договора" asp-for="PlaceOfContract" id="PlaceOfContract">
                 </div>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="PlaceOfContract"></span></div>
         </div>
 
         <div class="row">
@@ -47,14 +47,14 @@
                     <option value="false">Исполнитель</option>
                 </select>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="IsCustomer"></span></div>
         </div>
                 <div class="row">
             <div class="col-5 mb-3">
-                <select class="form-select" size="2" data-placeholder="Контрагент" asp-for="PartnerId" asp-items="@Model.MyPartners" id="PartnerId">
+                <select class="form-select" size="2" data-placeholder="Контрагент" asp-for="PartnerOrganizationId" asp-items="@Model.MyPartners" id="PartnerOrganizationId">
                 </select>
             </div>
-            <div class="col-7"><span asp-validation-for="PartnerId"></span></div>
+            <div class="col-7"><span asp-validation-for="PartnerOrganizationId"></span></div>
         </div>
 
         <div class="row">
@@ -63,7 +63,7 @@
                     <input type="text" class="form-control" placeholder="Номер контракта" aria-label="Номер контракта" asp-for="NumberOfContract" id="NumberOfContract">
                 </div>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="NumberOfContract"></span></div>
         </div>
 
         <div class="row">
@@ -72,7 +72,7 @@
                     <input type="date" asp-format="{0:yyyy-MM-dd}" class="form-control" placeholder="Дата подписания" aria-label="Дата подписания" asp-for="DateStart" id="DateStart">
                 </div>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="DateStart"></span></div>
         </div>
 
         <div class="row">
@@ -81,7 +81,7 @@
                     <input type="date" asp-format="{0:yyyy-MM-dd}" class="form-control" placeholder="Дата окончания" aria-label="Дата окончания" asp-for="DateEnd" id="DateEnd">
                 </div>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="DateEnd"></span></div>
         </div>
 
         <div class="row">
@@ -96,10 +96,10 @@
         <div class="row">
             <div class="col-5 mb-3">
                 <div class="input-group">
-                    <input type="number" class="form-control" placeholder="Цена контракта" aria-label="Цена контракта" asp-for="Cost" step="0.01" id="Cost" />
+                    <input type="number" class="form-control" placeholder="Цена контракта" aria-label="Цена контракта" asp-for="Cost" step="0.01" id="Cost" value=""/>
                 </div>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="Cost"></span></div>
         </div>
 
         <div class="row">
@@ -108,7 +108,7 @@
                 <option selected disabled>Статус договора</option>
                 </select>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="MyContractStatusId"></span></div>
         </div>
 
     <div class="container overflow-hidden">

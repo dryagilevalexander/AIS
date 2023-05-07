@@ -14,7 +14,7 @@ namespace AIS.ViewModels
         [Required(ErrorMessage = "Не указан взыскатель")]
         public int? PartnerId { get; set; }
         public IEnumerable<SelectListItem>? Courts { get; set; }
-        [Required(ErrorMessage = "Не указан взыскатель")]
+        [Required(ErrorMessage = "Не указан судебный орган")]
         public int CourtId { get; set; }
 
         [Required(ErrorMessage = "Не указан предмет судебного приказа")]

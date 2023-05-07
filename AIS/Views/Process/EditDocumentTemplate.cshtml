@@ -15,7 +15,7 @@
                     <select class="form-select" size="2" data-placeholder="Тип контракта" id="TypeOfContractId" asp-for="TypeOfContractId" asp-items="@Model.TypesOfContract">
                     </select>
                 </div>
-                <div class="col-7"></div>
+                <div class="col-7"><span asp-validation-for="TypeOfContractId"></span></div>
             </div>
         }
 
@@ -25,7 +25,7 @@
                     <input type="text" class="form-control" placeholder="Имя шаблона" aria-label="Имя шаблона" asp-for="Name">
                 </div>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="Name"></span></div>
         </div>
 
         <div class="row">
@@ -34,7 +34,7 @@
                     <input type="text" class="form-control" placeholder="Описание" aria-label="Описание" asp-for="Description">
                 </div>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="Description"></span></div>
         </div>
 
         <div class="row">
@@ -112,6 +112,8 @@
 
 <script asp-src-include="~/js/tables.js"></script>
 <script asp-src-include="~/js/select.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 }
 
 

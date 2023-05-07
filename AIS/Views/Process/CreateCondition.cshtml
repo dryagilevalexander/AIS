@@ -45,7 +45,7 @@
                     <option value="both">Выравнивание по ширине</option>
                 </select>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="Justification"></span></div>
         </div>
 
         @if (Model.TypeOfDocumentId == 1)
@@ -65,7 +65,7 @@
                     <input type="text" class="form-control" placeholder="Наименование условия" aria-label="Наименование условия" asp-for="Name">
                 </div>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="Name"></span></div>
         </div>
         
         <div class="row">
@@ -98,10 +98,10 @@
     </div>
 </form>
 
-
-
 @section scripts{
     <script asp-src-include="~/js/select.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 }
 
 

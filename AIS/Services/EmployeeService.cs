@@ -18,7 +18,7 @@ namespace AIS.Services
         {
             try
             {
-                IEnumerable<Employee>? employeers = await db.Employeers.Include(u => u.Partner).ToListAsync();
+                IEnumerable<Employee>? employeers = await db.Employeers.Include(u => u.PartnerOrganization).ToListAsync();
                 return employeers;
             }
             catch
@@ -40,10 +40,21 @@ namespace AIS.Services
             }
         }
 
-        public async Task<bool> CreateEmployee(Employee employee)
+        public async Task<bool> CreateEmployee(EmployeeViewModel evm)
         {
             try 
             {
+                Employee employee = new Employee()
+                {
+                    Name = evm.Name,
+                    FirstName = evm.FirstName,
+                    LastName = evm.LastName,
+                    Address = evm.Address,
+                    PhoneNumber = evm.PhoneNumber,
+                    Email = evm.Email,
+                    PartnerOrganizationId = evm.PartnerOrganizationId
+                };
+
                 db.Employeers.Add(employee);
                 await db.SaveChangesAsync();
                 return true;
@@ -54,13 +65,25 @@ namespace AIS.Services
             }
         }
 
-        public async Task<bool> EditEmployee(Employee employee)
+        public async Task<bool> EditEmployee(EmployeeViewModel evm)
         {
             try
             {
-                db.Employeers.Update(employee);
-                await db.SaveChangesAsync();
-                return true;
+                Employee? employee = await GetEmployee(evm.Id);
+                if (employee != null)
+                {
+                    employee.Name = evm.Name;
+                    employee.FirstName = evm.FirstName;
+                    employee.LastName = evm.LastName;
+                    employee.Address = evm.Address;
+                    employee.PhoneNumber = evm.PhoneNumber;
+                    employee.Email = evm.Email;
+                    employee.PartnerOrganizationId = evm.PartnerOrganizationId;
+                    db.Employeers.Update(employee);
+                    await db.SaveChangesAsync();
+                    return true;
+                }
+                else return false;
             }
             catch
             {

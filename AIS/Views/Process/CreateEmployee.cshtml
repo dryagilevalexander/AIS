@@ -1,24 +1,38 @@
-﻿@model Core.Employee;
+﻿@model AIS.ViewModels.EmployeeViewModel;
 
 <h2>Добавление сотрудника контрагента</h2>
 <form asp-action="createemployee" asp-controller="process">
-
+ <div class="validation" asp-validation-summary="ModelOnly"></div>
 
  <div class="container">
 
- <div class="row">
-   <div class="col-5 mb-3">
-    <div class="input-group">
-        <div class="input-group-prepend">
-            <span class="input-group-text" id="">ФИО</span>
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Имя" aria-label="Имя" asp-for="Name">
+                </div>
+            </div>
+            <div class="col-7"><span asp-validation-for="Name"></span></div>
         </div>
-        <input type="text" class="form-control" asp-for="Name">
-        <input type="text" class="form-control" asp-for="FirstName">
-        <input type="text" class="form-control" asp-for="LastName">
-    </div>
-    </div>
- <div class="col-7"></div>
- </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Отчество" aria-label="Отчество" asp-for="FirstName">
+                </div>
+            </div>
+            <div class="col-7"><span asp-validation-for="FirstName"></span></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Фамилия" aria-label="Фамилия" asp-for="LastName">
+                </div>
+            </div>
+            <div class="col-7"><span asp-validation-for="LastName"></span></div>
+        </div>
+
 
 <div class="row">
     <div class="col-5 mb-3">
@@ -26,7 +40,7 @@
         <input type="text" class="form-control" placeholder="Адрес" aria-label="Адрес" asp-for="Address">
     </div>
     </div>
-  <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="Address"></span></div>
 </div>
 
 <div class="row">
@@ -35,7 +49,7 @@
         <input type="text" class="form-control" placeholder="Телефон" aria-label="Телефон" asp-for="PhoneNumber">
     </div>
     </div>
-  <div class="col-7"></div>
+  <div class="col-7"><span asp-validation-for="PhoneNumber"></span></div>
 </div>
 
 <div class="row">
@@ -44,12 +58,12 @@
         <input type="text" class="form-control" placeholder="Email" aria-label="Email" asp-for="Email">
     </div>
     </div>
-  <div class="col-7"></div>
+     <div class="col-7"><span asp-validation-for="Email"></span></div>
 </div>
 
         <div class="row">
             <div class="col-5 mb-3">
-                <select size="2" data-placeholder="Контрагент" class="form-select form-select-sm mb-3" asp-for="PartnerId" asp-items="ViewBag.Partners">
+                <select size="2" data-placeholder="Контрагент" class="form-select form-select-sm mb-3" asp-for="PartnerOrganizationId" asp-items="ViewBag.Partners">
                 </select>
              </div>
             <div class="col-7"></div>
@@ -68,4 +82,6 @@
 
 @section scripts{
     <script asp-src-include="~/js/select.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 }

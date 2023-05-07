@@ -20,7 +20,7 @@ namespace AIS.Services
         public async Task<List<Contract>> GetActiveContractsEagerLoading()
         {
             return await db.Contracts
-                           .Include(u => u.Partner)
+                           .Include(u => u.PartnerOrganization)
                            .Include(u => u.MyContractStatus)
                            .Where(p => p.MyContractStatusId != 6)
                            .ToListAsync();
@@ -29,7 +29,7 @@ namespace AIS.Services
         public async Task<List<Contract>> GetArchiveContractsEagerLoading()
         {
             return await db.Contracts
-                           .Include(u => u.Partner)
+                           .Include(u => u.PartnerOrganization)
                            .Include(u => u.MyContractStatus)
                            .Where(p => p.MyContractStatusId == 6)
                            .ToListAsync();
@@ -73,7 +73,7 @@ namespace AIS.Services
                     MyContractStatusId = mcvm.MyContractStatusId,
                     DateStart = mcvm.DateStart,
                     DateEnd = mcvm.DateEnd,
-                    PartnerId = mcvm.PartnerId,
+                    PartnerOrganizationId = mcvm.PartnerOrganizationId,
                     SubjectOfContract = mcvm.SubjectOfContract,
                     Cost = mcvm.Cost
                 };
@@ -124,7 +124,7 @@ namespace AIS.Services
                 contract.NumberOfContract = mcvm.NumberOfContract;
                 contract.DateStart = mcvm.DateStart;
                 contract.DateEnd = mcvm.DateEnd;
-                contract.PartnerId = mcvm.PartnerId;
+                contract.PartnerOrganizationId = mcvm.PartnerOrganizationId;
                 contract.MyContractStatusId = mcvm.MyContractStatusId;
                 contract.SubjectOfContract = mcvm.SubjectOfContract;
                 contract.Cost = mcvm.Cost;
@@ -216,7 +216,7 @@ namespace AIS.Services
         }
 
         //Метод установки реквизитов контрагентов контракта
-        public DocumentModel SetContractRequisites(DocumentModel contract, bool isCustomer, Partner mainOrganization, Partner contragent)
+        public DocumentModel SetContractRequisites(DocumentModel contract, bool isCustomer, PartnerOrganization mainOrganization, PartnerOrganization contragent)
         {
             if (isCustomer == true)
             {
@@ -233,7 +233,7 @@ namespace AIS.Services
         }
 
         //Метод получения реквизитов
-        private Dictionary<string, string> GetRequisites(Partner contragent)
+        private Dictionary<string, string> GetRequisites(PartnerOrganization contragent)
         {
             Dictionary<string, string> props = new Dictionary<string, string>()
             {

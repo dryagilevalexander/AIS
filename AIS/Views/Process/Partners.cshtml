@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Core.Partner>
+﻿@model AIS.ViewModels.PartnersViewModel
 @{
     ViewData["Title"] = "Контрагенты";
 }
@@ -27,7 +27,7 @@
             <input type="text" id="tableFilter" />
         </td>
     </tr>
-    @foreach (var item in Model)
+    @foreach (var item in Model.Partners)
     {
         <tr class="table-data" onclick="myFunction(@item.Id)">
                 <td>@item.Name</td>
@@ -35,7 +35,6 @@
                 <td>@item.Email</td>
                 <td>@item.PhoneNumber</td>
                 <td>@item.PartnerType.Name</td>
-                <td>@item.OGRN</td>
             <td align="right">
                 <a class="btn btn-outline-primary" role="button" asp-action="EditPartner" asp-controller="process" asp-route-id="@item.Id">Изменить</a>
             </td>

@@ -27,7 +27,7 @@
                     <input type="text" class="form-control" placeholder="Номер дела" aria-label="Номер дела" asp-for="NumberOfСourtСase" id="NumberOfCourtCase">
                 </div>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="NumberOfСourtСase"></span></div>
         </div>
 
         <div class="row">
@@ -36,7 +36,7 @@
                     <input type="date" asp-format="{0:yyyy-MM-dd}" class="form-control" placeholder="Дата вынесения судебного приказа" aria-label="Дата вынесения судебного приказа" asp-for="DateOfOrder" id="DateOfOrder">
                 </div>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="DateOfOrder"></span></div>
         </div>
 
         <div class="row">

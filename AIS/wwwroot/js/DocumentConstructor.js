@@ -26,36 +26,39 @@ function change() {
 
 async function ConstructContract() {
 
-    if (document.getElementById('TypeOfStateRegId').value == '') { alert("Не заполнены обязательные поля!") }
+    var validateForm = $(document).find('#formContract');
+    validateForm.validate();
+    if (validateForm.valid())
+    {
+        currentContract = new DocConstructor();
+        formContract = document.getElementById('formContract').value;
+        currentContract.NumberOfContract = document.getElementById('NumberOfContract').value;
+        currentContract.DateStart = document.getElementById('DateStart').value;
+        currentContract.DateEnd = document.getElementById('DateEnd').value;
+        currentContract.PartnerId = document.getElementById('PartnerId').value;
+        currentContract.SubjectOfContract = document.getElementById('SubjectOfContract').value;
+        currentContract.Cost = document.getElementById('Cost').value;
+        currentContract.TypeOfStateRegId = document.getElementById('TypeOfStateRegId').value;
+        currentContract.ArticleOfLawId = document.getElementById('ArticleOfLawId').value;
+        currentContract.DocumentTemplateId = document.getElementById('DocumentTemplateId').value;
+        currentContract.IsCustomer = document.getElementById('IsCustomer').value;
+        currentContract.PlaceOfContract = document.getElementById('PlaceOfContract').value;
 
-    currentContract = new DocConstructor();
-    formContract = document.getElementById('formContract').value;
-    currentContract.NumberOfContract = document.getElementById('NumberOfContract').value;
-    currentContract.DateStart = document.getElementById('DateStart').value;
-    currentContract.DateEnd = document.getElementById('DateEnd').value;
-    currentContract.PartnerId = document.getElementById('PartnerId').value;
-    currentContract.SubjectOfContract = document.getElementById('SubjectOfContract').value;
-    currentContract.Cost = document.getElementById('Cost').value;
-    currentContract.TypeOfStateRegId = document.getElementById('TypeOfStateRegId').value;
-    currentContract.ArticleOfLawId = document.getElementById('ArticleOfLawId').value;
-    currentContract.DocumentTemplateId = document.getElementById('DocumentTemplateId').value;
-    currentContract.IsCustomer = document.getElementById('IsCustomer').value;
-    currentContract.PlaceOfContract = document.getElementById('PlaceOfContract').value;
+        let response = await fetch('/Process/ShadowConstructDocument', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(currentContract)
+        });
 
-    let response = await fetch('/Process/ShadowConstructDocument', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json;charset=utf-8'
-        },
-        body: JSON.stringify(currentContract)
-    });
-
-    if (response.status == 200) {
-        let result = await response.text();
-        addLink(result);
-    }
-    else {
-        console.log("Server response: ", resonse.status);
+        if (response.status == 200) {
+            let result = await response.text();
+            addLink(result);
+        }
+        else {
+            console.log("Server response: ", resonse.status);
+        }
     }
 }
 
