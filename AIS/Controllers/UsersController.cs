@@ -6,7 +6,7 @@ using Core;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using Microsoft.AspNetCore.Authorization;
-using AIS.ViewModels.ProcessViewModel;
+using AIS.ViewModels.UsersViewModels;
 
 namespace AIS.Controllers
 {

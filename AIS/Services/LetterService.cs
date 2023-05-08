@@ -1,7 +1,7 @@
 ﻿using Core;
 using System.Collections;
 using Microsoft.EntityFrameworkCore;
-using AIS.ViewModels.ProcessViewModel;
+using AIS.ViewModels.ProcessViewModels;
 
 namespace AIS.Services
 {

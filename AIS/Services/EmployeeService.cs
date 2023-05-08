@@ -1,4 +1,4 @@
-﻿using AIS.ViewModels.ProcessViewModel;
+﻿using AIS.ViewModels.ProcessViewModels;
 using Core;
 using Microsoft.EntityFrameworkCore;
 

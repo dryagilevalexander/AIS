@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Core;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
-using AIS.ViewModels.ProcessViewModel;
+using AIS.ViewModels.UsersViewModels;
 
 namespace AIS.Controllers
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
-using AIS.ViewModels.ProcessViewModel;
+using AIS.ViewModels.ProcessViewModels;
 
 namespace AIS.Services
 {

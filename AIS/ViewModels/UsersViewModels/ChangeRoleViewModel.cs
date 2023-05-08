@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 
-namespace AIS.ViewModels.ProcessViewModels
+namespace AIS.ViewModels.UsersViewModels
 {
     public class ChangeRoleViewModel
     {

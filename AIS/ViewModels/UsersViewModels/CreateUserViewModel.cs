@@ -1,4 +1,4 @@
-﻿namespace AIS.ViewModels.ProcessViewModels
+﻿namespace AIS.ViewModels.UsersViewModels
 {
     public class CreateUserViewModel
     {

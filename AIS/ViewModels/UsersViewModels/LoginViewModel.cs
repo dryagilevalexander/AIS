@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AIS.ViewModels.ProcessViewModels
+namespace AIS.ViewModels.UsersViewModels
 {
     public class LoginViewModel
     {
