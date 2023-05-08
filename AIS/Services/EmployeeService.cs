@@ -18,7 +18,7 @@ namespace AIS.Services
         {
             try
             {
-                IEnumerable<Employee>? employeers = await db.Employeers.Include(u => u.PartnerOrganization).ToListAsync();
+                IEnumerable<Employee>? employeers = await db.Employeers.Include(u => u.Partner).ToListAsync();
                 return employeers;
             }
             catch
@@ -52,7 +52,7 @@ namespace AIS.Services
                     Address = evm.Address,
                     PhoneNumber = evm.PhoneNumber,
                     Email = evm.Email,
-                    PartnerOrganizationId = evm.PartnerOrganizationId
+                    PartnerId = evm.PartnerId
                 };
 
                 db.Employeers.Add(employee);
@@ -78,7 +78,7 @@ namespace AIS.Services
                     employee.Address = evm.Address;
                     employee.PhoneNumber = evm.PhoneNumber;
                     employee.Email = evm.Email;
-                    employee.PartnerOrganizationId = evm.PartnerOrganizationId;
+                    employee.PartnerId = evm.PartnerId;
                     db.Employeers.Update(employee);
                     await db.SaveChangesAsync();
                     return true;

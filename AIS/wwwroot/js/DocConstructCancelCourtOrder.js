@@ -17,7 +17,7 @@ async function ConstructStatement() {
     statement.CourtId = document.getElementById('CourtId').value;
     statement.SubjectOfOrder = document.getElementById('SubjectOfOrder').value;
 
-    let response = await fetch('/Process/ShadowConstructStatementCancelOfCourtOrder', {
+    let response = await fetch('/Documents/ShadowConstructStatementCancelOfCourtOrder', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json;charset=utf-8'

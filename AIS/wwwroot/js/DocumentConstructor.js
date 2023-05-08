@@ -44,7 +44,7 @@ async function ConstructContract() {
         currentContract.IsCustomer = document.getElementById('IsCustomer').value;
         currentContract.PlaceOfContract = document.getElementById('PlaceOfContract').value;
 
-        let response = await fetch('/Process/ShadowConstructDocument', {
+        let response = await fetch('/Documents/ShadowConstructDocument', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'

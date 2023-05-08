@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using AIS.ViewModels;
 using Core;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using Microsoft.AspNetCore.Authorization;
+using AIS.ViewModels.ProcessViewModel;
 
 namespace AIS.Controllers
 {

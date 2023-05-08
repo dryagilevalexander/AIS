@@ -1,0 +1,215 @@
+﻿@model AIS.ViewModels.PartnersViewModels.EditPartnerIpViewModel;
+  <style type="text/css">
+    .input__box {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .name__input {
+        background: #fff;
+        padding: 10px;
+        border: 1px solid #6c6c6c;
+        color: #000;
+    }
+
+    .name__input_label {
+        position: absolute;
+        color: #6c6c6c;
+        top: -10px;
+        left: 20px;
+        background: #fff;
+        padding: 0 5px;
+    }
+  </style>
+
+<h2>Редактирование данных контрагента</h2>
+
+<form asp-action="editpartnerip" name="form1" asp-controller="partners">
+<div class="validation" asp-validation-summary="ModelOnly"></div>
+    <div class="container">
+
+        <input type="hidden" class="form-control" asp-for="PartnerTypeId">
+        <input type="hidden" class="form-control" asp-for="Id">
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="ФИО" aria-label="ФИО" asp-for="Fio">
+                </div>
+            </div>
+            <div class="col-7"><span asp-validation-for="Fio"></span></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="ФИО с инициалами" aria-label="Фио с инициалами" asp-for="ShortFio">
+                </div>
+            </div>
+            <div class="col-7"><span asp-validation-for="ShortFio"></span></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="ФИО с инициалами в родительном падеже" aria-label="Фио с инициалами в родительном падеже" asp-for="ShortFioR">
+                </div>
+            </div>
+            <div class="col-7"><span asp-validation-for="ShortFioR"></span></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Адрес" aria-label="Адрес" asp-for="Address">
+                </div>
+            </div>
+            <div class="col-7"><span asp-validation-for="Address"></span></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Email" aria-label="Email" asp-for="Email">
+                </div>
+            </div>
+            <div class="col-7"><span asp-validation-for="Email"></span></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Телефонный номер" aria-label="Телефонный номер" asp-for="PhoneNumber">
+                </div>
+            </div>
+            <div class="col-7"><span asp-validation-for="PhoneNumber"></span></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="ИНН" aria-label="ИНН" asp-for="INN">
+                </div>
+            </div>
+            <div class="col-7"><span asp-validation-for="INN"></span></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Банк" aria-label="Банк" asp-for="Bank">
+                </div>
+            </div>
+            <div class="col-7"><span asp-validation-for="Bank"></span></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Расчетный счет" aria-label="Расчетный счет" asp-for="Account">
+                </div>
+            </div>
+            <div class="col-7"><span asp-validation-for="Account"></span></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Корреспондентский счет" aria-label="Корреспондентский счет" asp-for="CorrespondentAccount">
+                </div>
+            </div>
+            <div class="col-7"><span asp-validation-for="CorrespondentAccount"></span></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Бик" aria-label="Бик" asp-for="BIK">
+                </div>
+            </div>
+            <div class="col-7"><span asp-validation-for="BIK"></span></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select size="2" data-placeholder="Тип взаимоотношений" class="form-select" asp-for="PartnerStatusId" asp-items="@Model.PartnerStatuses" id="PartnerStatusId1">
+                </select>
+            </div>
+            <div class="col-7"><span asp-validation-for="PartnerStatusId"></span></div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Паспорт: серия" aria-label="Паспорт: серия" asp-for="PassportSeries">
+            </div>
+        </div>
+        <div class="col-7"><span asp-validation-for="PassportSeries"></span></div>
+    </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Паспорт: номер" aria-label="Паспорт: номер" asp-for="PassportNumber">
+            </div>
+        </div>
+        <div class="col-7"><span asp-validation-for="PassportNumber"></span></div>
+    </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="input__box">
+                <label class="name__input_label">Дата выдачи паспорта</label>
+                <input type="date" asp-format="{0:yyyy-MM-dd}" class="form-control" placeholder="Дата выдачи паспорта" aria-label="Дата выдачи паспорта" asp-for="PassportDateOfIssue">
+            </div>
+        </div>
+        <div class="col-7"><span asp-validation-for="PassportDateOfIssue"></span></div>
+    </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Место выдачи паспорта" aria-label="Место выдачи паспорта" asp-for="PassportPlaseOfIssue" class="name__input">
+            </div>
+        </div>
+        <div class="col-7"><span asp-validation-for="PassportPlaseOfIssue"></span></div>
+    </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Код подразделения" aria-label="Код подразделения" asp-for="PassportDivisionCode">
+            </div>
+        </div>
+        <div class="col-7"><span asp-validation-for="PassportDivisionCode"></span></div>
+    </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="input__box">
+                <label class="name__input_label">Дата рождения</label>
+                <input type="date" asp-format="{0:yyyy-MM-dd}" class="form-control" placeholder="Дата рождения" aria-label="Дата рождения" asp-for="PassportDateOfBirth" class="name__input">
+            </div>
+        </div>
+        <div class="col-7"><span asp-validation-for="PassportDateOfBirth"></span></div>
+    </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <input class="btn btn-primary" type="submit" value="Отправить" />
+            </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+</form>
+
+@section scripts{
+    <script asp-src-include="~/js/partners.js"></script>
+    <script asp-src-include="~/js/select.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

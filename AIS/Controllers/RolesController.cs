@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using AIS.ViewModels;
 using Core;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+using AIS.ViewModels.ProcessViewModel;
 
 namespace AIS.Controllers
 {

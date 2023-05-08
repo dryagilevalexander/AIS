@@ -1,0 +1,58 @@
+﻿@model AIS.ViewModels.PartnersViewModels.PartnersViewModel
+@{
+    ViewData["Title"] = "Контрагенты";
+}
+
+<h2>Список контрагентов</h2>
+<p><a asp-action="CreatePartner">Добавить контрагента</a></p>
+<table class="table table-sm table-hover table-condensed" id="currentTable">
+    <tr><th onclick="sortTable(0)">Наименование</th><th onclick="sortTable(1)">Адрес</th><th>Email</th><th>Телефон</th><th onclick="sortTable(2)">Тип</th><th>ОГРН</th></tr>
+    <tr class="table-filters">
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+    </tr>
+    @foreach (var item in Model.Partners)
+    {
+       //<tr class="table-data" onclick="myFunction(@item.Id)">
+        <tr class="table-data">
+                <td>@item.Name</td>
+                <td>@item.Address</td>
+                <td>@item.Email</td>
+                <td>@item.PhoneNumber</td>
+                <td>@item.PartnerType.Name</td>
+            <td align="right">
+                <a class="btn btn-outline-primary" role="button" asp-action="EditPartner" asp-controller="partners" asp-route-id="@item.Id">Изменить</a>
+            </td>
+            <td align="left">
+                <form asp-controller="pфкетукы" asp-action="DeletePartner" method="post" asp-route-id="@item.Id">
+                    <input type="submit" value="Удалить" class="btn btn-outline-danger"/>
+                </form>
+            </td>
+        </tr>
+    }
+</table>
+
+<div id="modDialog" class="modal fade">
+    <div id="dialogContent" class="modal-dialog modal-lg modal-dialog-centered"></div>
+</div>
+
+@section scripts{
+    <script asp-src-include="~/js/tables.js"></script>
+    <script asp-src-include="~/js/subTasks.js"></script>
+}

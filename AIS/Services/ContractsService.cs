@@ -20,7 +20,7 @@ namespace AIS.Services
         public async Task<List<Contract>> GetActiveContractsEagerLoading()
         {
             return await db.Contracts
-                           .Include(u => u.PartnerOrganization)
+                           .Include(u => u.Partner)
                            .Include(u => u.MyContractStatus)
                            .Where(p => p.MyContractStatusId != 6)
                            .ToListAsync();
@@ -29,7 +29,7 @@ namespace AIS.Services
         public async Task<List<Contract>> GetArchiveContractsEagerLoading()
         {
             return await db.Contracts
-                           .Include(u => u.PartnerOrganization)
+                           .Include(u => u.Partner)
                            .Include(u => u.MyContractStatus)
                            .Where(p => p.MyContractStatusId == 6)
                            .ToListAsync();
@@ -216,7 +216,7 @@ namespace AIS.Services
         }
 
         //Метод установки реквизитов контрагентов контракта
-        public DocumentModel SetContractRequisites(DocumentModel contract, bool isCustomer, PartnerOrganization mainOrganization, PartnerOrganization contragent)
+        public DocumentModel SetContractRequisites(DocumentModel contract, bool isCustomer, Partner mainOrganization, Partner contragent)
         {
             if (isCustomer == true)
             {
@@ -233,7 +233,7 @@ namespace AIS.Services
         }
 
         //Метод получения реквизитов
-        private Dictionary<string, string> GetRequisites(PartnerOrganization contragent)
+        private Dictionary<string, string> GetRequisites(Partner contragent)
         {
             Dictionary<string, string> props = new Dictionary<string, string>()
             {

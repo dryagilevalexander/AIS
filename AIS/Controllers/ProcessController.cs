@@ -17,6 +17,8 @@ using static AIS.Controllers.ProcessController;
 using DocumentFormat.OpenXml.Presentation;
 using System.Linq;
 using DocumentFormat.OpenXml.Office2010.Excel;
+using System.ComponentModel.DataAnnotations;
+using AIS.ViewModels.DocumentsViewModels;
 
 namespace AIS.Controllers
 {
@@ -73,7 +75,7 @@ namespace AIS.Controllers
 
         public async Task<IActionResult> CreateEmployee()
         {
-            IEnumerable<PartnerOrganization> partners = await _partnerService.GetPartnersOrganizations();
+            IEnumerable<Partner> partners = await _partnerService.GetPartners();
             if (partners is not null)
             {
                 ViewBag.Partners = new SelectList(partners, "Id", "Name");
@@ -121,7 +123,7 @@ namespace AIS.Controllers
 
         public async Task<IActionResult> EditEmployee(int id)
         {
-                IEnumerable<PartnerOrganization> partners = await _partnerService.GetPartnersOrganizations();
+                IEnumerable<Partner> partners = await _partnerService.GetPartners();
                 ViewBag.Partners = new SelectList(partners, "Id", "Name");
                 Employee? employee = await _employeeService.GetEmployee(id);
                 if (employee == null) return NotFound();
@@ -136,7 +138,7 @@ namespace AIS.Controllers
                 Email = employee.Email,
             };
 
-            if (employee.PartnerOrganizationId != null) evm.PartnerOrganizationId = employee.PartnerOrganizationId.Value;
+            if (employee.PartnerId != null) evm.PartnerId = employee.PartnerId.Value;
 
             return View(evm);
         }
@@ -156,114 +158,6 @@ namespace AIS.Controllers
             {
                 return NotFound();
             }
-        }
-        #endregion
-
-        #region [Partners]
-        public async Task<IActionResult> Partners()
-        {
-            PartnersViewModel pvm = new PartnersViewModel();
-            IEnumerable<Partner> partners = await _partnerService.GetPartnersEagerLoading();
-            List<PartnerModel> partnersData = new List<PartnerModel>();
-            foreach (Partner partner in partners)
-            {
-                AIS.ViewModels.PartnerModel partnerModel = new AIS.ViewModels.PartnerModel();
-                if(partner is PartnerOrganization) 
-                {
-                    partnerModel.Id = partner.Id;
-                    partnerModel.Name = ((PartnerOrganization)partner).Name;
-                    partnerModel.Address = partner.Address;
-                    partnerModel.Email = partner.Email;
-                    partnerModel.PhoneNumber = partner.PhoneNumber;
-                    partnerModel.PartnerType = partner.PartnerType;
-                }
-
-                partnersData.Add(partnerModel);
-            }
-            pvm.Partners = partnersData.ToList();
-            return View(pvm);
-        }
-
-        public async Task<IActionResult> CreatePartner()
-        {
-            PartnerViewModel partnerViewModel = new PartnerViewModel();
-            var partnerTypes = await _partnerService.GetPartnerTypes();
-            partnerViewModel.PartnerTypes = from partnerType in partnerTypes select new SelectListItem { Text = partnerType.Name, Value = partnerType.Id.ToString() };
-
-            return View(partnerViewModel);
-        }
-
-        public async Task<IActionResult> CreatePartnerOrganization()
-        {
-            CreatePartnerOrganizationViewModel cpovm = new CreatePartnerOrganizationViewModel();
-            var directorTypes = await _partnerService.GetDirectorTypes();
-            cpovm.DirectorTypes = from directorType in directorTypes select new SelectListItem { Text = directorType.Name, Value = directorType.Id.ToString() };
-            var partnerStatuses = await _partnerService.GetPartnerStatuses();
-            cpovm.PartnerStatuses = from partnerStatus in partnerStatuses select new SelectListItem { Text = partnerStatus.Name, Value = partnerStatus.Id.ToString() };
-            cpovm.PartnerTypeId = 1;
-
-            return PartialView(cpovm);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreatePartnerOrganization(CreatePartnerOrganizationViewModel cpovm)
-        {
-            PartnerOrganization partner = new PartnerOrganization()
-            {
-                Name = cpovm.Name,
-                ShortName = cpovm.ShortName,
-                INN = cpovm.ShortName,
-                KPP = cpovm.KPP,
-                DirectorTypeId = cpovm.DirectorTypeId,
-                DirectorName = cpovm.DirectorName,
-                DirectorNameR = cpovm.DirectorNameR,
-                Bank = cpovm.Bank,
-                Account = cpovm.Account,
-                CorrespondentAccount = cpovm.CorrespondentAccount,
-                BIK = cpovm.BIK,
-                OGRN = cpovm.OGRN
-            };
-            if (await _partnerService.CreatePartnerOrganization(partner) == true)
-            {
-                return RedirectToAction("Partners");
-            }
-            else
-            {
-                return NotFound();
-            }
-        }
-
-
-        [HttpPost]
-        public async Task<IActionResult> DeletePartner(int id)
-        {
-            if (await _partnerService.DeletePartner(id) == true)
-            {
-                return RedirectToAction("Partners");
-            }
-            else
-            {
-                return NotFound();
-            }
-        }
-
-
-        [HttpPost]
-        public async Task<IActionResult> EditPartner(Partner partner)
-        {
-            if (await _partnerService.EditPartner(partner) == true)
-            {
-                return RedirectToAction("Partners");
-            }
-            else
-            {
-                return NotFound();
-            }
-        }
-
-        public async Task<IActionResult> PartnerCard(int id)
-        {
-            return PartialView(await _partnerService.GetPartnerEagerLoading(id));
         }
         #endregion
 
@@ -431,7 +325,7 @@ namespace AIS.Controllers
         public async Task<IActionResult> CreateContract()
         {
             MyContractViewModel myContractViewModel = new MyContractViewModel();
-            IEnumerable<PartnerOrganization> myPartners = await _partnerService.GetPartnersWithoutOurOrganization();
+            IEnumerable<Partner> myPartners = await _partnerService.GetPartnersWithoutOurOrganization();
             myContractViewModel.MyPartners = from myPartner in myPartners select new SelectListItem { Text = myPartner.ShortName, Value = myPartner.Id.ToString() };
             IEnumerable<DocumentTemplate> DocumentTemplates = await _conditionsService.GetDocumentTemplates();
             IEnumerable<TypeOfStateReg> typeOfStateRegs = await _contractsService.GetTypeOfStateRegs();
@@ -476,7 +370,7 @@ namespace AIS.Controllers
                 if(contract == null) return NotFound();
 
                 IEnumerable<MyFile> enclosures = await _enclosureService.GetMyEnclosuresByContractId(id);
-                IEnumerable<PartnerOrganization> myPartners = await _partnerService.GetPartnersOrganizations();
+                IEnumerable<Partner> myPartners = await _partnerService.GetPartners();
                 var partners = from myPartner in myPartners select new SelectListItem { Text = myPartner.ShortName, Value = myPartner.Id.ToString() };
                 IEnumerable<MyContractStatus> myContractStatuses = await _contractsService.GetMyContractStatuses();
                 var contractStatuses = from statusOfContract in myContractStatuses select new SelectListItem { Text = statusOfContract.Name, Value = statusOfContract.Id.ToString() };
@@ -1299,8 +1193,8 @@ namespace AIS.Controllers
 
             
 
-            PartnerOrganization contragent = await _partnerService.GetPartner(Convert.ToInt32(jsonContractData.PartnerId));
-            PartnerOrganization mainOrganization = await _partnerService.GetOurOrganization();
+            Partner contragent = await _partnerService.GetPartner(Convert.ToInt32(jsonContractData.PartnerId));
+            Partner mainOrganization = await _partnerService.GetOurOrganization();
 
 
 
@@ -1353,7 +1247,7 @@ namespace AIS.Controllers
                 CancellationOfCourtOrderViewModel ccovm = new CancellationOfCourtOrderViewModel();
                 var courts = await _partnerService.GetPartnersByPartnerCategoryId(2);
                 ccovm.Courts = from court in courts select new SelectListItem { Text = court.Name, Value = court.Id.ToString() };
-                var  partners= await _partnerService.GetPartnersOrganizations();
+                var  partners = await _partnerService.GetPartners();
                 ccovm.MyPartners = from partner in partners select new SelectListItem { Text = partner.Name, Value = partner.Id.ToString() };
 
             return View(ccovm);

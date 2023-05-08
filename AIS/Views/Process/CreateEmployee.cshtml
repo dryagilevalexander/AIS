@@ -1,4 +1,4 @@
-﻿@model AIS.ViewModels.EmployeeViewModel;
+﻿@model EmployeeViewModel;
 
 <h2>Добавление сотрудника контрагента</h2>
 <form asp-action="createemployee" asp-controller="process">
@@ -63,7 +63,7 @@
 
         <div class="row">
             <div class="col-5 mb-3">
-                <select size="2" data-placeholder="Контрагент" class="form-select form-select-sm mb-3" asp-for="PartnerOrganizationId" asp-items="ViewBag.Partners">
+                <select size="2" data-placeholder="Контрагент" class="form-select form-select-sm mb-3" asp-for="PartnerId" asp-items="ViewBag.Partners">
                 </select>
              </div>
             <div class="col-7"></div>

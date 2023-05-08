@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Шаблоны";
+}
+
+<h2>Список задач</h2>
+
+<table class="table table-sm table-hover table-condensed" id="currentTable">
+    <tr><th onclick="sortTable(0)">Наименование</th><th onclick="sortTable(1)">Описание</th></tr> 
+    <tr class="table-filters">
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+    </tr>
+    <tr class="table-data">
+            <td>Заявление об отмене судебного приказа</td>
+            <td>Шаблон заявления об отмене судебного приказа</td>
+             <td align="right">
+                 <a class="btn btn-outline-primary" role="button" asp-action="CreateCancellationOfCourtOrder" asp-controller="documents">Открыть</a>
+             </td>
+    </tr>
+</table>
+
+@section scripts{
+    <script asp-src-include="~/js/tables.js"></script>
+}

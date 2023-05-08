@@ -1,9 +1,9 @@
-﻿using AIS.ViewModels;
-using Core;
+﻿using Core;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using AIS.ViewModels.ProcessViewModel;
 
 namespace AIS.Controllers
 {

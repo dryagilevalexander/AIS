@@ -1,9 +1,9 @@
-﻿using AIS.ViewModels;
-using Core;
+﻿using Core;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
+using AIS.ViewModels.ProcessViewModel;
 
 namespace AIS.Services
 {

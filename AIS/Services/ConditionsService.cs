@@ -1,4 +1,4 @@
-﻿using AIS.ViewModels;
+﻿using AIS.ViewModels.DocumentsViewModels;
 using Core;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.AspNetCore.Mvc;

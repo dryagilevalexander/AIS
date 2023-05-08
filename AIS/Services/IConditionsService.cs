@@ -1,4 +1,4 @@
-﻿using AIS.ViewModels;
+﻿using AIS.ViewModels.DocumentsViewModels;
 using Core;
 
 namespace AIS.Services

@@ -1,0 +1,86 @@
+﻿@model AIS.ViewModels.DocumentsViewModels.SubConditionParagraphViewModel;
+
+<h2>Изменение подпункта</h2>
+
+<form  asp-action="editsubconditionparagraph" asp-controller="documents" method="post">
+    <div class="validation" asp-validation-summary="ModelOnly"></div>
+    <div class="container">
+
+        <input type="hidden" class="form-control" asp-for="SubConditionId">
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select class="form-select" size="2" data-placeholder="Уровень нумерации" id="NumLevelReference" asp-for="NumLevelReference">
+                    <option selected value="0">Без нумерации</option>
+                    <option value="1">Первый (1.)</option>
+                    <option value="2">Второй (1.1.)</option>
+                    <option value="3">Третий (1.1.1.)</option>
+                </select>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select class="form-select" size="2" data-placeholder="Группировка нумерации" id="NumId" asp-for="NumId">
+                    <option selected value="0">Группировка отсутствует</option>
+                    <option value="1">Первая</option>
+                    <option value="2">Вторая</option>
+                    <option value="3">Третяя</option>
+                    <option value="4">Четвертая</option>
+                    <option value="5">Пятая</option>
+                </select>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <select class="form-select" size="2" data-placeholder="Выравнивание текста" id="Justification" asp-for="Justification">
+                    <option value="left">Слева</option>
+                    <option value="center">По центру</option>
+                    <option value="right">Справа</option>
+                    <option value="both">Выравнивание по ширине</option>
+                </select>
+            </div>
+            <div class="col-7"><span asp-validation-for="Justification"></span></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Текст подпункта" aria-label="Текст подпункта" asp-for="Text">
+                </div>
+            </div>
+            <div class="col-7"><span asp-validation-for="Text"></span></div>
+        </div>
+    </div>
+
+        <div class="row">
+            <div class="col-12 mb-3"></div>
+        </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <div>
+                        <a class="btn btn-secondary" role="button" asp-action="EditSubCondition" asp-controller="documents" asp-route-id="@Model.SubConditionId">Отмена</a>
+                    </div>
+                    <div class="col-1"></div>
+                    <div>
+                        <input class="btn btn-primary" type="submit" value="Отправить" />
+                    </div>
+            </div>
+        </div>
+        <div class="col-7"></div>
+    </div>
+</form>
+
+@section scripts{
+    <script asp-src-include="~/js/select.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
+
+
+

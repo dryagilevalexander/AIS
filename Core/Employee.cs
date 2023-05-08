@@ -15,7 +15,7 @@ namespace Core
       public string Address { get; set; } = null!;
       public string PhoneNumber { get; set; } = null!;
       public string Email { get; set; } = null!;
-      public int? PartnerOrganizationId { get; set; }
-      public PartnerOrganization? PartnerOrganization { get; set; }
+      public int? PartnerId { get; set; }
+      public Partner? Partner { get; set; }
     }
 }

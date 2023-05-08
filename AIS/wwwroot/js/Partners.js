@@ -5,30 +5,27 @@
     let url;
 
     if (id === '1') {
-        url = '/Process/CreatePartnerOrganization/';
+        url = '/Partners/CreatePartnerOrganization/';
     }
 
     if (id === '2') {
-        url = '/Process/CreatePartnerIP/';
+        url = '/Partners/CreatePartnerIP/';
     }
 
     if (id === '3') {
-        url = '/Process/CreatePartnerFL/';
+        url = '/Partners/CreatePartnerFL/';
     }
 
     let response = await fetch(url);
     if (response.ok) {
         let data = await response.text();
         partialCreatePartner.html(data);
-        multiselectForPartialView();
+
+        $('.form-select').multiselect({
+            buttonWidth: '100%'
+        });
     }
     else {
         alert("Ошибка HTTP: " + response.status);
     }
-}
-
-function multiselectForPartialView() {
-    $('.form-select').multiselect({
-        buttonWidth: '100%'
-    });
 }

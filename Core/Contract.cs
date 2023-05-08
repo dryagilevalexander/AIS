@@ -18,7 +18,7 @@ namespace Core
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime? DateEnd { get; set; }       
         public int? PartnerOrganizationId { get; set; }
-        public PartnerOrganization? PartnerOrganization { get; set; }
+        public Partner? Partner { get; set; }
         public string? SubjectOfContract { get; set; }       
         public decimal? Cost { get; set; }
         public int TypeOfContract { get; set; }
