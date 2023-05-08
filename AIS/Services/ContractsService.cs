@@ -1,4 +1,4 @@
-﻿using AIS.ViewModels;
+﻿using AIS.ViewModels.ProcessViewModel;
 using Core;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Mvc;

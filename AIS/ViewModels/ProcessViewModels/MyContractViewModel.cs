@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
-namespace AIS.ViewModels.ProcessViewModel
+namespace AIS.ViewModels.ProcessViewModels
 {
     public class MyContractViewModel
     {

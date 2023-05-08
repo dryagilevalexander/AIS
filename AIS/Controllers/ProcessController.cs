@@ -2,7 +2,6 @@
 using Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using AIS.ViewModels;
 using AIS.Services;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
@@ -19,6 +18,7 @@ using System.Linq;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using System.ComponentModel.DataAnnotations;
 using AIS.ViewModels.DocumentsViewModels;
+using AIS.ViewModels.ProcessViewModel;
 
 namespace AIS.Controllers
 {
