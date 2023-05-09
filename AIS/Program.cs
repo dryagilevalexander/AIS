@@ -7,6 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using System.Globalization;
 using Microsoft.AspNetCore.SignalR;
+using DocumentFormat.OpenXml.InkML;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +31,29 @@ builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var app = builder.Build();
+app.Environment.EnvironmentName = "Production";
+
+
+app.UseStatusCodePages(async statusCodeContext =>
+{
+    var response = statusCodeContext.HttpContext.Response;
+    var path = statusCodeContext.HttpContext.Request.Path;
+
+    response.ContentType = "text/plain; charset=UTF-8";
+    if (response.StatusCode == 403)
+    {
+        await response.WriteAsync($"Доступ к ресурсу: {path} запрещен");
+    }
+    else if (response.StatusCode == 404)
+    {
+        await response.WriteAsync($"Страница {path} не найдена");
+    }
+    else if (response.StatusCode == 500)
+    {
+        await response.WriteAsync($"Сейчас сервер не может обработать запрос");
+    }
+});
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

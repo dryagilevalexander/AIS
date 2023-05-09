@@ -630,7 +630,7 @@ namespace AIS.Controllers
             
 
             Partner contragent = await _partnerService.GetPartner(Convert.ToInt32(jsonContractData.PartnerId));
-            Partner mainOrganization = await _partnerService.GetOurOrganization();
+            Partner mainOrganization = await _partnerService.GetMainOrganization();
 
 
 

@@ -3,6 +3,8 @@ using Core;
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
+using AIS.ErrorManager;
 
 
 namespace AIS.Services
@@ -25,7 +27,7 @@ namespace AIS.Services
             }
             catch
             {
-                return null;
+                throw new Exception("Ошибка выполнения запроса");
             }
         }
 
@@ -38,7 +40,7 @@ namespace AIS.Services
             }
             catch
             {
-                return null;
+                throw new Exception("Ошибка выполнения запроса");
             }
         }
 
@@ -51,21 +53,15 @@ namespace AIS.Services
             }
             catch
             {
-                return null;
+                throw new Exception("Ошибка выполнения запроса");
             }
         }
 
         public async Task<Partner?> GetPartner(int id)
         {
-            try 
-            { 
             Partner? partner = await db.Partners.Include(p => p.DirectorType).FirstOrDefaultAsync(p => p.Id == id);
+            if(partner == null) throw new Exception("Не найден контрагент");
             return partner;
-            }
-            catch
-            {
-            return null;
-            }
         }
 
         public async Task<IEnumerable<PartnerCategory>> GetCategories()
@@ -77,35 +73,34 @@ namespace AIS.Services
             }
             catch
             {
-                return null;
+                throw new Exception("Ошибка выполнения запроса");
             }
         }
 
         public async Task<Partner?> GetPartnerEagerLoading(int id)
         {
+
+            Partner? partner = await db.Partners.Include(u => u.PartnerType).FirstOrDefaultAsync(p => p.Id == id);
+            if (partner == null) throw new Exception("Не найден контрагент");
+            return partner;
+        }
+        public async Task CreatePartner(Partner partner)
+        {
             try
             {
-                Partner? partner = await db.Partners.Include(u => u.PartnerType).FirstOrDefaultAsync(p => p.Id == id);
-                return partner;
+            db.Partners.Add(partner);
+            await db.SaveChangesAsync();
             }
             catch
             {
-                return null;
+                throw new Exception("Ошибка создания контрагента");
             }
         }
-        public async Task<bool> CreatePartner(Partner partner)
-        {
-                db.Partners.Add(partner);
-                await db.SaveChangesAsync();
-                return true;
-         
-        }
 
-        public async Task<bool> EditPartnerOrganization(EditPartnerOrganizationViewModel model)
+        public async Task EditPartnerOrganization(EditPartnerOrganizationViewModel model)
         {
-            try
-            {
-                var partner = await db.Partners.FirstOrDefaultAsync(p => p.Id == model.Id);
+                Partner? partner = await db.Partners.FirstOrDefaultAsync(p => p.Id == model.Id);
+                if(partner == null) throw new AisException("Контрагент не найден", HttpStatusCode.BadRequest);
 
                 partner.Name = model.Name;
                 partner.ShortName = model.ShortName;
@@ -127,20 +122,12 @@ namespace AIS.Services
 
                 db.Partners.Update(partner);
                 await db.SaveChangesAsync();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
         }
 
-        public async Task<bool> EditPartnerIp(EditPartnerIpViewModel model)
+        public async Task EditPartnerIp(EditPartnerIpViewModel model)
         {
-            try
-            {
-                var partner = await db.Partners.FirstOrDefaultAsync(p => p.Id == model.Id);
-                
+                Partner? partner = await db.Partners.FirstOrDefaultAsync(p => p.Id == model.Id);
+                if (partner == null) throw new AisException("Контрагент не найден", HttpStatusCode.BadRequest);
 
                 partner.Fio = model.Fio;
                 partner.ShortFio = model.ShortFio;
@@ -163,20 +150,12 @@ namespace AIS.Services
 
                 db.Partners.Update(partner);
                 await db.SaveChangesAsync();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
         }
 
-        public async Task<bool> EditPartnerFl(EditPartnerFlViewModel model)
+        public async Task EditPartnerFl(EditPartnerFlViewModel model)
         {
-            try
-            {
-                var partner = await db.Partners.FirstOrDefaultAsync(p => p.Id == model.Id);
-
+                Partner? partner = await db.Partners.FirstOrDefaultAsync(p => p.Id == model.Id);
+                if (partner == null) throw new AisException("Контрагент не найден", HttpStatusCode.BadRequest);
 
                 partner.Fio = model.Fio;
                 partner.ShortFio = model.ShortFio;
@@ -195,15 +174,9 @@ namespace AIS.Services
 
                 db.Partners.Update(partner);
                 await db.SaveChangesAsync();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
         }
 
-        public async Task<bool> DeletePartner(int? id)
+        public async Task DeletePartner(int? id)
         {
             if (id != null)
             {
@@ -232,9 +205,7 @@ namespace AIS.Services
                 }
 
                 await db.SaveChangesAsync();
-                return true;
-            }
-            return false;
+            } else throw new AisException("Ошибка удаления контрагента", HttpStatusCode.BadRequest);
         }
         public async Task<IEnumerable<DirectorType>> GetDirectorTypes()
         {
@@ -245,7 +216,7 @@ namespace AIS.Services
             }
             catch
             {
-                return null;
+             throw new Exception("Внутренняя ошибка сервера");
             }
         }
 
@@ -258,7 +229,7 @@ namespace AIS.Services
             }
             catch
             {
-                return null;
+                throw new Exception("Внутренняя ошибка сервера");
             }
         }
 
@@ -271,7 +242,7 @@ namespace AIS.Services
             }
             catch
             {
-                return null;
+                throw new Exception("Внутренняя ошибка сервера");
             }
         }
 
@@ -283,22 +254,23 @@ namespace AIS.Services
 
         public async Task<PartnerType> GetPartnerTypeById(int? id)
         {
-            return await db.PartnerTypes.FirstOrDefaultAsync(p => p.Id == id.Value);
-        }
-
-        public async Task<Partner> GetOurOrganization()
-        {
-            return db.Partners.Include(p => p.DirectorType).FirstOrDefault(p => p.PartnerStatusId == 1);
+            PartnerType? partnerType = await db.PartnerTypes.FirstOrDefaultAsync(p => p.Id == id.Value);
+            if (partnerType == null) throw new Exception("Не найден тип контрагента");
+            return partnerType;
         }
 
         public async Task<DirectorType?> GetDirectorTypeById(int? id)
         {
-            return await db.DirectorTypes.FirstOrDefaultAsync(p => p.Id == id);
+            DirectorType? directorType = await db.DirectorTypes.FirstOrDefaultAsync(p => p.Id == id);
+            if (directorType == null) throw new Exception("Не найден тип руководителя");
+            return directorType;
         }
 
-        public Partner GetMainOrganization()
+        public async Task<Partner> GetMainOrganization()
         {
-            return db.Partners.Include(p => p.DirectorType).FirstOrDefault(p => p.PartnerStatusId == 1);
+            Partner? partner = await db.Partners.Include(p => p.DirectorType).FirstOrDefaultAsync(p => p.PartnerStatusId == 1);
+            if (partner == null) throw new Exception("Головная организация не найдена");
+            return partner;
         }
     }
 }

@@ -1,9 +1,10 @@
+using System.Net;
+
 namespace AIS.Models
 {
     public class ErrorViewModel
     {
-        public string? RequestId { get; set; }
-
-        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+        public string Message { get; set; }
+        public HttpStatusCode StatusCode { get; set; }
     }
 }

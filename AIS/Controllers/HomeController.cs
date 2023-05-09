@@ -24,6 +24,8 @@ using static System.Net.Mime.MediaTypeNames;
 using static Npgsql.PostgresTypes.PostgresCompositeType;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
+using AIS.ErrorManager;
 
 namespace AIS.Controllers
 {
@@ -39,6 +41,27 @@ namespace AIS.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult Error()
+        {
+            Exception? exception = HttpContext.Features
+                .Get<IExceptionHandlerPathFeature>()?
+                .Error;
+
+            if (exception is AisException aisException)
+            {
+                return View(new ErrorViewModel
+                {
+                    Message = aisException.Message,
+                    StatusCode = aisException.StatusCode,
+                });
+            }
+            return View(new ErrorViewModel
+            {
+                Message = exception?.Message ?? "unknown error",
+                StatusCode = HttpStatusCode.InternalServerError,
+            });
         }
     }
 }

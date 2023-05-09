@@ -101,14 +101,8 @@ namespace AIS.Controllers
                 PhoneNumber = model.PhoneNumber,
                 Email = model.Email                             
             };
-            if (await _partnerService.CreatePartner(partner) == true)
-            {
+                await _partnerService.CreatePartner(partner);
                 return RedirectToAction("Partners");
-            }
-            else
-            {
-                return NotFound();
-            }
         }
 
         public async Task<IActionResult> EditPartner(int id)
@@ -132,7 +126,6 @@ namespace AIS.Controllers
         public async Task<IActionResult> EditPartnerOrganization(int id)
         {
             Partner? partner = await _partnerService.GetPartner(id);
-            if (partner == null) return NotFound();
             EditPartnerOrganizationViewModel model = new EditPartnerOrganizationViewModel()
             {
                 Id = partner.Id,
@@ -176,14 +169,8 @@ namespace AIS.Controllers
                 return NotFound();
             }
 
-            if (await _partnerService.EditPartnerOrganization(model) == true)
-            {
-                return RedirectToAction("Partners");
-            }
-            else
-            {
-                return NotFound();
-            }
+            await _partnerService.EditPartnerOrganization(model);
+            return RedirectToAction("Partners");
         }
 
         public async Task<IActionResult> CreatePartnerIp()
@@ -226,14 +213,8 @@ namespace AIS.Controllers
                 PassportPlaseOfIssue = model.PassportPlaseOfIssue,
                 PassportDivisionCode = model.PassportDivisionCode
             };
-            if (await _partnerService.CreatePartner(partner) == true)
-            {
-                return RedirectToAction("Partners");
-            }
-            else
-            {
-                return NotFound();
-            }
+            await _partnerService.CreatePartner(partner);
+            return RedirectToAction("Partners");
         }
 
         public async Task<IActionResult> EditPartnerIp(int id)
@@ -278,14 +259,8 @@ namespace AIS.Controllers
                 return NotFound();
             }
 
-            if (await _partnerService.EditPartnerIp(model) == true)
-            {
-                return RedirectToAction("Partners");
-            }
-            else
-            {
-                return NotFound();
-            }
+            await _partnerService.EditPartnerIp(model);
+            return RedirectToAction("Partners");
         }
 
         public async Task<IActionResult> CreatePartnerFl()
@@ -324,14 +299,8 @@ namespace AIS.Controllers
                 PassportPlaseOfIssue = model.PassportPlaseOfIssue,
                 PassportDivisionCode = model.PassportDivisionCode
             };
-            if (await _partnerService.CreatePartner(partner) == true)
-            {
-                return RedirectToAction("Partners");
-            }
-            else
-            {
-                return NotFound();
-            }
+            await _partnerService.CreatePartner(partner);
+            return RedirectToAction("Partners");
         }
 
         public async Task<IActionResult> EditPartnerFl(int id)
@@ -372,28 +341,16 @@ namespace AIS.Controllers
                 return NotFound();
             }
 
-            if (await _partnerService.EditPartnerFl(model) == true)
-            {
-                return RedirectToAction("Partners");
-            }
-            else
-            {
-                return NotFound();
-            }
+            await _partnerService.EditPartnerFl(model);
+            return RedirectToAction("Partners");
         }
 
 
         [HttpPost]
         public async Task<IActionResult> DeletePartner(int id)
         {
-            if (await _partnerService.DeletePartner(id) == true)
-            {
-                return RedirectToAction("Partners");
-            }
-            else
-            {
-                return NotFound();
-            }
+            await _partnerService.DeletePartner(id);
+            return RedirectToAction("Partners");
         }
 
        // public async Task<IActionResult> PartnerCard(int id)
