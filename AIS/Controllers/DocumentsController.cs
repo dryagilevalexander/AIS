@@ -65,14 +65,8 @@ namespace AIS.Controllers
             return NotFound();
         }
 
-        if (await _conditionsService.CreateRootTemplate(cctvm) == true)
-            {
-                return RedirectToAction("RootTemplates");
-            }
-            else
-            {
-                return NotFound();
-            }
+           await _conditionsService.CreateRootTemplate(cctvm);
+           return RedirectToAction("RootTemplates");
         }
 
         [HttpGet]
@@ -104,27 +98,15 @@ namespace AIS.Controllers
             return NotFound();
         }
 
-        if (await _conditionsService.EditRootTemplate(cctvm) == true)
-            {
-                return RedirectToAction("RootTemplates");
-            }
-            else
-            {
-                return NotFound();
-            }
+            await _conditionsService.EditRootTemplate(cctvm);
+            return RedirectToAction("RootTemplates");
         }
 
         [HttpPost]
         public async Task<IActionResult> DeleteRootTemplate(int id)
         {
-            if (await _conditionsService.DeleteRootTemplate(id) == true)
-            {
-                return RedirectToAction("RootTemplates");
-            }
-            else
-            {
-                return NotFound();
-            }
+            await _conditionsService.DeleteRootTemplate(id);
+            return RedirectToAction("RootTemplates");
         }
 
         public async Task<IActionResult> DocumentTemplates()
@@ -159,14 +141,8 @@ namespace AIS.Controllers
                 if (ctvm.Description == null) return NotFound();
             }
 
-            if (await _conditionsService.CreateDocumentTemplate(ctvm) == true)
-            {
-                return RedirectToAction("EditRootTemplate", new { id = ctvm.RootTemplateId });
-            }
-            else
-            {
-                return NotFound();
-            }
+            await _conditionsService.CreateDocumentTemplate(ctvm);
+            return RedirectToAction("EditRootTemplate", new { id = ctvm.RootTemplateId });
         }
 
         [HttpGet]
@@ -213,14 +189,8 @@ namespace AIS.Controllers
                 if (ctvm.Description == null) return NotFound();
             }
 
-            if (await _conditionsService.EditDocumentTemplate(ctvm) == true)
-            {
-                return RedirectToAction("EditRootTemplate", new { id = ctvm.RootTemplateId });
-            }
-            else
-            {
-                return NotFound();
-            }
+            await _conditionsService.EditDocumentTemplate(ctvm);
+            return RedirectToAction("EditRootTemplate", new { id = ctvm.RootTemplateId });
         }
 
         [HttpPost]
@@ -228,15 +198,10 @@ namespace AIS.Controllers
         {
             DocumentTemplate documentTemplate = await _conditionsService.GetDocumentTemplateById(id);
             int RootTemplateId = documentTemplate.RootTemplateId;
-            if (await _conditionsService.DeleteDocumentTemplate(id) == true)
-            {
-                return RedirectToAction("EditRootTemplate", new { id = RootTemplateId });
-            }
-            else
-            {
-                return NotFound();
-            }
+            await _conditionsService.DeleteDocumentTemplate(id);
+            return RedirectToAction("EditRootTemplate", new { id = RootTemplateId });
         }
+
         [HttpGet]
         public async Task<IActionResult> CreateCondition(int id)
         {
@@ -259,14 +224,8 @@ namespace AIS.Controllers
                 return NotFound();
             }
 
-            if (await _conditionsService.CreateCondition(cvm) == true)
-            {
-                return RedirectToAction("EditDocumentTemplate", new {id = cvm.DocumentTemplateId});
-            }
-            else
-            {
-                return NotFound();
-            }
+            await _conditionsService.CreateCondition(cvm);
+            return RedirectToAction("EditDocumentTemplate", new {id = cvm.DocumentTemplateId});
         }
 
         [HttpGet]
@@ -301,14 +260,8 @@ namespace AIS.Controllers
                 return NotFound();
             }
 
-            if (await _conditionsService.EditCondition(cvm) == true)
-            {
-                return RedirectToAction("EditDocumentTemplate", new { id = cvm.DocumentTemplateId });
-            }
-            else
-            {
-                return NotFound();
-            }
+            await _conditionsService.EditCondition(cvm);
+            return RedirectToAction("EditDocumentTemplate", new { id = cvm.DocumentTemplateId });
         }
 
         [HttpPost]
@@ -351,14 +304,8 @@ namespace AIS.Controllers
             Core.Condition? condition = await _conditionsService.GetCondition(id);
             if (condition == null) return NotFound();
             int DocumentTemplateId = condition.DocumentTemplateId;
-            if (await _conditionsService.DeleteCondition(id) == true)
-            {
-                return RedirectToAction("EditDocumentTemplate", new { id = DocumentTemplateId });
-            }
-            else
-            {
-                return NotFound();
-            }
+            await _conditionsService.DeleteCondition(id);
+            return RedirectToAction("EditDocumentTemplate", new { id = DocumentTemplateId });
         }
 
 
@@ -377,14 +324,9 @@ namespace AIS.Controllers
             {
                 return NotFound();
             }
-            if (await _conditionsService.CreateSubCondition(scvm) == true)
-            {
-                return RedirectToAction("EditCondition", new { id = scvm.ConditionId });
-            }
-            else
-            {
-                return NotFound();
-            }
+
+            await _conditionsService.CreateSubCondition(scvm);
+            return RedirectToAction("EditCondition", new { id = scvm.ConditionId });
         }
 
         [HttpGet]
@@ -411,14 +353,9 @@ namespace AIS.Controllers
             {
                 return NotFound();
             }
-            if (await _conditionsService.EditSubCondition(scvm) == true)
-            {
-                return RedirectToAction("EditCondition", new { id = scvm.ConditionId });
-            }
-            else
-            {
-                return NotFound();
-            }
+
+            await _conditionsService.EditSubCondition(scvm);
+            return RedirectToAction("EditCondition", new { id = scvm.ConditionId });
         }
 
 
@@ -428,14 +365,8 @@ namespace AIS.Controllers
             SubCondition subCondition = await _conditionsService.GetSubCondition(id);
             if (subCondition == null) return NotFound();
             int conditionId = subCondition.ConditionId;
-            if (await _conditionsService.DeleteSubCondition(id) == true)
-            {
-                return RedirectToAction("EditCondition", new { id = conditionId });
-            }
-            else
-            {
-                return NotFound();
-            }
+            await _conditionsService.DeleteSubCondition(id);
+            return RedirectToAction("EditCondition", new { id = conditionId });
         }
 
         [HttpGet]
@@ -454,14 +385,8 @@ namespace AIS.Controllers
                 return NotFound();
             }
 
-            if (await _conditionsService.CreateSubConditionParagraph(scpvm) == true)
-            {
-                return RedirectToAction("EditSubCondition", new { id = scpvm.SubConditionId });
-            }
-            else
-            {
-                return NotFound();
-            }
+            await _conditionsService.CreateSubConditionParagraph(scpvm);
+            return RedirectToAction("EditSubCondition", new { id = scpvm.SubConditionId });
         }
 
         [HttpGet]
@@ -487,31 +412,18 @@ namespace AIS.Controllers
                 return NotFound();
             }
 
-            if (await _conditionsService.EditSubConditionParagraph(scpvm) == true)
-            {
-                return RedirectToAction("EditSubCondition", new { id = scpvm.SubConditionId });
-            }
-            else
-            {
-                return NotFound();
-            }
+            await _conditionsService.EditSubConditionParagraph(scpvm);
+            return RedirectToAction("EditSubCondition", new { id = scpvm.SubConditionId });
         }
 
 
         [HttpPost]
         public async Task<IActionResult> DeleteSubConditionParagraph(int id)
         {
-            SubConditionParagraph? subConditionParagraph = await _conditionsService.GetSubConditionParagraph(id);
-            if (subConditionParagraph == null) return NotFound();
+            SubConditionParagraph subConditionParagraph = await _conditionsService.GetSubConditionParagraph(id);
             int subConditionId = subConditionParagraph.SubConditionId;
-            if (await _conditionsService.DeleteSubConditionParagraph(id) == true)
-            {
-                return RedirectToAction("EditSubCondition", new { id = subConditionId });
-            }
-            else
-            {
-                return NotFound();
-            }
+            await _conditionsService.DeleteSubConditionParagraph(id);
+            return RedirectToAction("EditSubCondition", new { id = subConditionId });
         }
 
         public class JsonContractData

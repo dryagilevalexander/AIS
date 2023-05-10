@@ -27,7 +27,7 @@ namespace AIS.Services
             }
             catch
             {
-                throw new Exception("Ошибка выполнения запроса");
+                throw new AisException("Список контрагентов не получен", HttpStatusCode.BadRequest);
             }
         }
 
@@ -40,7 +40,7 @@ namespace AIS.Services
             }
             catch
             {
-                throw new Exception("Ошибка выполнения запроса");
+                throw new AisException("Список контрагентов не получен", HttpStatusCode.BadRequest);
             }
         }
 
@@ -53,14 +53,14 @@ namespace AIS.Services
             }
             catch
             {
-                throw new Exception("Ошибка выполнения запроса");
+                throw new AisException("Список контрагентов не получен", HttpStatusCode.BadRequest);
             }
         }
 
         public async Task<Partner?> GetPartner(int id)
         {
             Partner? partner = await db.Partners.Include(p => p.DirectorType).FirstOrDefaultAsync(p => p.Id == id);
-            if(partner == null) throw new Exception("Не найден контрагент");
+            if(partner == null) throw new AisException("Контрагент не найден", HttpStatusCode.BadRequest);
             return partner;
         }
 
@@ -73,7 +73,7 @@ namespace AIS.Services
             }
             catch
             {
-                throw new Exception("Ошибка выполнения запроса");
+                throw new AisException("Категории контрагентов не найдены", HttpStatusCode.BadRequest);
             }
         }
 
@@ -81,7 +81,7 @@ namespace AIS.Services
         {
 
             Partner? partner = await db.Partners.Include(u => u.PartnerType).FirstOrDefaultAsync(p => p.Id == id);
-            if (partner == null) throw new Exception("Не найден контрагент");
+            if (partner == null) throw new AisException("Контрагент не найден", HttpStatusCode.BadRequest);
             return partner;
         }
         public async Task CreatePartner(Partner partner)
@@ -93,7 +93,7 @@ namespace AIS.Services
             }
             catch
             {
-                throw new Exception("Ошибка создания контрагента");
+                throw new AisException("Не удалось создать контрагента", HttpStatusCode.BadRequest);
             }
         }
 
@@ -216,7 +216,7 @@ namespace AIS.Services
             }
             catch
             {
-             throw new Exception("Внутренняя ошибка сервера");
+                throw new AisException("Не получен список типов руководителей", HttpStatusCode.BadRequest);
             }
         }
 
@@ -229,7 +229,7 @@ namespace AIS.Services
             }
             catch
             {
-                throw new Exception("Внутренняя ошибка сервера");
+                throw new AisException("Не получен список статусов контрагентов", HttpStatusCode.BadRequest);
             }
         }
 
@@ -242,7 +242,7 @@ namespace AIS.Services
             }
             catch
             {
-                throw new Exception("Внутренняя ошибка сервера");
+                throw new AisException("Не получен список типов контрагентов", HttpStatusCode.BadRequest);
             }
         }
 
@@ -255,21 +255,21 @@ namespace AIS.Services
         public async Task<PartnerType> GetPartnerTypeById(int? id)
         {
             PartnerType? partnerType = await db.PartnerTypes.FirstOrDefaultAsync(p => p.Id == id.Value);
-            if (partnerType == null) throw new Exception("Не найден тип контрагента");
+            if (partnerType == null) throw new AisException("Не найден тип контрагента", HttpStatusCode.BadRequest);
             return partnerType;
         }
 
         public async Task<DirectorType?> GetDirectorTypeById(int? id)
         {
             DirectorType? directorType = await db.DirectorTypes.FirstOrDefaultAsync(p => p.Id == id);
-            if (directorType == null) throw new Exception("Не найден тип руководителя");
+            if (directorType == null) throw new AisException("Не найден тип руководителя", HttpStatusCode.BadRequest);
             return directorType;
         }
 
         public async Task<Partner> GetMainOrganization()
         {
             Partner? partner = await db.Partners.Include(p => p.DirectorType).FirstOrDefaultAsync(p => p.PartnerStatusId == 1);
-            if (partner == null) throw new Exception("Головная организация не найдена");
+            if (partner == null) throw new AisException("Головная организация не найдена", HttpStatusCode.BadRequest);
             return partner;
         }
     }

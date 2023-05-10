@@ -1,4 +1,4 @@
-﻿using AIS.ViewModels.ProcessViewModels;
+﻿using AIS.ViewModels.TasksViewModels;
 using Core;
 
 namespace AIS.Services
@@ -11,17 +11,17 @@ namespace AIS.Services
         Task<IEnumerable<MyTask>> GetMyArchiveTasksWithCurrentUser(string currentUserId);
         Task<IEnumerable<MyTaskStatus>> GetMyTaskStatuses();
         Task<IEnumerable<LevelImportance>> GetMyTaskLevels();
-        Task<bool> DeleteMyTask(int? id);
-        Task<bool> CreateTask(User destinationUser, MyTaskViewModel mtvm);
-        Task<bool> EditMyTask(User destinationUser, MyTaskViewModel mtvm);
-        Task<bool> DeleteMyEnclosure(int? id);
+        Task DeleteMyTask(int id);
+        Task CreateTask(User destinationUser, MyTaskViewModel mtvm);
+        Task EditMyTask(User destinationUser, MyTaskViewModel mtvm);
+        Task DeleteMyEnclosure(int id);
         Task<MyTask> GetMyTaskByIdEagerLoading(int id);
-        Task<bool> CreateSubTask(MySubTaskViewModel mtvm);
-        Task<bool> EditSubTask(MySubTaskViewModel mtvm);
+        Task CreateSubTask(MySubTaskViewModel mtvm);
+        Task EditSubTask(MySubTaskViewModel mtvm);
         Task<MySubTask> GetMySubTaskByIdWithFiles(int id);
         Task<List<MyTaskStatus>> GetMyTaskStatusesToList();
         Task<List<LevelImportance>> GetMyTaskLevelsToList();
-        Task<bool> DeleteMySubTask(int? id, MySubTask currentSubTask);
+        Task DeleteMySubTask(MySubTask currentSubTask);
 
     }
 }

@@ -37,7 +37,7 @@ function deleteFieldBySelector(a, b) {
 
 
     const xhr = new XMLHttpRequest();
-    var currentUrl = '/Process/DeleteMyEnclosure/' + b;
+    var currentUrl = '/Tasks/DeleteMyEnclosure/' + b;
     xhr.open('POST', currentUrl);
     xhr.send();
 

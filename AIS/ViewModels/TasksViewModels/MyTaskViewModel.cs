@@ -1,7 +1,7 @@
 ﻿using Core;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace AIS.ViewModels.ProcessViewModels
+namespace AIS.ViewModels.TasksViewModels
 {
     public class MyTaskViewModel
     {

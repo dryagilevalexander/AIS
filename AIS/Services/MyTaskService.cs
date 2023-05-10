@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
-using AIS.ViewModels.ProcessViewModels;
+using AIS.ViewModels.TasksViewModels;
+using AIS.ErrorManager;
+using System.Net;
 
 namespace AIS.Services
 {
@@ -74,21 +76,23 @@ namespace AIS.Services
             return taskLevel;
         }
 
-        public async Task<bool> DeleteMyTask(int? id)
+        public async Task DeleteMyTask(int id)
         {
-            if (id != null)
+            try
             {
-                MyTask myTask = new MyTask { Id = id.Value };
+                MyTask myTask = new MyTask { Id = id };
                 db.Entry(myTask).State = EntityState.Deleted;
                 await db.SaveChangesAsync();
-
                 await db.SaveChangesAsync();
-                return true;
             }
-            return false;
+            catch
+            {
+                throw new AisException("Не удалось удалить контрагента", HttpStatusCode.BadRequest);
+            }
+
         }
 
-        public async Task<bool> CreateTask(User destinationUser, MyTaskViewModel mtvm)
+        public async Task CreateTask(User destinationUser, MyTaskViewModel mtvm)
         {
             try
             {
@@ -140,16 +144,15 @@ namespace AIS.Services
                 myTask.MyFiles = myFiles;
                 db.MyTasks.Update(myTask);
                 await db.SaveChangesAsync();
-                return true;
             }
             catch
             {
-                return false;
+                throw new AisException("Не удалось создать задачу", HttpStatusCode.BadRequest);
             }
 
         }
 
-        public async Task<bool> EditMyTask(User destinationUser, MyTaskViewModel mtvm)
+        public async Task EditMyTask(User destinationUser, MyTaskViewModel mtvm)
         {
             try
             {
@@ -194,43 +197,35 @@ namespace AIS.Services
 
                 db.MyTasks.Update(currentTask);
                 await db.SaveChangesAsync();
-                return true;
             }
             catch
             {
-                return false;
+                throw new AisException("Ошибка при редактировании задачи", HttpStatusCode.BadRequest);
             }
         }
 
-        public async Task<bool> DeleteMyEnclosure(int? id)
+        public async Task DeleteMyEnclosure(int id)
         {
             try
             {
-                if (id != null)
-                {
                     var currentMyFile = await db.MyFiles.FirstOrDefaultAsync(p => p.Id == id);
                     db.Entry(currentMyFile).State = EntityState.Deleted;
                     await db.SaveChangesAsync();
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
             }
             catch
             {
-                return false;
+                throw new AisException("Не удалось удалить вложение", HttpStatusCode.BadRequest);
             }
         }
 
         public async Task<MyTask> GetMyTaskByIdEagerLoading(int id)
         {
             MyTask? myTask = await db.MyTasks.Include(u => u.MyFiles).Include(u => u.MySubTasks).FirstOrDefaultAsync(p => p.Id == id);
+            if(myTask == null) throw new AisException("Задача не найдена", HttpStatusCode.BadRequest);
             return myTask;
         }
 
-        public async Task<bool> CreateSubTask(MySubTaskViewModel mtvm)
+        public async Task CreateSubTask(MySubTaskViewModel mtvm)
         {
             try
             {
@@ -273,15 +268,14 @@ namespace AIS.Services
                 mySubTask.MyFiles = myFiles;
                 db.MySubTasks.Update(mySubTask);
                 await db.SaveChangesAsync();
-                return true;
             }
             catch
             {
-                return false;
+                throw new AisException("Не удалось создать подзадачу", HttpStatusCode.BadRequest);
             }
         }
 
-        public async Task<bool> EditSubTask(MySubTaskViewModel mtvm)
+        public async Task EditSubTask(MySubTaskViewModel mtvm)
         {
             try
             {
@@ -325,38 +319,36 @@ namespace AIS.Services
 
                 db.MySubTasks.Update(currentSubTask);
                 await db.SaveChangesAsync();
-                return true;
             }
             catch
             {
-                return false;
+                throw new AisException("Ошибка при редактировании подзадачи", HttpStatusCode.BadRequest);
             }
         }
 
-        public async Task<bool> DeleteMySubTask(int? id, MySubTask currentSubTask)
+        public async Task DeleteMySubTask(MySubTask currentSubTask)
         {
             try
             {
-                if (id != null)
-                {
                     db.MySubTasks.Remove(currentSubTask);
                     await db.SaveChangesAsync();
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
             }
             catch
             {
-                return false;
+                throw new AisException("Не удалось удалить подзадачу", HttpStatusCode.BadRequest);
             }
         }
 
-            public async Task<MySubTask> GetMySubTaskByIdWithFiles(int id)
+        public async Task<MySubTask> GetMySubTaskByIdWithFiles(int id)
         {
-            return await db.MySubTasks.Include(u => u.MyFiles).FirstOrDefaultAsync(p => p.Id == id);
+            try
+            {
+                return await db.MySubTasks.Include(u => u.MyFiles).FirstOrDefaultAsync(p => p.Id == id);
+            }
+            catch
+            {
+                throw new AisException("Ошибка при получении подзадачи", HttpStatusCode.BadRequest);
+            }
         }
     }
 }

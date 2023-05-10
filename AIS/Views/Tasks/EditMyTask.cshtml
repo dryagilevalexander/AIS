@@ -1,7 +1,7 @@
-﻿@model AIS.ViewModels.ProcessViewModels.MyTaskViewModel;
+﻿@model AIS.ViewModels.TasksViewModels.MyTaskViewModel;
 
 <h2>Редактирование задачи</h2>
-<form asp-action="editmytask" asp-controller="process" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+<form asp-action="editmytask" asp-controller="tasks" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
 
     <div class="container">
         
@@ -122,7 +122,7 @@
 <h2>Подзадачи</h2>
 
 <table class="table table-sm table-hover" id="currentTable">
-    <tr>><th onclick="sortTable(0)">Наименование</th><th onclick="sortTable(1)">Описание</th><th onclick="sortTable(2)">Дата начала</th><th onclick="sortTable(3)">Дата окончания</th><th onclick="sortTable(4)">Статус</th><th onclick="sortTable(5)">Важность</th></tr>
+    <tr><th onclick="sortTable(0)">Наименование</th><th onclick="sortTable(1)">Описание</th><th onclick="sortTable(2)">Дата начала</th><th onclick="sortTable(3)">Дата окончания</th><th onclick="sortTable(4)">Статус</th><th onclick="sortTable(5)">Важность</th></tr>
     <tr class="table-filters">
         <td>
             <input type="text" id="tableFilter" />
@@ -167,7 +167,7 @@
                 <a class="btn btn-outline-primary" role="button" onclick="editSubTask(@item.Id)">Изменить</a>
             </td>
             <td align="left">
-                <form asp-controller="process" asp-action="DeleteMySubTask" method="post" asp-route-id="@item.Id">
+                <form asp-controller="tasks" asp-action="DeleteMySubTask" method="post" asp-route-id="@item.Id">
                     <input type="submit" value="Удалить" class="btn btn-outline-danger" />
                 </form>
             </td>
@@ -191,7 +191,7 @@
 <script asp-src-include="~/js/select.js"></script>
     <script>
         async function myFunction() {
-            let url = '/Process/CreateSubTask/' + @Model.Id;
+            let url = '/Tasks/CreateSubTask/' + @Model.Id;
             let response = await fetch(url);
             if (response.ok) {
                 let data = await response.text();
@@ -205,7 +205,7 @@
         }
 
         async function editSubTask(id) {
-            let url = '/Process/EditMySubTask/' + id;
+            let url = '/Tasks/EditMySubTask/' + id;
             let response = await fetch(url);
             if (response.ok) {
                 let data = await response.text();

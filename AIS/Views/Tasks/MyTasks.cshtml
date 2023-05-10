@@ -66,10 +66,10 @@
                 }
             </td>
             <td align="right">
-                <a class="btn btn-outline-primary" role="button" asp-action="EditMyTask" asp-controller="process" asp-route-id="@item.Id">Изменить</a>
+                <a class="btn btn-outline-primary" role="button" asp-action="EditMyTask" asp-controller="tasks" asp-route-id="@item.Id">Изменить</a>
             </td>
             <td align="left">
-                <form asp-controller="process" asp-action="DeleteMyTask" method="post" asp-route-id="@item.Id">
+                <form asp-controller="tasks" asp-action="DeleteMyTask" method="post" asp-route-id="@item.Id">
                     <input type="submit" value="Удалить" class="btn btn-outline-danger" />
                 </form>
             </td>

@@ -1,8 +1,11 @@
-﻿using AIS.ViewModels.DocumentsViewModels;
+﻿using AIS.ErrorManager;
+using AIS.ViewModels.DocumentsViewModels;
 using Core;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using AIS.ErrorManager;
+using System.Net;
 
 
 namespace AIS.Services
@@ -43,7 +46,7 @@ namespace AIS.Services
             return db.DocumentTemplates.Include(p => p.Conditions).ThenInclude(p => p.SubConditions).ThenInclude(c => c.SubConditionParagraphs).FirstOrDefault(p => p.Id == id);
         }
 
-        public async Task<bool> CreateRootTemplate(RootTemplateViewModel cctvm)
+        public async Task CreateRootTemplate(RootTemplateViewModel cctvm)
         {
             try
             {
@@ -55,16 +58,15 @@ namespace AIS.Services
 
                 db.RootTemplates.Add(RootTemplate);
                 await db.SaveChangesAsync();
-                return true;
             }
 
             catch
             {
-                return false;
+                throw new AisException("Не удалось создать шаблон", HttpStatusCode.BadRequest);
             }
         }
 
-        public async Task<bool> EditRootTemplate(RootTemplateViewModel cctvm)
+        public async Task EditRootTemplate(RootTemplateViewModel cctvm)
         {
             try
             {
@@ -75,30 +77,33 @@ namespace AIS.Services
 
                 db.RootTemplates.Update(RootTemplate);
                 await db.SaveChangesAsync();
-                return true;
             }
             catch
             {
-                return false;
+                throw new AisException("Не удалось открыть шаблон для редактирования", HttpStatusCode.BadRequest);
             }
         }
 
-        public async Task<bool> DeleteRootTemplate(int? id)
+        public async Task DeleteRootTemplate(int id)
         {
-            if (id != null)
+            try
             {
                 RootTemplate RootTemplate = await db.RootTemplates.FirstOrDefaultAsync(p => p.Id == id);
                 db.RootTemplates.Remove(RootTemplate);
                 await db.SaveChangesAsync();
-                return true;
+            }   
+            catch
+            {
+                throw new AisException("Не удалось удалить шаблон", HttpStatusCode.BadRequest);
             }
-            return false;
         }
 
 
-        public async Task<bool> CreateDocumentTemplate(DocumentTemplateViewModel ctvm)
+        public async Task CreateDocumentTemplate(DocumentTemplateViewModel ctvm)
         {
 
+            try
+            {
                 DocumentTemplate documentTemplate = new DocumentTemplate
                 {
                     Name = ctvm.Name,
@@ -106,14 +111,18 @@ namespace AIS.Services
                     RootTemplateId = ctvm.RootTemplateId,
                     TypeOfDocumentId = ctvm.TypeOfDocumentId
                 };
-            if (ctvm.TypeOfContractId != null) documentTemplate.TypeOfContractId = ctvm.TypeOfContractId;
+                if (ctvm.TypeOfContractId != null) documentTemplate.TypeOfContractId = ctvm.TypeOfContractId;
 
                 db.DocumentTemplates.Add(documentTemplate);
                 await db.SaveChangesAsync();
-                return true;
+            }
+            catch
+            {
+                throw new AisException("Не удалось создать шаблон", HttpStatusCode.BadRequest);
+            }
         }
 
-        public async Task<bool> EditDocumentTemplate(DocumentTemplateViewModel ctvm)
+        public async Task EditDocumentTemplate(DocumentTemplateViewModel ctvm)
         {
             try
             {
@@ -124,15 +133,14 @@ namespace AIS.Services
 
                 db.DocumentTemplates.Update(DocumentTemplate);
                 await db.SaveChangesAsync();
-                return true;
             }
             catch
             {
-                return false;
+                throw new AisException("Не удалось открыть шаблон для редактирования", HttpStatusCode.BadRequest);
             }
         }
 
-        public async Task<bool> CreateCondition(ConditionViewModel cvm)
+        public async Task CreateCondition(ConditionViewModel cvm)
         {
             try
             {
@@ -149,15 +157,14 @@ namespace AIS.Services
 
                 db.Conditions.Add(condition);
                 await db.SaveChangesAsync();
-                return true;
             }
             catch
             {
-                return false;
+                throw new AisException("Не удалось создать пункт шаблона", HttpStatusCode.BadRequest);
             }
         }
 
-        public async Task<bool> EditCondition(ConditionViewModel cvm)
+        public async Task EditCondition(ConditionViewModel cvm)
         {
             try
             {
@@ -171,29 +178,27 @@ namespace AIS.Services
                 condition.Justification = cvm.Justification;
                 db.Conditions.Update(condition);
                 await db.SaveChangesAsync();
-                return true;
             }
             catch
             {
-                return false;
+                throw new AisException("Не удалось открыть пункт шаблона для редактирования", HttpStatusCode.BadRequest);
             }
         }
 
-        public async Task<bool> SaveCondition(Condition condition)
+        public async Task SaveCondition(Condition condition)
         {
             try
             {
                 db.Conditions.Update(condition);
                 await db.SaveChangesAsync();
-                return true;
             }
             catch
             {
-                return false;
+                throw new AisException("Не удалось сохранить пункт шаблона", HttpStatusCode.BadRequest);
             }
         }
 
-        public async Task<bool> CreateSubCondition(SubConditionViewModel scvm)
+        public async Task CreateSubCondition(SubConditionViewModel scvm)
         {
             try
             {
@@ -209,15 +214,14 @@ namespace AIS.Services
 
             db.SubConditions.Add(subCondition);
                 await db.SaveChangesAsync();
-                return true;
             }
             catch
             {
-                return false;
+                throw new AisException("Не удалось создать подпункт шаблона", HttpStatusCode.BadRequest);
             }
         }
 
-        public async Task<bool> EditSubCondition(SubConditionViewModel scvm)
+        public async Task EditSubCondition(SubConditionViewModel scvm)
         {
             try
             {
@@ -231,27 +235,28 @@ namespace AIS.Services
 
                 db.SubConditions.Update(subCondition);
                 await db.SaveChangesAsync();
-                return true;
             }
             catch
             {
-                return false;
+                throw new AisException("Не удалось открыть подпункт шаблона для редактирования", HttpStatusCode.BadRequest);
             }
         }
 
-        public async Task<bool> DeleteSubCondition(int? id)
+        public async Task DeleteSubCondition(int id)
         {
-            if (id != null)
+            try
             {
                 SubCondition subCondition = await db.SubConditions.FirstOrDefaultAsync(p => p.Id == id);
                 db.SubConditions.Remove(subCondition);
                 await db.SaveChangesAsync();
-                return true;
             }
-            return false;
+            catch 
+            {
+                throw new AisException("Не удалось удалить подпункт шаблона", HttpStatusCode.BadRequest);
+            }
         }
 
-        public async Task<bool> CreateSubConditionParagraph(SubConditionParagraphViewModel scpvm)
+        public async Task CreateSubConditionParagraph(SubConditionParagraphViewModel scpvm)
         {
             try
             {
@@ -266,15 +271,14 @@ namespace AIS.Services
 
                 db.SubConditionParagraphs.Add(subConditionParagraph);
                 await db.SaveChangesAsync();
-                return true;
             }
             catch
             {
-                return false;
+                throw new AisException("Не удалось создать абзац", HttpStatusCode.BadRequest);
             }
         }
 
-        public async Task<bool> EditSubConditionParagraph(SubConditionParagraphViewModel scpvm)
+        public async Task EditSubConditionParagraph(SubConditionParagraphViewModel scpvm)
         {
             try
             {
@@ -287,177 +291,143 @@ namespace AIS.Services
 
                 db.SubConditionParagraphs.Update(subConditionParagraph);
                 await db.SaveChangesAsync();
-                return true;
             }
             catch
             {
-                return false;
+                throw new AisException("Не удалось открыть абзац для редактирования", HttpStatusCode.BadRequest);
             }
         }
 
-        public async Task<bool> DeleteSubConditionParagraph(int? id)
+        public async Task DeleteSubConditionParagraph(int id)
         {
-            if (id != null)
-            {
+            try { 
                 SubConditionParagraph subConditionParagraph = await db.SubConditionParagraphs.FirstOrDefaultAsync(p => p.Id == id);
                 db.SubConditionParagraphs.Remove(subConditionParagraph);
                 await db.SaveChangesAsync();
-                return true;
-            }
-            return false;
-        }
-
-        public async Task<DocumentTemplate?> GetDocumentTemplateById(int id)
-        {
-            try
-            {
-                DocumentTemplate? DocumentTemplate = await db.DocumentTemplates
-                    .FirstOrDefaultAsync(p => p.Id == id);
-                return DocumentTemplate;
             }
             catch
             {
-                return null;
+                throw new AisException("Не удалось удалить абзац", HttpStatusCode.BadRequest);
             }
         }
 
-        public async Task<DocumentTemplate?> GetDocumentTemplateWithConditionsById(int id)
+        public async Task<DocumentTemplate> GetDocumentTemplateById(int id)
         {
-            try
-            {
-                DocumentTemplate? DocumentTemplate = await db.DocumentTemplates
+
+                DocumentTemplate? documentTemplate = await db.DocumentTemplates
+                    .FirstOrDefaultAsync(p => p.Id == id);
+                if(documentTemplate == null) throw new AisException("Не обнаружен шаблон документа", HttpStatusCode.BadRequest);
+                return documentTemplate;
+        }
+
+        public async Task<DocumentTemplate> GetDocumentTemplateWithConditionsById(int id)
+        {
+                DocumentTemplate? documentTemplate = await db.DocumentTemplates
                     .Include(p => p.Conditions).ThenInclude(p => p.SubConditions).ThenInclude(p => p.SubConditionParagraphs)
                     .FirstOrDefaultAsync(p => p.Id == id);
-                return DocumentTemplate;
-            }
-            catch
-            {
-                return null;
-            }
+                if(documentTemplate == null) throw new AisException("Не обнаружен шаблон документа", HttpStatusCode.BadRequest);
+                return documentTemplate;
         }
 
-        public async Task<DocumentTemplate?> GetDocumentTemplateWithRootTemplateById(int id)
+        public async Task<DocumentTemplate> GetDocumentTemplateWithRootTemplateById(int id)
         {
-            try
-            {
-                DocumentTemplate? DocumentTemplate = await db.DocumentTemplates
+                DocumentTemplate? documentTemplate = await db.DocumentTemplates
                     .Include(p => p.RootTemplate)
                     .FirstOrDefaultAsync(p => p.Id == id);
-                return DocumentTemplate;
-            }
-            catch
-            {
-                return null;
-            }
+                if (documentTemplate == null) throw new AisException("Не обнаружен шаблон документа", HttpStatusCode.BadRequest);
+                return documentTemplate;
         }
 
-        public async Task<DocumentTemplate?> GetDocumentTemplateWithTypeOfContractById(int id)
+        public async Task<DocumentTemplate> GetDocumentTemplateWithTypeOfContractById(int id)
         {
-            try
-            {
-                DocumentTemplate? DocumentTemplate = await db.DocumentTemplates
+                DocumentTemplate? documentTemplate = await db.DocumentTemplates
                     .Include(p => p.TypeOfContract)
                     .FirstOrDefaultAsync(p => p.Id == id);
-                return DocumentTemplate;
-            }
-            catch
-            {
-                return null;
-            }
-        }
+                if (documentTemplate == null) throw new AisException("Не обнаружен шаблон документа", HttpStatusCode.BadRequest);
+                return documentTemplate;
+       }
 
-        public async Task<bool> DeleteDocumentTemplate(int? id)
+        public async Task DeleteDocumentTemplate(int id)
         {
-            if (id != null)
+            try
             {
                 DocumentTemplate DocumentTemplate = await db.DocumentTemplates.FirstOrDefaultAsync(p => p.Id == id);
                 db.DocumentTemplates.Remove(DocumentTemplate);
                 await db.SaveChangesAsync();
-                return true;
             }
-            return false;
+            catch
+            {
+                throw new AisException("Не удалось удалить шаблон документа", HttpStatusCode.BadRequest);
+            }
         }
 
 
         public async Task<List<Condition>> GetConditions()
         {
-            return await db.Conditions.Include(p => p.SubConditions).ToListAsync();
+            try
+            {
+                return await db.Conditions.Include(p => p.SubConditions).ToListAsync();
+            }
+            catch
+            {
+                throw new AisException("Не удалось получить список пунктов для шаблонов документов", HttpStatusCode.BadRequest);
+            }
         }
 
         public async Task<int> GetNumberOfConditionsInDocumentTemplate(int id)
         {
-             DocumentTemplate DocumentTemplate = await db.DocumentTemplates.Include(p => p.Conditions).FirstOrDefaultAsync(p => p.Id == id);
-             return DocumentTemplate.Conditions.Count();
+             DocumentTemplate? documentTemplate = await db.DocumentTemplates.Include(p => p.Conditions).FirstOrDefaultAsync(p => p.Id == id);
+            if (documentTemplate == null) throw new AisException("Не обнаружен шаблон документа", HttpStatusCode.BadRequest);
+            return documentTemplate.Conditions.Count();
         }
 
-        public async Task<Condition?> GetCondition(int id)
+        public async Task<Condition> GetCondition(int id)
         {
-            try
-            {
                 Condition? condition = await db.Conditions
                     .Include(p=>p.SubConditions).ThenInclude(p => p.SubConditionParagraphs)
                     .FirstOrDefaultAsync(p => p.Id == id);
+                if(condition == null) throw new AisException("Не удалось получить пункт шаблона", HttpStatusCode.BadRequest);
                 return condition;
-            }
-            catch
-            {
-                return null;
-            }
         }
 
-        public async Task<Condition?> GetConditionByNumberInDocument(int number)
+        public async Task<Condition> GetConditionByNumberInDocument(int number)
         {
-            try
-            {
+
                 Condition? condition = await db.Conditions
                     .FirstOrDefaultAsync(p => p.NumberInDocument == number);
+                if (condition == null) throw new AisException("Не удалось получить пункт шаблона", HttpStatusCode.BadRequest);
                 return condition;
-            }
-            catch
-            {
-                return null;
-            }
         }
 
-        public async Task<SubCondition?> GetSubCondition(int id)
+        public async Task<SubCondition> GetSubCondition(int id)
         {
-            try
-            {
                 SubCondition? subCondition = await db.SubConditions
                     .Include(p => p.SubConditionParagraphs)
                     .FirstOrDefaultAsync(p => p.Id == id);
+                if (subCondition == null) throw new AisException("Не удалось получить подпункт шаблона", HttpStatusCode.BadRequest);
                 return subCondition;
-            }
-            catch
-            {
-                return null;
-            }
         }
 
-        public async Task<SubConditionParagraph?> GetSubConditionParagraph(int id)
+        public async Task<SubConditionParagraph> GetSubConditionParagraph(int id)
+        {
+                SubConditionParagraph? subConditionParagraph = await db.SubConditionParagraphs
+                    .FirstOrDefaultAsync(p => p.Id == id);
+                if (subConditionParagraph == null) throw new AisException("Не удалось получить абзац", HttpStatusCode.BadRequest);
+                return subConditionParagraph;
+        }
+
+        public async Task DeleteCondition(int id)
         {
             try
             {
-                SubConditionParagraph? subConditionParagraph = await db.SubConditionParagraphs
-                    .FirstOrDefaultAsync(p => p.Id == id);
-                return subConditionParagraph;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        public async Task<bool> DeleteCondition(int? id)
-        {
-            if (id != null)
-            {
-                Condition condition = await db.Conditions.FirstOrDefaultAsync(p => p.Id == id);               
+                Condition condition = await db.Conditions.FirstOrDefaultAsync(p => p.Id == id);
                 db.Conditions.Remove(condition);
                 await db.SaveChangesAsync();
-                return true;
             }
-            return false;
+            catch 
+            {
+                throw new AisException("Не удалось удалить пункт", HttpStatusCode.BadRequest);
+            }
         }
 
     }
