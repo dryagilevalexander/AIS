@@ -1,6 +1,7 @@
 using AIS;
 using AIS.Services;
-using Core;
+using Infrastructure;
+using Infrastructure.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -16,8 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 string connection = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<CoreContext>(options => options.UseNpgsql(connection));
-builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<CoreContext>();
+builder.Services.AddDbContext<AisDbContext>(options => options.UseNpgsql(connection));
+builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<AisDbContext>();
 builder.Services.AddTransient<IEmployeeService, EmployeeService>();
 builder.Services.AddTransient<IPartnerService, PartnerService>();
 builder.Services.AddTransient<IMyTaskService, MyTaskService>();

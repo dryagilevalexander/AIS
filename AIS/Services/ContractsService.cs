@@ -1,20 +1,21 @@
-﻿using AIS.ViewModels.ProcessViewModels;
-using Core;
+﻿using Infrastructure;
+using Infrastructure.Models;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using static AIS.Controllers.ProcessController;
-
+using AIS.ErrorManager;
+using System.Net;
+using AIS.ViewModels.ContractsViewModels;
 
 namespace AIS.Services
 {
     public class ContractsService: IContractsService
     {
-        private CoreContext db;
+        private AisDbContext db;
         IWebHostEnvironment _appEnvironment;
-        public ContractsService(CoreContext coreContext, IWebHostEnvironment appEnvironment)
+        public ContractsService(AisDbContext context, IWebHostEnvironment appEnvironment)
         {
-            db = coreContext;
+            db = context;
             _appEnvironment = appEnvironment;
         }
         public async Task<List<Contract>> GetActiveContractsEagerLoading()
@@ -59,7 +60,7 @@ namespace AIS.Services
             return await db.MyContractStatuses.ToListAsync();
         }
 
-        public async Task<bool> CreateContract(MyContractViewModel mcvm, int typeOfContract)
+        public async Task CreateContract(MyContractViewModel mcvm, int typeOfContract)
         {
             try
             {
@@ -104,15 +105,14 @@ namespace AIS.Services
                 myContract.MyFiles = myFiles;
                 db.Contracts.Update(myContract);
                 await db.SaveChangesAsync();
-                return true;
             }
             catch
             {
-                return false;
+                throw new AisException("Не удалось создать контракт", HttpStatusCode.BadRequest);
             }
         }
 
-        public async Task<bool> EditContract(MyContractViewModel mcvm)
+        public async Task EditContract(MyContractViewModel mcvm)
         {
             try
             {
@@ -155,21 +155,18 @@ namespace AIS.Services
                 contract.MyFiles = myFiles;
                 db.Contracts.Update(contract);
                 await db.SaveChangesAsync();
-                return true;
             }
             catch
             {
-                return false;
+                throw new AisException("Не удалось сохранить контракт", HttpStatusCode.BadRequest);
             }
         }
 
-        public async Task<bool> DeleteContract(int? id)
+        public async Task DeleteContract(int id)
         {
             try
             {
-                if (id != null)
-                {
-                    Contract myContract = db.Contracts.Include(r => r.MyFiles).FirstOrDefault(p => p.Id == id.Value);
+                    Contract myContract = db.Contracts.Include(r => r.MyFiles).FirstOrDefault(p => p.Id == id);
                     List<MyFile> myFiles = myContract.MyFiles;
                     foreach (var myFile in myFiles)
                     {
@@ -178,16 +175,10 @@ namespace AIS.Services
                     }
                     db.Contracts.Remove(myContract);
                     await db.SaveChangesAsync();
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
             }
             catch
-            { 
-            return false;
+            {
+                throw new AisException("Не удалось удалить контракт", HttpStatusCode.BadRequest);
             }
         }
 
@@ -201,7 +192,7 @@ namespace AIS.Services
             return await db.Contracts.Include(u => u.MyFiles).FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public RootTemplate? GetRootTemplateById(int id)
+        public RootTemplate GetRootTemplateById(int id)
         {
             try
             {
@@ -211,7 +202,7 @@ namespace AIS.Services
             }
             catch
             {
-                return null;
+                throw new AisException("Не удалось получить корневой шаблон документа", HttpStatusCode.BadRequest);
             }
         }
 

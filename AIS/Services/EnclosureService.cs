@@ -1,14 +1,15 @@
-﻿using Core;
+﻿using Infrastructure;
+using Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace AIS.Services
 {
     public class EnclosureService:IEnclosureService
     {
-        private CoreContext db;
-        public EnclosureService(CoreContext coreContext) 
+        private AisDbContext db;
+        public EnclosureService(AisDbContext context) 
         { 
-            db = coreContext;
+            db = context;
         }
 
         public async Task<IEnumerable<MyFile>> GetMyEnclosuresBySubTaskId(int id)

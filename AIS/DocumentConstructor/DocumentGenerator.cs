@@ -10,7 +10,7 @@ using RunProperties = DocumentFormat.OpenXml.Wordprocessing.RunProperties;
 using Text = DocumentFormat.OpenXml.Wordprocessing.Text;
 using Style = DocumentFormat.OpenXml.Wordprocessing.Style;
 using StyleValues = DocumentFormat.OpenXml.Wordprocessing.StyleValues;
-using Core;
+using Infrastructure.Models;
 
 
 namespace AIS

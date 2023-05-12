@@ -1,5 +1,6 @@
 ﻿using AIS.ViewModels.PartnersViewModels;
-using Core;
+using Infrastructure;
+using Infrastructure.Models;
 
 namespace AIS.Services
 {
@@ -23,5 +24,6 @@ namespace AIS.Services
         Task EditPartnerIp(EditPartnerIpViewModel model);
         Task EditPartnerFl(EditPartnerFlViewModel model);
         Task<Partner> GetMainOrganization();
+        Task<List<Employee>> GetEmployeesByPartnerId(int id);
     }
 }

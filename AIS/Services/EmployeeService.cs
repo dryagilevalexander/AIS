@@ -1,106 +1,93 @@
-﻿using AIS.ViewModels.ProcessViewModels;
-using Core;
+﻿using AIS.ViewModels.EmployersViewModels;
+using Infrastructure;
+using Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
+using AIS.ErrorManager;
 
 
 namespace AIS.Services
 {
     public class EmployeeService : IEmployeeService
     {
-        private CoreContext db;
+        private AisDbContext db;
 
-        public EmployeeService(CoreContext context)
+        public EmployeeService(AisDbContext context)
         {
             db = context;
         }
 
-        public async Task<IEnumerable<Employee>> GetEmployeers()
+        public async Task<Employee> GetEmployee(int id)
         {
-            try
-            {
-                IEnumerable<Employee>? employeers = await db.Employeers.Include(u => u.Partner).ToListAsync();
-                return employeers;
-            }
-            catch
-            {
-                return null;
-            }
-        }
 
-        public async Task<Employee?> GetEmployee(int id)
-        {
-            try 
-            { 
             Employee? employee = await db.Employeers.FirstOrDefaultAsync(p => p.Id == id);
+            if(employee == null) throw new AisException("Сотрудник не найден", HttpStatusCode.BadRequest);
             return employee;
-            }
-            catch
-            {
-            return null;
-            }
+
         }
 
-        public async Task<bool> CreateEmployee(EmployeeViewModel evm)
+        public async Task CreateEmployee(CreateEmployeeViewModel model)
         {
             try 
             {
                 Employee employee = new Employee()
                 {
-                    Name = evm.Name,
-                    FirstName = evm.FirstName,
-                    LastName = evm.LastName,
-                    Address = evm.Address,
-                    PhoneNumber = evm.PhoneNumber,
-                    Email = evm.Email,
-                    PartnerId = evm.PartnerId
+                    Name = model.Name,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Address = model.Address,
+                    PhoneNumber = model.PhoneNumber,
+                    Email = model.Email,
+                    PartnerId = model.PartnerId
                 };
 
                 db.Employeers.Add(employee);
                 await db.SaveChangesAsync();
-                return true;
             }
             catch
             {
-            return false;
+                throw new AisException("Не удалось создать сотрудника", HttpStatusCode.BadRequest);
             }
         }
 
-        public async Task<bool> EditEmployee(EmployeeViewModel evm)
+        public async Task EditEmployee(EditEmployeeViewModel model)
         {
             try
             {
-                Employee? employee = await GetEmployee(evm.Id);
-                if (employee != null)
-                {
-                    employee.Name = evm.Name;
-                    employee.FirstName = evm.FirstName;
-                    employee.LastName = evm.LastName;
-                    employee.Address = evm.Address;
-                    employee.PhoneNumber = evm.PhoneNumber;
-                    employee.Email = evm.Email;
-                    employee.PartnerId = evm.PartnerId;
+                Employee? employee = await GetEmployee(model.Id);
+                if (employee == null) throw new AisException("Сотрудник не найден", HttpStatusCode.BadRequest);
+
+                    employee.Name = model.Name;
+                    employee.FirstName = model.FirstName;
+                    employee.LastName = model.LastName;
+                    employee.Address = model.Address;
+                    employee.PhoneNumber = model.PhoneNumber;
+                    employee.Email = model.Email;
+                    employee.PartnerId = model.PartnerId;
                     db.Employeers.Update(employee);
                     await db.SaveChangesAsync();
-                    return true;
-                }
-                else return false;
+
+
             }
             catch
             {
-                return false;
+                throw new AisException("Не удалось отредактировать данные сотрудника", HttpStatusCode.BadRequest);
             }
         }
 
-        public async Task<bool> DeleteEmployee(int? id)
+        public async Task DeleteEmployee(int id)
         {
-            if (id != null)
+            try
             {
-                Employee employee = new Employee { Id = id.Value };
+                Employee? employee = await GetEmployee(id);
+                if (employee == null) throw new AisException("Сотрудник не найден", HttpStatusCode.BadRequest);
                 db.Entry(employee).State = EntityState.Deleted;
                 await db.SaveChangesAsync();
-                return true;    
             }
-            return false;
+            catch
+            {
+                throw new AisException("Не удалось удалить сотрудника", HttpStatusCode.BadRequest);
+            }
         }
     }
 }

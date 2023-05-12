@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using Infrastructure.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace AIS.ViewModels.PartnersViewModels

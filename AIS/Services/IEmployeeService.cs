@@ -1,14 +1,14 @@
-﻿using AIS.ViewModels.ProcessViewModels;
-using Core;
+﻿using AIS.ViewModels.EmployersViewModels;
+using Infrastructure;
+using Infrastructure.Models;
 
 namespace AIS.Services
 {
     public interface IEmployeeService
     {
-        Task<IEnumerable<Employee>> GetEmployeers();
         Task<Employee?> GetEmployee(int id);
-        Task<bool> CreateEmployee(EmployeeViewModel evm);
-        Task<bool> EditEmployee(EmployeeViewModel evm);
-        Task<bool> DeleteEmployee(int? id);
+        Task CreateEmployee(CreateEmployeeViewModel model);
+        Task EditEmployee(EditEmployeeViewModel model);
+        Task DeleteEmployee(int id);
     }
 }

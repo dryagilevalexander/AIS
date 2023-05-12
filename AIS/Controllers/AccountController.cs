@@ -1,4 +1,5 @@
-﻿using Core;
+﻿using Infrastructure;
+using Infrastructure.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -11,13 +12,13 @@ namespace AIS.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private CoreContext db;
+        private AisDbContext db;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, CoreContext coreContext)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, AisDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            db = coreContext;
+            db = context;
         }
         [HttpGet]
         public IActionResult Register()

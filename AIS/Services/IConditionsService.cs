@@ -1,5 +1,6 @@
 ﻿using AIS.ViewModels.DocumentsViewModels;
-using Core;
+using Infrastructure;
+using Infrastructure.Models;
 
 namespace AIS.Services
 {
@@ -7,13 +8,13 @@ namespace AIS.Services
     {
         Task<List<RootTemplate>> GetRootTemplates();
         Task<List<DocumentTemplate>> GetDocumentTemplates();
-        Task CreateRootTemplate(RootTemplateViewModel cctvm);
-        Task EditRootTemplate(RootTemplateViewModel cctvm);
+        Task CreateRootTemplate(CreateRootTemplateViewModel model);
+        Task EditRootTemplate(EditRootTemplateViewModel model);
         Task DeleteRootTemplate(int id);
         Task<RootTemplate> GetRootTemplateById(int id);
         Task<RootTemplate> GetRootTemplateWithDocumentTemplatesById(int id);
-        Task CreateDocumentTemplate(DocumentTemplateViewModel ctvm);
-        Task EditDocumentTemplate(DocumentTemplateViewModel ctvm);
+        Task CreateDocumentTemplate(CreateDocumentTemplateViewModel model);
+        Task EditDocumentTemplate(EditDocumentTemplateViewModel model);
         Task<DocumentTemplate> GetDocumentTemplateById(int id);
         DocumentTemplate GetDocumentTemplateEagerLoadingById(int id);
         Task<DocumentTemplate> GetDocumentTemplateWithConditionsById(int id);
@@ -24,15 +25,15 @@ namespace AIS.Services
         Task<Condition> GetCondition(int id);
         Task<int> GetNumberOfConditionsInDocumentTemplate(int id);
         Task<Condition> GetConditionByNumberInDocument(int number);
-        Task CreateCondition(ConditionViewModel cvm);
-        Task EditCondition(ConditionViewModel cvm);
+        Task CreateCondition(CreateConditionViewModel model);
+        Task EditCondition(EditConditionViewModel model);
         Task DeleteCondition(int id);
         Task SaveCondition(Condition condition);
-        Task CreateSubCondition(SubConditionViewModel scvm);
-        Task EditSubCondition(SubConditionViewModel scvm);
+        Task CreateSubCondition(CreateSubConditionViewModel model);
+        Task EditSubCondition(EditSubConditionViewModel model);
         Task DeleteSubCondition(int id);
-        Task CreateSubConditionParagraph(SubConditionParagraphViewModel scpvm);
-        Task EditSubConditionParagraph(SubConditionParagraphViewModel scpvm);
+        Task CreateSubConditionParagraph(CreateSubConditionParagraphViewModel model);
+        Task EditSubConditionParagraph(EditSubConditionParagraphViewModel model);
         Task DeleteSubConditionParagraph(int id);
         Task<SubCondition> GetSubCondition(int id);
         Task<SubConditionParagraph?> GetSubConditionParagraph(int id);

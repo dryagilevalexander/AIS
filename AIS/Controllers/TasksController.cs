@@ -1,4 +1,5 @@
-﻿using Core;
+﻿using Infrastructure;
+using Infrastructure.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using AIS.Services;
 using Microsoft.AspNetCore.Authorization;

@@ -1,5 +1,6 @@
 ﻿using AIS.ViewModels.TasksViewModels;
-using Core;
+using Infrastructure;
+using Infrastructure.Models;
 
 namespace AIS.Services
 {

@@ -1,5 +1,6 @@
 ﻿using AIS.ViewModels.PartnersViewModels;
-using Core;
+using Infrastructure;
+using Infrastructure.Models;
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.EntityFrameworkCore;
@@ -11,9 +12,9 @@ namespace AIS.Services
 {
     public class PartnerService : IPartnerService
     {
-        private CoreContext db;
+        private AisDbContext db;
 
-        public PartnerService(CoreContext context)
+        public PartnerService(AisDbContext context)
         {
             db = context;
         }
@@ -271,6 +272,11 @@ namespace AIS.Services
             Partner? partner = await db.Partners.Include(p => p.DirectorType).FirstOrDefaultAsync(p => p.PartnerStatusId == 1);
             if (partner == null) throw new AisException("Головная организация не найдена", HttpStatusCode.BadRequest);
             return partner;
+        }
+
+        public async Task<List<Employee>> GetEmployeesByPartnerId(int id)
+        {
+            return await db.Employeers.Where(p => p.PartnerId == id).ToListAsync();
         }
     }
 }

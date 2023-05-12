@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using Infrastructure.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
@@ -45,8 +45,7 @@ namespace AIS.ViewModels.PartnersViewModels
         public string DirectorNameR { get; set; }
         [Required(ErrorMessage = "Не указан статус контрагента")]
         public int PartnerStatusId { get; set; }
+        public List<Employee>? Employees { get; set; }
     }
-
-
 }
 

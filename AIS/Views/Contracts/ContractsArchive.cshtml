@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Infrastructure.Models.Contract>
+@{
+    ViewData["Title"] = "Архив договоров";
+}
+
+<h2>Реестр договоров</h2>
+<p><a asp-action="MyContracts">Реестр договоров</a></p>
+<table class="table table-sm table-hover table-condensed" id="currentTable">
+    <tr><th>Номер</th><th>Дата подписания</th><th>Дата окончания</th><th onclick="sortTable(0)">Контрагент</th><th onclick="sortTable(1)">Предмет</th><th onclick="sortTable(2)">Цена</th><th onclick="sortTable(3)">Статус</th></tr>
+    @foreach (var item in Model)
+    {
+            <tr>
+                <td>@item.NumberOfContract</td>
+                <td>@item.DateStart</td>
+                <td>@item.DateEnd</td>
+                <td>
+                    @if(item.Partner is not null && item.Partner.Name is not null) @item.Partner.Name
+                </td>
+                <td>@item.SubjectOfContract</td>
+                <td>@item.Cost</td>
+                <td>
+                    @if (item.MyContractStatus is not null && item.MyContractStatus.Name is not null)
+                    @item.MyContractStatus.Name
+                </td>
+            <td align="right">
+                <a class="btn btn-outline-primary" role="button" asp-action="EditContract" asp-controller="contracts" asp-route-id="@item.Id">Изменить</a>
+            </td>
+            <td align="left">
+                <form asp-controller="contracts" asp-action="DeleteContract" method="post" asp-route-id="@item.Id">
+                    <input type="submit" value="Удалить" class="btn btn-outline-danger" />
+                </form>
+            </td>
+            </tr>
+    }
+</table>
+
+@section scripts{
+    <script asp-src-include="~/js/tables.js"></script>
+}

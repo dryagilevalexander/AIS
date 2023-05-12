@@ -187,13 +187,73 @@
     
     <div class="row">
         <div class="col-5 mb-3">
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <input class="btn btn-primary" type="submit" value="Отправить" />
+            <div class="d-flex justify-content-end">
+                <div>
+                    <a class="btn btn-secondary" role="button" asp-action="Partners" asp-controller="Partners">Отмена</a>
+                </div>
+                <div class="col-1"></div>
+                <div>
+                    <input class="btn btn-primary" type="submit" value="Отправить" />
+                </div>
             </div>
         </div>
         <div class="col-7"></div>
     </div>
+
 </form>
+
+<style>
+    .line {
+        border-bottom: 1px solid #d3d3d3; /* Параметры линии */
+    }
+</style>
+<div class="line col-12"></div>
+<h2>Сотрудники</h2>
+
+<table class="table table-sm table-hover" id="currentTable">
+    <tr><th onclick="sortTable(0)">Фио</th><th onclick="sortTable(1)">Адрес</th><th onclick="sortTable(1)">Email</th><th onclick="sortTable(1)">Телефон</th></tr>
+    <tr class="table-filters">
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+        <td>
+            <input type="text" id="tableFilter" />
+        </td>
+    </tr>
+
+    @foreach (var item in Model.Employees)
+    {
+        <tr class="table-data">
+            
+        @{string Fio = item.LastName + " " + item.Name + " " + item.FirstName;
+        <td>
+        @Fio
+        </td>
+        }        
+        <td>@if (item.Address != null)@item.Address</td>
+        <td>@if (item.Email != null)@item.Email</td>
+        <td>@if (item.PhoneNumber != null)@item.PhoneNumber</td>
+                <td align="right">
+                    <a class="btn btn-outline-primary" role="button" asp-action="EditEmployee" asp-controller="employers" asp-route-id="@item.Id">Изменить</a>
+                </td>
+                <td align="left">
+                    <form asp-controller="employers" asp-action="DeleteEmployee" method="post" asp-route-id="@item.Id">
+                        <input type="submit" value="Удалить" class="btn btn-outline-danger" />
+                    </form>
+                </td>
+            </tr>
+    }
+</table>
+
+<a class="btn btn-outline-primary" role="button" asp-action="CreateEmployee" asp-controller="employers" asp-route-id="@Model.Id">Добавить</a>
+
+
 
 @section scripts{
     <script asp-src-include="~/js/partners.js"></script>

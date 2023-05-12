@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using Infrastructure.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AIS.ViewModels.TasksViewModels

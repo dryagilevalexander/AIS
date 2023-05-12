@@ -1,4 +1,5 @@
-﻿using Core;
+﻿using Infrastructure;
+using Infrastructure.Models;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
@@ -11,10 +12,10 @@ namespace AIS.Services
 {
     public class MyTaskService : IMyTaskService
     {
-        private CoreContext db;
+        private AisDbContext db;
         IWebHostEnvironment _appEnvironment;
 
-        public MyTaskService(CoreContext context, IWebHostEnvironment appEnvironment)
+        public MyTaskService(AisDbContext context, IWebHostEnvironment appEnvironment)
         {
             db = context;
             _appEnvironment = appEnvironment;

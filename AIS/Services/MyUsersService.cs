@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Core;
+using Infrastructure;
+using Infrastructure.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 
@@ -7,11 +8,11 @@ namespace AIS.Services
 {
     public class MyUsersService: IMyUsersService
     {
-        private CoreContext db;
+        private AisDbContext db;
 
-        public MyUsersService(CoreContext coreContext)
+        public MyUsersService(AisDbContext context)
         {
-            db = coreContext;
+            db = context;
         }
         public async Task<User> GetCurrentUser(string userName)
         {

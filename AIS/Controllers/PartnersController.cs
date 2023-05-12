@@ -1,4 +1,5 @@
-﻿using Core;
+﻿using Infrastructure;
+using Infrastructure.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using AIS.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -126,6 +127,7 @@ namespace AIS.Controllers
         public async Task<IActionResult> EditPartnerOrganization(int id)
         {
             Partner? partner = await _partnerService.GetPartner(id);
+            List<Employee> employees = await _partnerService.GetEmployeesByPartnerId(id);
             EditPartnerOrganizationViewModel model = new EditPartnerOrganizationViewModel()
             {
                 Id = partner.Id,
@@ -145,7 +147,8 @@ namespace AIS.Controllers
                 PartnerTypeId = partner.PartnerTypeId,
                 Address = partner.Address,
                 PhoneNumber = partner.PhoneNumber,
-                Email = partner.Email
+                Email = partner.Email,
+                Employees = employees
             };
             
             var directorTypes = await _partnerService.GetDirectorTypes();

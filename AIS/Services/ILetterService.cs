@@ -1,5 +1,6 @@
 ﻿using AIS.ViewModels.ProcessViewModels;
-using Core;
+using Infrastructure;
+using Infrastructure.Models;
 
 namespace AIS.Services
 {
@@ -7,10 +8,10 @@ namespace AIS.Services
     {
         Task<IEnumerable<ShippingMethod>> GetAllShippingMethods();
         Task<IEnumerable<LetterType>> GetAllletterTypes();
-        Task<bool> CreateLetter(LetterViewModel letterViewModel);
-        Task<bool> DeleteLetter(int? id);
+        Task CreateLetter(LetterViewModel letterViewModel);
+        Task DeleteLetter(int id);
         Task<Letter> GetLetterById(int id);
-        Task<bool> EditLetter(Letter letter);
+        Task EditLetter(Letter letter);
         Task<List<Letter>> GetAllLettersEagerLoading();
     }
 }

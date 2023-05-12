@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using Infrastructure.Models;
 using System.Runtime.CompilerServices;
 
 namespace AIS.ViewModels.PartnersViewModels

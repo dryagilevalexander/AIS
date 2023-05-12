@@ -1,7 +1,8 @@
 ﻿using AIS.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using Core;
+using Infrastructure;
+using Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;

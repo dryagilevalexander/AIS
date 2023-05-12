@@ -1,4 +1,5 @@
-﻿using Core;
+﻿using Infrastructure;
+using Infrastructure.Models;
 
 namespace AIS.Services
 {

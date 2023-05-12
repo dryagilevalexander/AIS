@@ -1,5 +1,6 @@
 ﻿using AIS.Models;
-using Core;
+using Infrastructure;
+using Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using AIS.Services;
@@ -18,6 +19,8 @@ using System.Linq;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using System.ComponentModel.DataAnnotations;
 using AIS.ViewModels.DocumentsViewModels;
+using AIS.ErrorManager;
+using System.Net;
 
 namespace AIS.Controllers
 {
@@ -49,56 +52,41 @@ namespace AIS.Controllers
         }
 
         public async Task<IActionResult> CreateRootTemplate()
-        {          
-            RootTemplateViewModel RootTemplateViewModel = new RootTemplateViewModel();
-            var documentTypes = await _contractsService.GetTypesOfDocument();
-            RootTemplateViewModel.TypesOfDocument = from documentType in documentTypes select new SelectListItem { Text = documentType.Name, Value = documentType.Id.ToString() };
-
-            return View(RootTemplateViewModel);
+        {
+            CreateRootTemplateViewModel model = new CreateRootTemplateViewModel();
+            await model.Fill(_contractsService);
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateRootTemplate(RootTemplateViewModel cctvm)
+        public async Task<IActionResult> CreateRootTemplate(CreateRootTemplateViewModel model)
         {
         if (!ModelState.IsValid)
         {
             return NotFound();
         }
 
-           await _conditionsService.CreateRootTemplate(cctvm);
+           await _conditionsService.CreateRootTemplate(model);
            return RedirectToAction("RootTemplates");
         }
 
         [HttpGet]
         public async Task<IActionResult> EditRootTemplate(int id)
         {
-                var documentTypes = await _contractsService.GetTypesOfDocument();
-
-                RootTemplate? rootTemplate = await _conditionsService.GetRootTemplateWithDocumentTemplatesById(id);                
-                if(rootTemplate == null) return NotFound();
-    
-                RootTemplateViewModel rootTemplateViewModel = new RootTemplateViewModel
-                {
-                    Id = rootTemplate.Id,
-                    Name = rootTemplate.Name,
-                    Description = rootTemplate.Description,
-                    DocumentTemplates = rootTemplate.DocumentTemplates,
-                    TypeOfDocumentId = rootTemplate.TypeOfDocumentId,
-                };
-                rootTemplateViewModel.TypesOfDocument = from documentType in documentTypes select new SelectListItem { Text = documentType.Name, Value = documentType.Id.ToString() };
-
-                return View(rootTemplateViewModel);
+                EditRootTemplateViewModel model = new EditRootTemplateViewModel();
+                await model.Fill(id, _conditionsService, _contractsService);
+                return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditRootTemplate(RootTemplateViewModel cctvm)
+        public async Task<IActionResult> EditRootTemplate(EditRootTemplateViewModel model)
         {
         if (!ModelState.IsValid)
         {
             return NotFound();
         }
 
-            await _conditionsService.EditRootTemplate(cctvm);
+            await _conditionsService.EditRootTemplate(model);
             return RedirectToAction("RootTemplates");
         }
 
@@ -116,19 +104,15 @@ namespace AIS.Controllers
 
         public async Task<IActionResult> CreateDocumentTemplate(int id)
         {
-            DocumentTemplateViewModel DocumentTemplateViewModel = new DocumentTemplateViewModel();
-            DocumentTemplateViewModel.RootTemplateId = id;
-            RootTemplate rootTemplate = await _conditionsService.GetRootTemplateById(id);
-            DocumentTemplateViewModel.TypeOfDocumentId = rootTemplate.TypeOfDocumentId;
-            var typesOfContract = await _contractsService.GetTypeOfContracts();
-            DocumentTemplateViewModel.TypesOfContract = from typeOfContract in typesOfContract select new SelectListItem { Text = typeOfContract.Name, Value = typeOfContract.Id.ToString() };
-            return View(DocumentTemplateViewModel);
+            CreateDocumentTemplateViewModel model = new CreateDocumentTemplateViewModel();
+            await model.Fill(id, _conditionsService, _contractsService);
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateDocumentTemplate(DocumentTemplateViewModel ctvm)
+        public async Task<IActionResult> CreateDocumentTemplate(CreateDocumentTemplateViewModel model)
         {
-            if(ctvm.TypeOfDocumentId == 1)
+            if(model.TypeOfDocumentId == 1)
             { 
             if (!ModelState.IsValid)
             {
@@ -137,46 +121,27 @@ namespace AIS.Controllers
             }
             else
             {
-                if (ctvm.Name == null) return NotFound();
-                if (ctvm.Description == null) return NotFound();
+                if (model.Name == null) return NotFound();
+                if (model.Description == null) return NotFound();
             }
 
-            await _conditionsService.CreateDocumentTemplate(ctvm);
-            return RedirectToAction("EditRootTemplate", new { id = ctvm.RootTemplateId });
+            await _conditionsService.CreateDocumentTemplate(model);
+            return RedirectToAction("EditRootTemplate", new { id = model.RootTemplateId });
         }
 
         [HttpGet]
         public async Task<IActionResult> EditDocumentTemplate(int id)
-        {       
-                DocumentTemplate? DocumentTemplate = await _conditionsService.GetDocumentTemplateWithConditionsById(id);
-                if (DocumentTemplate == null) return NotFound();
-    
-                var typesOfContract = await _contractsService.GetTypeOfContracts();
-                var typesOfStateReg = await _contractsService.GetTypeOfStateRegs();
-                var conditions = DocumentTemplate.Conditions;
-                conditions = conditions.OrderBy(x => x.NumberInDocument).ToList<Core.Condition>();
-                DocumentTemplateViewModel DocumentTemplateViewModel = new DocumentTemplateViewModel
-                {
-                    Id = DocumentTemplate.Id,
-                    Name = DocumentTemplate.Name,
-                    Description = DocumentTemplate.Description,
-                    Conditions = conditions
-                };
-                if (DocumentTemplate.TypeOfContractId != null) DocumentTemplateViewModel.TypeOfContractId = DocumentTemplate.TypeOfContractId.Value;
-
-                DocumentTemplateViewModel.RootTemplateId = DocumentTemplate.RootTemplateId;
-                DocumentTemplateViewModel.TypesOfContract = from typeOfContract in typesOfContract select new SelectListItem { Text = typeOfContract.Name, Value = typeOfContract.Id.ToString() };
-                DocumentTemplateViewModel.TypesOfStateReg = from typeOfStateReg in typesOfStateReg select new SelectListItem { Text = typeOfStateReg.Name, Value = typeOfStateReg.Id.ToString() };
-
-
-                return View(DocumentTemplateViewModel);
+        {
+            EditDocumentTemplateViewModel model = new EditDocumentTemplateViewModel();
+            await model.Fill(id, _conditionsService, _contractsService);
+            return View(model);
 
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditDocumentTemplate(DocumentTemplateViewModel ctvm)
+        public async Task<IActionResult> EditDocumentTemplate(EditDocumentTemplateViewModel model)
         {
-            if (ctvm.TypeOfDocumentId != 1)
+            if (model.TypeOfDocumentId != 1)
             {
                 if (!ModelState.IsValid)
                 {
@@ -185,12 +150,12 @@ namespace AIS.Controllers
             }
             else
             {
-                if (ctvm.Name == null) return NotFound();
-                if (ctvm.Description == null) return NotFound();
+                if (model.Name == null) return NotFound();
+                if (model.Description == null) return NotFound();
             }
 
-            await _conditionsService.EditDocumentTemplate(ctvm);
-            return RedirectToAction("EditRootTemplate", new { id = ctvm.RootTemplateId });
+            await _conditionsService.EditDocumentTemplate(model);
+            return RedirectToAction("EditRootTemplate", new { id = model.RootTemplateId });
         }
 
         [HttpPost]
@@ -205,73 +170,50 @@ namespace AIS.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateCondition(int id)
         {
-                ConditionViewModel conditionViewModel = new ConditionViewModel();
-                DocumentTemplate? documentTemplate = await _conditionsService.GetDocumentTemplateWithRootTemplateById(id);
-                if (documentTemplate == null) return NotFound();
-                int typeOfDocumentId = documentTemplate.RootTemplate.TypeOfDocumentId;
-                conditionViewModel.DocumentTemplateId = id;
-                conditionViewModel.TypeOfDocumentId = typeOfDocumentId;
-                var typesOfStateReg = await _contractsService.GetTypeOfStateRegs();
-                conditionViewModel.TypesOfStateReg = from typeOfStateReg in typesOfStateReg select new SelectListItem { Text = typeOfStateReg.Name, Value = typeOfStateReg.Id.ToString() };
-                return View(conditionViewModel);
+            CreateConditionViewModel model = new CreateConditionViewModel();
+            await model.Fill(id, _conditionsService, _contractsService);
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCondition(ConditionViewModel cvm)
+        public async Task<IActionResult> CreateCondition(CreateConditionViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return NotFound();
             }
 
-            await _conditionsService.CreateCondition(cvm);
-            return RedirectToAction("EditDocumentTemplate", new {id = cvm.DocumentTemplateId});
+            await _conditionsService.CreateCondition(model);
+            return RedirectToAction("EditDocumentTemplate", new {id = model.DocumentTemplateId});
         }
 
         [HttpGet]
         public async Task<IActionResult> EditCondition(int id)
         {
-                ConditionViewModel conditionViewModel = new ConditionViewModel();
-                Core.Condition? condition = await _conditionsService.GetCondition(id);
-                if(condition == null) return NotFound();
-                DocumentTemplate? documentTemplate = await _conditionsService.GetDocumentTemplateWithRootTemplateById(condition.DocumentTemplateId);
-                if (documentTemplate == null) return NotFound();
-                conditionViewModel.Id = condition.Id;
-                if(condition.TypeOfStateRegId != null) conditionViewModel.TypeOfStateRegId = condition.TypeOfStateRegId.Value;
-                conditionViewModel.Title = condition.Title;
-                conditionViewModel.Name = condition.Name;
-                conditionViewModel.DocumentTemplateId = condition.DocumentTemplateId;
-                int typeOfDocumentId = documentTemplate.RootTemplate.TypeOfDocumentId;
-                conditionViewModel.TypeOfDocumentId = typeOfDocumentId;
-                conditionViewModel.NumLevelReference = condition.NumLevelReference;
-                conditionViewModel.NumId = condition.NumId;
-                conditionViewModel.Justification = condition.Justification;
-                conditionViewModel.SubConditions = condition.SubConditions;
-                var typesOfStateReg = await _contractsService.GetTypeOfStateRegs();
-                conditionViewModel.TypesOfStateReg = from typeOfStateReg in typesOfStateReg select new SelectListItem { Text = typeOfStateReg.Name, Value = typeOfStateReg.Id.ToString() };
-                return View(conditionViewModel);
+                EditConditionViewModel model = new EditConditionViewModel();
+                await model.Fill(id, _conditionsService, _contractsService);
+                return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditCondition(ConditionViewModel cvm)
+        public async Task<IActionResult> EditCondition(EditConditionViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return NotFound();
             }
 
-            await _conditionsService.EditCondition(cvm);
-            return RedirectToAction("EditDocumentTemplate", new { id = cvm.DocumentTemplateId });
+            await _conditionsService.EditCondition(model);
+            return RedirectToAction("EditDocumentTemplate", new { id = model.DocumentTemplateId });
         }
 
         [HttpPost]
         public async Task<IActionResult> LiftUpCondition(int id)
         {
-            Core.Condition? condition = await _conditionsService.GetCondition(id);
-            if (condition == null) return NotFound();
-            if(condition.NumberInDocument != 1)
+            Infrastructure.Models.Condition condition = await _conditionsService.GetCondition(id);
+            if (condition.NumberInDocument != 1)
             { 
-            Core.Condition lowerDownCondition = await _conditionsService.GetConditionByNumberInDocument(condition.NumberInDocument-1);
+            Infrastructure.Models.Condition lowerDownCondition = await _conditionsService.GetConditionByNumberInDocument(condition.NumberInDocument-1);
                 condition.NumberInDocument = lowerDownCondition.NumberInDocument;
                 lowerDownCondition.NumberInDocument = lowerDownCondition.NumberInDocument + 1;
                 _conditionsService.SaveCondition(condition);
@@ -284,9 +226,8 @@ namespace AIS.Controllers
         [HttpPost]
         public async Task<IActionResult> LowerDownCondition(int id)
         {
-            Core.Condition? condition = await _conditionsService.GetCondition(id);
-            if (condition == null) return NotFound();
-            Core.Condition liftUpCondition = await _conditionsService.GetConditionByNumberInDocument(condition.NumberInDocument + 1);
+            Infrastructure.Models.Condition? condition = await _conditionsService.GetCondition(id);
+            Infrastructure.Models.Condition liftUpCondition = await _conditionsService.GetConditionByNumberInDocument(condition.NumberInDocument + 1);
             if(liftUpCondition != null)
             {
                 condition.NumberInDocument = liftUpCondition.NumberInDocument;
@@ -301,7 +242,7 @@ namespace AIS.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteCondition(int id)
         {
-            Core.Condition? condition = await _conditionsService.GetCondition(id);
+            Infrastructure.Models.Condition? condition = await _conditionsService.GetCondition(id);
             if (condition == null) return NotFound();
             int DocumentTemplateId = condition.DocumentTemplateId;
             await _conditionsService.DeleteCondition(id);
@@ -312,50 +253,41 @@ namespace AIS.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateSubCondition(int id)
         {
-                SubConditionViewModel subConditionViewModel = new SubConditionViewModel();
-                subConditionViewModel.ConditionId = id;
-                return View(subConditionViewModel);
+                CreateSubConditionViewModel model = new CreateSubConditionViewModel();
+                model.ConditionId = id;
+                return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateSubCondition(SubConditionViewModel scvm)
+        public async Task<IActionResult> CreateSubCondition(CreateSubConditionViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return NotFound();
             }
 
-            await _conditionsService.CreateSubCondition(scvm);
-            return RedirectToAction("EditCondition", new { id = scvm.ConditionId });
+            await _conditionsService.CreateSubCondition(model);
+            return RedirectToAction("EditCondition", new { id = model.ConditionId });
         }
 
         [HttpGet]
         public async Task<IActionResult> EditSubCondition(int id)
         {
-                SubConditionViewModel subConditionViewModel = new SubConditionViewModel();
-                SubCondition subCondition = await _conditionsService.GetSubCondition(id);
-                if (subCondition == null) return NotFound();
-                subConditionViewModel.Id = subCondition.Id;
-                subConditionViewModel.Name = subCondition.Name;
-                subConditionViewModel.Text = subCondition.Text;
-                subConditionViewModel.ConditionId = subCondition.ConditionId;
-                subConditionViewModel.NumLevelReference = subCondition.NumLevelReference;
-                subConditionViewModel.NumId = subCondition.NumId;
-                subConditionViewModel.Justification = subCondition.Justification;
-                subConditionViewModel.SubConditionParagraphs = subCondition.SubConditionParagraphs;
-                return View(subConditionViewModel);
+            EditSubConditionViewModel model = new EditSubConditionViewModel();
+            model.Fill(id, _conditionsService);
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditSubCondition(SubConditionViewModel scvm)
+        public async Task<IActionResult> EditSubCondition(EditSubConditionViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return NotFound();
             }
 
-            await _conditionsService.EditSubCondition(scvm);
-            return RedirectToAction("EditCondition", new { id = scvm.ConditionId });
+            await _conditionsService.EditSubCondition(model);
+            return RedirectToAction("EditCondition", new { id = model.ConditionId });
         }
 
 
@@ -372,48 +304,41 @@ namespace AIS.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateSubConditionParagraph(int id)
         {
-                SubConditionParagraphViewModel subConditionParagraphViewModel = new SubConditionParagraphViewModel();
-                subConditionParagraphViewModel.SubConditionId = id;
-                return View(subConditionParagraphViewModel);
+                CreateSubConditionParagraphViewModel model = new CreateSubConditionParagraphViewModel();
+                model.SubConditionId = id;
+                return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateSubConditionParagraph(SubConditionParagraphViewModel scpvm)
+        public async Task<IActionResult> CreateSubConditionParagraph(CreateSubConditionParagraphViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return NotFound();
             }
 
-            await _conditionsService.CreateSubConditionParagraph(scpvm);
-            return RedirectToAction("EditSubCondition", new { id = scpvm.SubConditionId });
+            await _conditionsService.CreateSubConditionParagraph(model);
+            return RedirectToAction("EditSubCondition", new { id = model.SubConditionId });
         }
 
         [HttpGet]
         public async Task<IActionResult> EditSubConditionParagraph(int id)
         {
-                SubConditionParagraphViewModel subConditionParagraphViewModel = new SubConditionParagraphViewModel();
-                SubConditionParagraph? subConditionParagraph = await _conditionsService.GetSubConditionParagraph(id);
-                if (subConditionParagraph == null) return NotFound();
-                subConditionParagraphViewModel.Id = subConditionParagraph.Id;
-                subConditionParagraphViewModel.Text = subConditionParagraph.Text;
-                subConditionParagraphViewModel.NumLevelReference = subConditionParagraph.NumLevelReference;
-                subConditionParagraphViewModel.NumId = subConditionParagraph.NumId;
-                subConditionParagraphViewModel.Justification = subConditionParagraph.Justification;
-                subConditionParagraphViewModel.SubConditionId = subConditionParagraph.SubConditionId;
-                return View(subConditionParagraphViewModel);
+            EditSubConditionParagraphViewModel model = new EditSubConditionParagraphViewModel();
+            model.Fill(id, _conditionsService);
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditSubConditionParagraph(SubConditionParagraphViewModel scpvm)
+        public async Task<IActionResult> EditSubConditionParagraph(EditSubConditionParagraphViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return NotFound();
             }
 
-            await _conditionsService.EditSubConditionParagraph(scpvm);
-            return RedirectToAction("EditSubCondition", new { id = scpvm.SubConditionId });
+            await _conditionsService.EditSubConditionParagraph(model);
+            return RedirectToAction("EditSubCondition", new { id = model.SubConditionId });
         }
 
 
@@ -456,7 +381,7 @@ namespace AIS.Controllers
             DocumentModel contract = new DocumentModel();
             contract.TypeOfDocumentId = typeOfDocumentId;
 
-            List<Core.Condition> conditions = new List<Core.Condition>();
+            List<Infrastructure.Models.Condition> conditions = new List<Infrastructure.Models.Condition>();
 
             DocumentTemplate documentTemplate = _conditionsService.GetDocumentTemplateEagerLoadingById(Convert.ToInt32(jsonContractData.DocumentTemplateId));
             int typeOfContract = documentTemplate.TypeOfContractId.Value;
@@ -477,7 +402,7 @@ namespace AIS.Controllers
                 }
             }
 
-            conditions = conditions.OrderBy(x => x.NumberInDocument).ToList<Core.Condition>();
+            conditions = conditions.OrderBy(x => x.NumberInDocument).ToList<Infrastructure.Models.Condition>();
             contract.Conditions = conditions;
 
             string contractType = "";
