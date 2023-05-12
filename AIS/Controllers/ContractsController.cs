@@ -42,22 +42,13 @@ namespace AIS.Controllers
 
         public async Task<IActionResult> CreateContract()
         {
-            MyContractViewModel myContractViewModel = new MyContractViewModel();
-            IEnumerable<Partner> myPartners = await _partnerService.GetPartnersWithoutOurOrganization();
-            myContractViewModel.MyPartners = from myPartner in myPartners select new SelectListItem { Text = myPartner.ShortName, Value = myPartner.Id.ToString() };
-            IEnumerable<DocumentTemplate> DocumentTemplates = await _conditionsService.GetDocumentTemplates();
-            IEnumerable<TypeOfStateReg> typeOfStateRegs = await _contractsService.GetTypeOfStateRegs();
-            IEnumerable<ArticleOfLaw> articleOfLaws = await _contractsService.GetArticleOfLaws();
-            IEnumerable<MyContractStatus> myContractStatuses = await _contractsService.GetMyContractStatuses();
-            myContractViewModel.DocumentTemplates = from DocumentTemplate in DocumentTemplates select new SelectListItem { Text = DocumentTemplate.Name, Value = DocumentTemplate.Id.ToString() };
-            myContractViewModel.TypeOfStateRegs = from typeOfStateReg in typeOfStateRegs select new SelectListItem { Text = typeOfStateReg.Name, Value = typeOfStateReg.Id.ToString() };
-            myContractViewModel.ArticleOfLaws = from articleOfLaw in articleOfLaws select new SelectListItem { Text = articleOfLaw.Name, Value = articleOfLaw.Id.ToString() };
-            myContractViewModel.MyContractStatuses = from statusOfContract in myContractStatuses select new SelectListItem { Text = statusOfContract.Name, Value = statusOfContract.Id.ToString() };
-            return View(myContractViewModel);
+            CreateContractViewModel model = new CreateContractViewModel();
+            await model.Fill(_partnerService, _conditionsService, _contractsService);
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateContract(MyContractViewModel mcvm)
+        public async Task<IActionResult> CreateContract(CreateContractViewModel model)
         {
 
              if (!ModelState.IsValid)
@@ -65,11 +56,11 @@ namespace AIS.Controllers
                 return NotFound();
              }
 
-            DocumentTemplate DocumentTemplate = await _conditionsService.GetDocumentTemplateWithTypeOfContractById(Convert.ToInt32(mcvm.DocumentTemplateId));
+            DocumentTemplate DocumentTemplate = await _conditionsService.GetDocumentTemplateWithTypeOfContractById(model.DocumentTemplateId);
             int typeOfContractId = DocumentTemplate.TypeOfContractId.Value;
 
-            _contractsService.CreateContract(mcvm, typeOfContractId);
-             return RedirectToAction("MyContracts");
+            await _contractsService.CreateContract(model, typeOfContractId);
+            return RedirectToAction("MyContracts");
         }
 
         public async Task<IActionResult> EditContract(int id)
@@ -78,45 +69,17 @@ namespace AIS.Controllers
              {
                  return NotFound();
              }
-            
-                Contract? contract = await _contractsService.GetContractByIdWithMyFiles(id);
-                if(contract == null) return NotFound();
 
-                IEnumerable<MyFile> enclosures = await _enclosureService.GetMyEnclosuresByContractId(id);
-                IEnumerable<Partner> myPartners = await _partnerService.GetPartners();
-                var partners = from myPartner in myPartners select new SelectListItem { Text = myPartner.ShortName, Value = myPartner.Id.ToString() };
-                IEnumerable<MyContractStatus> myContractStatuses = await _contractsService.GetMyContractStatuses();
-                var contractStatuses = from statusOfContract in myContractStatuses select new SelectListItem { Text = statusOfContract.Name, Value = statusOfContract.Id.ToString() };
-                IEnumerable<TypeOfStateReg> typeOfStateRegs = await _contractsService.GetTypeOfStateRegs();
-                IEnumerable<ArticleOfLaw> articleOfLaws = await _contractsService.GetArticleOfLaws();
-
-                MyContractViewModel myContractViewModel = new MyContractViewModel
-                {
-                    Id = contract.Id,
-                    NumberOfContract = contract.NumberOfContract,
-                    DateStart = contract.DateStart,
-                    DateEnd = contract.DateEnd,
-                    PartnerOrganizationId = contract.PartnerOrganizationId,
-                    SubjectOfContract = contract.SubjectOfContract,
-                    Cost = (decimal)contract.Cost,
-                    MyPartners = partners,
-                    MyContractStatuses = contractStatuses,
-                    MyContractStatusId = contract.MyContractStatusId,
-                    MyFiles = enclosures
-                };
-
-                myContractViewModel.TypeOfStateRegs = from typeOfStateReg in typeOfStateRegs select new SelectListItem { Text = typeOfStateReg.Name, Value = typeOfStateReg.Id.ToString() };
-                myContractViewModel.ArticleOfLaws = from articleOfLaw in articleOfLaws select new SelectListItem { Text = articleOfLaw.Name, Value = articleOfLaw.Id.ToString() };
-
-
-                return View(myContractViewModel);
+             EditContractViewModel model = new EditContractViewModel();
+             model.Fill(id, _contractsService, _enclosureService, _partnerService);
+             return View(model);
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> EditContract(MyContractViewModel mcvm)
+        public async Task<IActionResult> EditContract(EditContractViewModel model)
         {
-            await _contractsService.EditContract(mcvm);
+            await _contractsService.EditContract(model);
             return RedirectToAction("MyContracts");
         }
 

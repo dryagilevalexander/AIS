@@ -12,8 +12,8 @@ namespace AIS.Services
         Task<IEnumerable<TypeOfStateReg>> GetTypeOfStateRegs();
         Task<IEnumerable<ArticleOfLaw>> GetArticleOfLaws();
         Task<IEnumerable<MyContractStatus>> GetMyContractStatuses();
-        Task CreateContract(MyContractViewModel mcvm, int typeOfContract);
-        Task EditContract(MyContractViewModel mcvm);
+        Task CreateContract(CreateContractViewModel model, int typeOfContract);
+        Task EditContract(EditContractViewModel model);
         Task DeleteContract(int id);
         Task<Contract> GetContractByIdWithMyFiles(int id);
         DocumentModel SetContractRequisites(DocumentModel contract, bool isCustomer, Partner mainOrganization, Partner contragent);

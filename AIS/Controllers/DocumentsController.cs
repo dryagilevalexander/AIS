@@ -369,21 +369,27 @@ namespace AIS.Controllers
         [HttpPost]
         public async Task<string> ShadowConstructDocument([FromBody] JsonContractData jsonContractData)
         {
-            bool isCustomer;
-            Dictionary <string, string> replacementDictionary = new Dictionary<string, string>();
+           
             DocumentTemplate DocumentTemplate = await _conditionsService.GetDocumentTemplateWithTypeOfContractById(Convert.ToInt32(jsonContractData.DocumentTemplateId));
-
             RootTemplate RootTemplate = await _conditionsService.GetRootTemplateWithDocumentTemplatesById(DocumentTemplate.RootTemplateId);
+            Partner contragent = await _partnerService.GetPartner(Convert.ToInt32(jsonContractData.PartnerId));
+            Partner mainOrganization = await _partnerService.GetMainOrganization();
+            DocumentTemplate documentTemplate = _conditionsService.GetDocumentTemplateEagerLoadingById(Convert.ToInt32(jsonContractData.DocumentTemplateId));
+
+
             int typeOfDocumentId = RootTemplate.TypeOfDocumentId;
+
+            bool isCustomer;
             if (jsonContractData.IsCustomer == "true") isCustomer = true;
             else isCustomer = false;
             if (jsonContractData.ArticleOfLawId == "") jsonContractData.ArticleOfLawId = "0";
+            
+            
             DocumentModel contract = new DocumentModel();
-            contract.TypeOfDocumentId = typeOfDocumentId;
+
 
             List<Infrastructure.Models.Condition> conditions = new List<Infrastructure.Models.Condition>();
 
-            DocumentTemplate documentTemplate = _conditionsService.GetDocumentTemplateEagerLoadingById(Convert.ToInt32(jsonContractData.DocumentTemplateId));
             int typeOfContract = documentTemplate.TypeOfContractId.Value;
             foreach (var condition in DocumentTemplate.Conditions)
             {
@@ -403,7 +409,7 @@ namespace AIS.Controllers
             }
 
             conditions = conditions.OrderBy(x => x.NumberInDocument).ToList<Infrastructure.Models.Condition>();
-            contract.Conditions = conditions;
+
 
             string contractType = "";
             string contractName = "";
@@ -464,17 +470,11 @@ namespace AIS.Controllers
             }
 
 
-            
-
-            Partner contragent = await _partnerService.GetPartner(Convert.ToInt32(jsonContractData.PartnerId));
-            Partner mainOrganization = await _partnerService.GetMainOrganization();
-
-
-
-            contract = _contractsService.SetContractRequisites(contract, isCustomer, mainOrganization, contragent);
+            Dictionary<string, string> replacementDictionary = new Dictionary<string, string>();
 
             replacementDictionary.Add("договор", contractName);
             replacementDictionary.Add("contractType", contractType);
+            
             if(isCustomer == true)
             {
                 replacementDictionary.Add("customerName", mainOrganization.Name);
@@ -504,11 +504,17 @@ namespace AIS.Controllers
             replacementDictionary.Add("executor", executor);
             replacementDictionary.Add("cost", jsonContractData.Cost);
 
-            contract.ReplacementDictionary = replacementDictionary;
             
             string fileName = Guid.NewGuid().ToString();
             fileName = fileName + ".docx";
             string path = _appEnvironment.WebRootPath + "\\files\\Output\\" + fileName;
+
+
+            contract.TypeOfDocumentId = typeOfDocumentId;
+            contract.Conditions = conditions;
+            contract = _contractsService.SetContractRequisites(contract, isCustomer, mainOrganization, contragent);
+            contract.ReplacementDictionary = replacementDictionary;
+
             new DocumentGenerator().CreateContract(path, contract);
 
             return path;

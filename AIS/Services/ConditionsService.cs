@@ -24,28 +24,48 @@ namespace AIS.Services
 
         public async Task<List<RootTemplate>> GetRootTemplates()
         {
-            return await db.RootTemplates.ToListAsync();
+            try
+            {
+                return await db.RootTemplates.ToListAsync();
+            }
+            catch
+            {
+                throw new AisException("Не удалось получить корневые шаблоны документов", HttpStatusCode.BadRequest);
+            }
         }
 
         public async Task<RootTemplate> GetRootTemplateById(int id)
         {
-            return await db.RootTemplates.FirstOrDefaultAsync(p => p.Id == id);
+            RootTemplate? rootTemplate = await db.RootTemplates.FirstOrDefaultAsync(p => p.Id == id);
+            if (rootTemplate == null) throw new AisException("Не найден корневой шаблон документа", HttpStatusCode.BadRequest);
+            return rootTemplate;
         }
 
         public async Task<RootTemplate> GetRootTemplateWithDocumentTemplatesById(int id)
         {
-            return await db.RootTemplates.Include(p => p.DocumentTemplates).FirstOrDefaultAsync(p => p.Id == id);
+             RootTemplate? rootTemplate = await db.RootTemplates.Include(p => p.DocumentTemplates).FirstOrDefaultAsync(p => p.Id == id);
+             if (rootTemplate == null) throw new AisException("Не найден корневой шаблон документа", HttpStatusCode.BadRequest);
+             return rootTemplate;
         }
 
         public async Task<List<DocumentTemplate>> GetDocumentTemplates()
         {
+            try 
+            { 
             return await db.DocumentTemplates.ToListAsync();
+            }
+            catch
+            {
+                throw new AisException("Не удалось получить шаблоны документов", HttpStatusCode.BadRequest);
+            }
         }
 
         //Метод получения шаблона контракта с стандартными условиями для всех типов регулирования
         public DocumentTemplate GetDocumentTemplateEagerLoadingById(int id)
         {
-            return db.DocumentTemplates.Include(p => p.Conditions).ThenInclude(p => p.SubConditions).ThenInclude(c => c.SubConditionParagraphs).FirstOrDefault(p => p.Id == id);
+            DocumentTemplate? documentTemplate = db.DocumentTemplates.Include(p => p.Conditions).ThenInclude(p => p.SubConditions).ThenInclude(c => c.SubConditionParagraphs).FirstOrDefault(p => p.Id == id);
+            if(documentTemplate == null) throw new AisException("Не найден шаблон документа", HttpStatusCode.BadRequest);
+            return documentTemplate;
         }
 
         public async Task CreateRootTemplate(CreateRootTemplateViewModel model)

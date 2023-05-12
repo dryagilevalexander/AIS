@@ -60,7 +60,7 @@ namespace AIS.Services
             return await db.MyContractStatuses.ToListAsync();
         }
 
-        public async Task CreateContract(MyContractViewModel mcvm, int typeOfContract)
+        public async Task CreateContract(CreateContractViewModel model, int typeOfContract)
         {
             try
             {
@@ -70,18 +70,18 @@ namespace AIS.Services
                 Contract myContract = new Contract
                 {
                     TypeOfContract = typeOfContract,
-                    NumberOfContract = mcvm.NumberOfContract,
-                    MyContractStatusId = mcvm.MyContractStatusId,
-                    DateStart = mcvm.DateStart,
-                    DateEnd = mcvm.DateEnd,
-                    PartnerOrganizationId = mcvm.PartnerOrganizationId,
-                    SubjectOfContract = mcvm.SubjectOfContract,
-                    Cost = mcvm.Cost
+                    NumberOfContract = model.NumberOfContract,
+                    MyContractStatusId = model.MyContractStatusId,
+                    DateStart = model.DateStart,
+                    DateEnd = model.DateEnd,
+                    PartnerOrganizationId = model.PartnerOrganizationId,
+                    SubjectOfContract = model.SubjectOfContract,
+                    Cost = model.Cost
                 };
 
-                if (mcvm.Enclosure is not null)
+                if (model.Enclosure is not null)
                 {
-                    foreach (var uploadedFile in mcvm.Enclosure)
+                    foreach (var uploadedFile in model.Enclosure)
                     {
                         var ext = Path.GetExtension(uploadedFile.FileName);
                         string fileName = String.Format(@"{0}" + ext, System.Guid.NewGuid());
@@ -112,26 +112,26 @@ namespace AIS.Services
             }
         }
 
-        public async Task EditContract(MyContractViewModel mcvm)
+        public async Task EditContract(EditContractViewModel model)
         {
             try
             {
                 List<string> enclosure = new List<string>();
                 List<MyFile> myFiles = new List<MyFile>();
 
-                Contract? contract = await db.Contracts.Include(u => u.MyFiles).FirstOrDefaultAsync(p => p.Id == mcvm.Id);
+                Contract? contract = await db.Contracts.Include(u => u.MyFiles).FirstOrDefaultAsync(p => p.Id == model.Id);
 
-                contract.NumberOfContract = mcvm.NumberOfContract;
-                contract.DateStart = mcvm.DateStart;
-                contract.DateEnd = mcvm.DateEnd;
-                contract.PartnerOrganizationId = mcvm.PartnerOrganizationId;
-                contract.MyContractStatusId = mcvm.MyContractStatusId;
-                contract.SubjectOfContract = mcvm.SubjectOfContract;
-                contract.Cost = mcvm.Cost;
+                contract.NumberOfContract = model.NumberOfContract;
+                contract.DateStart = model.DateStart;
+                contract.DateEnd = model.DateEnd;
+                contract.PartnerOrganizationId = model.PartnerOrganizationId;
+                contract.MyContractStatusId = model.MyContractStatusId;
+                contract.SubjectOfContract = model.SubjectOfContract;
+                contract.Cost = model.Cost;
 
-                if (mcvm.Enclosure is not null)
+                if (model.Enclosure is not null)
                 {
-                    foreach (var uploadedFile in mcvm.Enclosure)
+                    foreach (var uploadedFile in model.Enclosure)
                     {
                         var ext = Path.GetExtension(uploadedFile.FileName);
                         string fileName = String.Format(@"{0}" + ext, System.Guid.NewGuid());

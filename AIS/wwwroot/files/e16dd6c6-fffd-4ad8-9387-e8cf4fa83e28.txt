@@ -1,22 +1,11 @@
-﻿@model AIS.ViewModels.TasksViewModels.MyTaskViewModel;
+@model AIS.ViewModels.MySubTaskViewModel;
 
-<h2>Добавление задачи</h2>
-<form asp-action="createtask" asp-controller="tasks" method="post" enctype="multipart/form-data">
+<h2>Добавление подзадачи</h2>
+<form asp-action="createSubtask" asp-controller="process" method="post" enctype="multipart/form-data">
 
     <div class="container">
 
-        <input type= "hidden" class="form-control" asp-for="SenderUserId">
-        <input type="hidden" class="form-control" asp-for="SenderUserName">
-        
-        <div class="row">
-        <div class="col-5 mb-3">
-        <div class="input-group">
-                    <select size="2" data-placeholder="Адресат" class="form-select" asp-for="DestinationUserId" asp-items="@Model.DestinationUsers" id="DestinaionUserId">
-                </select>
-            </div>
-            </div>
-            <div class="col-7"></div>
-        </div>
+    <input type="hidden" class="form-control" asp-for="MyTaskId">
 
     <div class="row">
         <div class="col-5 mb-3">
@@ -56,40 +45,60 @@
 
         <div class="row">
             <div class="col-5 mb-3">
-                <select size="2" data-placeholder="Статус" class="form-select" asp-for="MyTaskStatusId" asp-items="@Model.MyTaskStatuses" id="MyTaskStatusId">
-                </select>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $('#MyTaskStatusId').multiselect({
+                            buttonWidth: '100%',
+                            nonSelectedText: 'Статус'
+                        });
+                    });
+                </script>
+                <style type="text/css">
+                    .multiselect-container {
+                        width: 100% !important;
+                    }
+                </style>
+        <select class="form-select" asp-for="MyTaskStatusId" asp-items="@Model.MyTaskStatuses" id="MyTaskStatusId">
+            <option selected>Статус</option>
+        </select>
         </div>
         <div class="col-7"></div>
     </div>
 
         <div class="row">
             <div class="col-5 mb-3">
-                <select size="2" data-placeholder="Важность" class="form-select form-select-sm-8 mb-3" asp-for="MyTaskLevelImportanceId" asp-items="@Model.MyTaskLevelImportances" id="MyTaskLevelImportanceId">
-                </select>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $('#MyTaskLevelImportanceId').multiselect({
+                            buttonWidth: '100%',
+                            nonSelectedText: 'Важность'
+                        });
+                    });
+                </script>
+                <style type="text/css">
+                    .multiselect-container {
+                        width: 100% !important;
+                    }
+                </style>
+                <select class="form-select form-select-sm-8 mb-3" asp-for="MyTaskLevelImportanceId" asp-items="@Model.MyTaskLevelImportances" id="MyTaskLevelImportanceId">
+             <option selected>Важность</option>
+        </select>
         </div>
         <div class="col-7"></div>
         </div>
-    
+    </div>
 
     <div class="container overflow-hidden">
             <div class="input-group-lg mb-3" id="parentId">
             </div>
-    </div>
-    
-  </div>
+    </div>    
 
     <button type="button" class="btn btn-success" onclick="return addField()">Добавить вложение</button>
        
     <div class="row">
         <div class="col-5 mb-3">
-            <div class="d-flex justify-content-end">
-                <div>
-                    <a class="btn btn-secondary" role="button" asp-action="MyTasks" asp-controller="Tasks">Отмена</a>
-                </div>
-                <div class="col-1"></div>
-                <div>
-                    <input class="btn btn-primary" type="submit" value="Отправить" />
-                </div>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <input class="btn btn-primary"  type="submit" value="Отправить" />
             </div>
         </div>
         <div class="col-7"></div>
@@ -97,10 +106,4 @@
 
 </form>
 
-@section scripts{
 <script asp-src-include="~/js/Enclosures.js"></script>
-<script asp-src-include="~/js/select.js"></script>
-}
-
-
-

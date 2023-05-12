@@ -35,7 +35,7 @@ async function ConstructContract() {
         currentContract.NumberOfContract = document.getElementById('NumberOfContract').value;
         currentContract.DateStart = document.getElementById('DateStart').value;
         currentContract.DateEnd = document.getElementById('DateEnd').value;
-        currentContract.PartnerId = document.getElementById('PartnerId').value;
+        currentContract.PartnerId = document.getElementById('PartnerOrganizationId').value;
         currentContract.SubjectOfContract = document.getElementById('SubjectOfContract').value;
         currentContract.Cost = document.getElementById('Cost').value;
         currentContract.TypeOfStateRegId = document.getElementById('TypeOfStateRegId').value;

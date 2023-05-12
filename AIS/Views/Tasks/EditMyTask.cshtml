@@ -100,17 +100,20 @@
 
     <button type="button" class="btn btn-success" onclick="return addField()">Добавить вложение</button>
 
-
     <div class="row">
         <div class="col-5 mb-3">
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <input class="btn btn-primary" type="submit" value="Отправить" />
+            <div class="d-flex justify-content-end">
+                <div>
+                    <a class="btn btn-secondary" role="button" asp-action="MyTasks" asp-controller="Tasks">Отмена</a>
+                </div>
+                <div class="col-1"></div>
+                <div>
+                    <input class="btn btn-primary" type="submit" value="Отправить" />
+                </div>
             </div>
         </div>
         <div class="col-7"></div>
     </div>
-
-    
 
 </form>
   <style>

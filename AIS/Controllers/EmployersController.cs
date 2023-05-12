@@ -1,24 +1,7 @@
-﻿using AIS.Models;
-using Infrastructure;
-using Infrastructure.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Infrastructure.Models;
 using AIS.Services;
-using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.SignalR;
-using System.Runtime.CompilerServices;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using AspNetCore;
 using Microsoft.AspNetCore.Mvc;
-using static AIS.Controllers.ProcessController;
-using DocumentFormat.OpenXml.Presentation;
-using System.Linq;
-using DocumentFormat.OpenXml.Office2010.Excel;
-using System.ComponentModel.DataAnnotations;
-using AIS.ViewModels.DocumentsViewModels;
 using AIS.ViewModels.EmployersViewModels;
 using AIS.ErrorManager;
 using System.Net;
@@ -73,22 +56,11 @@ namespace AIS.Controllers
 
         public async Task<IActionResult> EditEmployee(int id)
         {
-            Employee? employee = await _employeeService.GetEmployee(id);
-            if (employee == null) throw new AisException("Сотрудник не найден", HttpStatusCode.BadRequest);
-            EditEmployeeViewModel model = new EditEmployeeViewModel()
-            {
-                Id = employee.Id,   
-                Name = employee.Name,
-                FirstName = employee.FirstName,
-                LastName = employee.LastName,
-                Address = employee.Address,
-                PhoneNumber = employee.PhoneNumber,
-                Email = employee.Email,
-                PartnerId = employee.PartnerId.Value
-            };
-
+            EditEmployeeViewModel model = new EditEmployeeViewModel();
+            await model.Fill(id, _employeeService);            
             return View(model);
         }
+
         [HttpPost]
         public async Task<IActionResult> EditEmployee(EditEmployeeViewModel model)
         {

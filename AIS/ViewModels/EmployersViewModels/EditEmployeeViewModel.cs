@@ -1,4 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AIS.ErrorManager;
+using AIS.Services;
+using DocumentFormat.OpenXml.Office2010.Excel;
+using Infrastructure.Models;
+using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 namespace AIS.ViewModels.EmployersViewModels
 {
@@ -18,8 +23,21 @@ namespace AIS.ViewModels.EmployersViewModels
         [Required(ErrorMessage = "Не указан email сотрудника")]
         public string Email { get; set; } = null!;
         public int PartnerId { get; set; }
+
+        public async Task Fill(int id, IEmployeeService _employeeService)
+        {
+            Employee? employee = await _employeeService.GetEmployee(id);
+            if (employee == null) throw new AisException("Сотрудник не найден", HttpStatusCode.BadRequest);
+            Id = employee.Id;
+            Name = employee.Name;
+            FirstName = employee.FirstName;
+            LastName = employee.LastName;
+            Address = employee.Address;
+            PhoneNumber = employee.PhoneNumber;
+            Email = employee.Email;
+            PartnerId = employee.PartnerId.Value;
+        }
+
     }
-
-
 }
 
