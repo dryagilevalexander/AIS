@@ -28,10 +28,12 @@ namespace AIS.Controllers
     public class ProcessController : Controller
     {
         private ILetterService _letterService;
+        private IEnclosureService _enclosureService;
 
-        public ProcessController(ILetterService letterService)
+        public ProcessController(ILetterService letterService, IEnclosureService enclosureService)
         {
             _letterService = letterService;
+            _enclosureService = enclosureService;
         }
 
         #region [Letters]
@@ -64,14 +66,14 @@ namespace AIS.Controllers
         public async Task<IActionResult> EditLetter(int id)
         {
             EditLetterViewModel model = new EditLetterViewModel();
-            await model.Fill(id, _letterService);
+            await model.Fill(id, _letterService, _enclosureService);
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditLetter(Letter letter)
+        public async Task<IActionResult> EditLetter(EditLetterViewModel model)
         {
-            await _letterService.EditLetter(letter);
+            await _letterService.EditLetter(model);
             return RedirectToAction("Letters");
         }
         #endregion

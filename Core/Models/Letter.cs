@@ -20,5 +20,6 @@ namespace Infrastructure.Models
     public ShippingMethod ShippingMethod { get; set; }
     public int LetterTypeId { get; set; }
     public LetterType LetterType { get; set; }
+    public List<MyFile>? MyFiles { get; set; }
     }
 }

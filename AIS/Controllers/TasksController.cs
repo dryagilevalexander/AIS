@@ -112,13 +112,6 @@ namespace AIS.Controllers
             await _myTaskService.EditMyTask(destinationUser, model);
             return RedirectToAction("MyTasks");
         }
-
-        [HttpPost]
-        public async Task<IActionResult> DeleteMyEnclosure(int id)
-        {
-            await _myTaskService.DeleteMyEnclosure(id);
-            return new EmptyResult();
-        }
         #endregion
 
         #region[subTasks]

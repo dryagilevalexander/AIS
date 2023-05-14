@@ -11,7 +11,7 @@ namespace AIS.Services
         Task CreateLetter(CreateLetterViewModel letterViewModel);
         Task DeleteLetter(int id);
         Task<Letter> GetLetterById(int id);
-        Task EditLetter(Letter letter);
+        Task EditLetter(EditLetterViewModel model);
         Task<List<Letter>> GetAllLettersEagerLoading();
     }
 }

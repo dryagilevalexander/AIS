@@ -15,7 +15,6 @@ namespace AIS.Services
         Task DeleteMyTask(int id);
         Task CreateTask(User destinationUser, CreateTaskViewModel model);
         Task EditMyTask(User destinationUser, EditTaskViewModel model);
-        Task DeleteMyEnclosure(int id);
         Task<MyTask> GetMyTaskByIdEagerLoading(int id);
         Task CreateSubTask(CreateSubTaskViewModel model);
         Task EditSubTask(EditSubTaskViewModel model);

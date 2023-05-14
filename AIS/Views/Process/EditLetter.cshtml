@@ -2,7 +2,8 @@
 
 <h2>Изменение документа</h2>
 
-<form asp-action="editletter" name="form1" asp-controller="process">
+<form asp-action="editletter" name="form1" asp-controller="process" enctype="multipart/form-data">
+<div class="validation" asp-validation-summary="ModelOnly"></div>
     <div class="container">
 
         <div class="row">
@@ -11,7 +12,7 @@
                     <input type="text" class="form-control" placeholder="Номер" aria-label="Номер" asp-for="Number">
                 </div>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="Number"></span></div>
         </div>
 
         <div class="row">
@@ -20,7 +21,7 @@
                         <input type="date" asp-format="{0:yyyy-MM-dd}" class="form-control" placeholder="Дата отправки" aria-label="Дата отправки" asp-for="DepartureDate">
                 </div>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="DepartureDate"></span></div>
         </div>
 
         <div class="row">
@@ -29,7 +30,7 @@
                     <input type="text" class="form-control" placeholder="Место назначения" aria-label="Место назначения" asp-for="Destination">
                 </div>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="Destination"></span></div>
         </div>
 
         <div class="row">
@@ -38,7 +39,7 @@
                     <input type="text" class="form-control" placeholder="Описание" aria-label="Описание" asp-for="Name">
                 </div>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="Name"></span></div>
         </div>
 
         <div class="row">
@@ -46,7 +47,7 @@
                 <select size="2" data-placeholder="Способ отправки" class="form-select" asp-for="ShippingMethodId" asp-items="@Model.ShippingMethods" id="ShippingMethod">
                 </select>
             </div>
-            <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="ShippingMethodId"></span></div>
         </div>
 
 
@@ -55,13 +56,40 @@
                 <select size="2" data-placeholder="Тип документа" class="form-select" asp-for="LetterTypeId" asp-items="@Model.LetterTypes" id="LetterType">
             </select>
         </div>
-        <div class="col-7"></div>
+            <div class="col-7"><span asp-validation-for="LetterTypeId"></span></div>
     </div>
 
-
-
-
     </div>
+
+    <div class="row">
+        <div class="col-5 mb-3">
+            <table class="table">
+                <tr><th>Наименование</th></tr>
+                @if (Model.MyFiles is not null)
+                {
+                    @foreach (var item in Model.MyFiles)
+                    {
+                        <tr class="@("file"+item.Id)">
+                            <td>@item.Name</td>
+                            <td align="right">
+                                <button type="button" class="btn btn-outline-danger" onclick="return deleteFieldBySelector(@("'"+("file"+item.Id)+"'"),@item.Id)">Удалить</button>
+                            </td>
+                            <td align="left">
+                                <a href="/files/@item.NameInServer" download="@item.Name" class="btn btn-outline-success">Скачать</a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+
+    <div class="container overflow-hidden">
+        <div class="input-group-lg mb-3" id="parentId">
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-success" onclick="return addField()">Добавить вложение</button>
 
     <div class="row">
         <div class="col-5 mb-3">
@@ -81,4 +109,5 @@
 
 @section scripts{
     <script asp-src-include="~/js/select.js"></script>
+    <script asp-src-include="~/js/Enclosures.js"></script>
 }

@@ -8,5 +8,7 @@ namespace AIS.Services
         Task<IEnumerable<MyFile>> GetMyEnclosuresBySubTaskId(int id);
         Task<IEnumerable<MyFile>> GetMyEnclosuresByTaskId(int id);
         Task<IEnumerable<MyFile>> GetMyEnclosuresByContractId(int id);
+        Task<IEnumerable<MyFile>> GetMyEnclosuresByLetterId(int id);
+        Task DeleteMyEnclosure(int id);
     }
 }

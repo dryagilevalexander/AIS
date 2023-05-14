@@ -18,5 +18,7 @@ namespace Infrastructure.Models
         public MySubTask? MySubTask { get; set; }
         public int? ContractId { get; set; }
         public Contract? Contract { get; set; }
+        public int? LetterId { get; set; }
+        public Letter? Letter { get; set; }
     }
 }

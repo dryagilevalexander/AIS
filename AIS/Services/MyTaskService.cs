@@ -205,20 +205,6 @@ namespace AIS.Services
             }
         }
 
-        public async Task DeleteMyEnclosure(int id)
-        {
-            try
-            {
-                    var currentMyFile = await db.MyFiles.FirstOrDefaultAsync(p => p.Id == id);
-                    db.Entry(currentMyFile).State = EntityState.Deleted;
-                    await db.SaveChangesAsync();
-            }
-            catch
-            {
-                throw new AisException("Не удалось удалить вложение", HttpStatusCode.BadRequest);
-            }
-        }
-
         public async Task<MyTask> GetMyTaskByIdEagerLoading(int id)
         {
             MyTask? myTask = await db.MyTasks.Include(u => u.MyFiles).Include(u => u.MySubTasks).FirstOrDefaultAsync(p => p.Id == id);

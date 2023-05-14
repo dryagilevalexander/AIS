@@ -1,6 +1,8 @@
-﻿using Infrastructure;
+﻿using AIS.ErrorManager;
+using Infrastructure;
 using Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace AIS.Services
 {
@@ -25,6 +27,25 @@ namespace AIS.Services
         public async Task<IEnumerable<MyFile>> GetMyEnclosuresByContractId(int id)
         {
             return await (from myFile in db.MyFiles.Include(p => p.Contract) where myFile.ContractId == id select myFile).ToListAsync();
+        }
+
+        public async Task<IEnumerable<MyFile>> GetMyEnclosuresByLetterId(int id)
+        {
+            return await (from myFile in db.MyFiles.Include(p => p.Letter) where myFile.LetterId == id select myFile).ToListAsync();
+        }
+
+        public async Task DeleteMyEnclosure(int id)
+        {
+            try
+            {
+                var currentMyFile = await db.MyFiles.FirstOrDefaultAsync(p => p.Id == id);
+                db.Entry(currentMyFile).State = EntityState.Deleted;
+                await db.SaveChangesAsync();
+            }
+            catch
+            {
+                throw new AisException("Не удалось удалить вложение", HttpStatusCode.BadRequest);
+            }
         }
     }
 }
