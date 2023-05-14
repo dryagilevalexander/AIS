@@ -132,8 +132,7 @@ new TypeOfContract[]
             {
                 new PartnerCategory {Id=1, Name="Государственный орган"},
                 new PartnerCategory {Id=2, Name="Судебный орган"},
-                new PartnerCategory {Id=3, Name="Организация"},
-                new PartnerCategory {Id=4, Name="Физическое лицо"},
+                new PartnerCategory {Id=3, Name="Организация"}
             });
 
             modelBuilder.Entity<MyContractStatus>().HasData(

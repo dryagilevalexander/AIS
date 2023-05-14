@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Mvc;
 using AIS.ViewModels.TasksViewModels;
+using AIS.ErrorManager;
+using System.Net;
 
 namespace AIS.Controllers
 {
@@ -71,36 +73,19 @@ namespace AIS.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateTask()
         {
-            List<User> users;
-            MyTaskViewModel myTaskViewModel = new MyTaskViewModel();
-            if (User.Identity.IsAuthenticated)
-            {
+            CreateTaskViewModel model = new CreateTaskViewModel();
+
                 var userName = User.FindFirstValue(ClaimTypes.Name);
-                var currentUser = await _myUserService.GetCurrentUser(userName);
-                users = await _myUserService.GetUsers();
-                myTaskViewModel.DestinationUsers = from destinationUser in users select new SelectListItem { Text = destinationUser.UserNickName, Value = destinationUser.Id };
-                myTaskViewModel.SenderUserId = currentUser.Id;
-                myTaskViewModel.SenderUserName = currentUser.UserNickName;
-            }
-            else
-            {
-                return NotFound();
-            }
-            var taskStatuses = await _myTaskService.GetMyTaskStatuses();
-            var taskLevel = await _myTaskService.GetMyTaskLevels();
-            myTaskViewModel.MyTaskStatuses = from myTaskStatus in taskStatuses select new SelectListItem { Text = myTaskStatus.Name, Value = myTaskStatus.Id.ToString() };
-            myTaskViewModel.MyTaskLevelImportances = from myTaskLevel in taskLevel select new SelectListItem { Text = myTaskLevel.Name, Value = myTaskLevel.Id.ToString() };
-
-
-            return View(myTaskViewModel);
+                await model.Fill(_myUserService, _myTaskService, userName);
+                return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTask(MyTaskViewModel mtvm)
+        public async Task<IActionResult> CreateTask(CreateTaskViewModel model)
         {
-            var DestinationUser = await _myUserService.GetUserById(mtvm.DestinationUserId);
-            await _myTaskService.CreateTask(DestinationUser, mtvm);
-            await _hubContext.Clients.User(DestinationUser.Id).SendAsync("Notify", "Создана задача: " + mtvm.Name + ". Автор: " + mtvm.SenderUserName);
+            var DestinationUser = await _myUserService.GetUserById(model.DestinationUserId);
+            await _myTaskService.CreateTask(DestinationUser, model);
+            await _hubContext.Clients.User(DestinationUser.Id).SendAsync("Notify", "Создана задача: " + model.Name + ". Автор: " + model.SenderUserName);
             return RedirectToAction("MyTasks");
         }
 
@@ -113,48 +98,18 @@ namespace AIS.Controllers
 
         public async Task<IActionResult> EditMyTask(int id)
         {
-                MyTask? myTask = await _myTaskService.GetMyTaskByIdEagerLoading(id);
-                if(myTask == null) return NotFound();
-                IEnumerable<MyTaskStatus> myTaskStatuses = await _myTaskService.GetMyTaskStatuses();
-                ViewBag.MyTaskStatuses = new SelectList(myTaskStatuses, "Id", "Name");
-                IEnumerable<LevelImportance> myTaskLevels = await _myTaskService.GetMyTaskLevels();
-                ViewBag.MyTaskLevels = new SelectList(myTaskLevels, "Id", "Name");
-                IEnumerable<MyFile> enclosures = await _enclosureService.GetMyEnclosuresByTaskId(id);
-                MyTaskViewModel myTaskViewModel = new MyTaskViewModel
-                {
-                    Id = myTask.Id,
-                    Name = myTask.Name,
-                    Description = myTask.Description,
-                    DateStart = myTask.DateStart,
-                    DateEnd = myTask.DateEnd,
-                    MyTaskStatusId = myTask.MyTaskStatusId,
-                    MyTaskLevelImportanceId = myTask.MyTaskLevelImportanceId,
-                    MyFiles = enclosures,
-                    SenderUserId = myTask.SenderUserId,
-                    DestinationUserId = myTask.DestinationUserId,
-                    MySubTasks = myTask.MySubTasks
-                };
-
-                string userId;
-                List<User> users;
-                if (User.Identity.IsAuthenticated)
-                {
-                    var userName = User.FindFirstValue(ClaimTypes.Name);
-                    var currentUser = await _myUserService.GetCurrentUser(userName);
-                    users = await _myUserService.GetUsers();
-                    myTaskViewModel.DestinationUsers = from destinationUser in users select new SelectListItem { Text = destinationUser.UserNickName, Value = destinationUser.Id };
-                }
-
-             return View(myTaskViewModel);
+            var userName = User.FindFirstValue(ClaimTypes.Name);
+            EditTaskViewModel model = new EditTaskViewModel();
+            await model.Fill(id, _myTaskService, _enclosureService, _myUserService, userName);
+            return View(model);
 
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditMyTask(MyTaskViewModel mtvm)
+        public async Task<IActionResult> EditMyTask(EditTaskViewModel model)
         {
-            var destinationUser = await _myUserService.GetUserById(mtvm.DestinationUserId);
-
-            await _myTaskService.EditMyTask(destinationUser, mtvm);
+            var destinationUser = await _myUserService.GetUserById(model.DestinationUserId);
+            await _myTaskService.EditMyTask(destinationUser, model);
             return RedirectToAction("MyTasks");
         }
 
@@ -170,60 +125,31 @@ namespace AIS.Controllers
         [HttpGet]
         public async Task<ActionResult> CreateSubTask(int id)
         {
-            MySubTaskViewModel mySubTaskViewModel = new MySubTaskViewModel();
-            var taskStatuses = await _myTaskService.GetMyTaskStatuses();
-            var taskLevel = await _myTaskService.GetMyTaskLevels();
-            mySubTaskViewModel.MyTaskStatuses = from myTaskStatus in taskStatuses select new SelectListItem { Text = myTaskStatus.Name, Value = myTaskStatus.Id.ToString() };
-            mySubTaskViewModel.MyTaskLevelImportances = from myTaskLevel in taskLevel select new SelectListItem { Text = myTaskLevel.Name, Value = myTaskLevel.Id.ToString() };
-            mySubTaskViewModel.MyTaskId = id;
-
-            return PartialView(mySubTaskViewModel);
+            CreateSubTaskViewModel model = new CreateSubTaskViewModel();
+            await model.Fill(id, _myTaskService);
+            return PartialView(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateSubTask(MySubTaskViewModel mtvm)
+        public async Task<IActionResult> CreateSubTask(CreateSubTaskViewModel model)
         {
-            await _myTaskService.CreateSubTask(mtvm);
-            return RedirectToAction("EditMyTask", new { id = mtvm.MyTaskId });
+            await _myTaskService.CreateSubTask(model);
+            return RedirectToAction("EditMyTask", new { id = model.MyTaskId });
         }
 
-        public async Task<IActionResult> EditMySubTask(int? id)
+        public async Task<IActionResult> EditMySubTask(int id)
         {
-            if (id != null)
-            {
-                MySubTask? mySubTask = await _myTaskService.GetMySubTaskByIdWithFiles(id.Value);
+            EditSubTaskViewModel model = new EditSubTaskViewModel();
+            await model.Fill(id, _myTaskService, _enclosureService);
+            return PartialView(model);
 
-                var taskStatuses = await _myTaskService.GetMyTaskStatusesToList();
-                var taskLevels = await _myTaskService.GetMyTaskLevelsToList();
-
-                IEnumerable<MyFile> enclosures = await _enclosureService.GetMyEnclosuresBySubTaskId(id.Value);
-                MySubTaskViewModel mySubTaskViewModel = new MySubTaskViewModel
-                {
-                    Id = mySubTask.Id,
-                    MyTaskId = mySubTask.MyTaskId,
-                    Name = mySubTask.Name,
-                    Description = mySubTask.Description,
-                    DateStart = mySubTask.DateStart,
-                    DateEnd = mySubTask.DateEnd,
-                    MyTaskStatusId = mySubTask.MyTaskStatusId,
-                    MyTaskLevelImportanceId = mySubTask.MyTaskLevelImportanceId,
-                    MyFiles = enclosures
-                };
-
-                mySubTaskViewModel.MyTaskStatuses = from myTaskStatus in taskStatuses select new SelectListItem { Text = myTaskStatus.Name, Value = myTaskStatus.Id.ToString() };
-                mySubTaskViewModel.MyTaskLevelImportances = from myTaskLevel in taskLevels select new SelectListItem { Text = myTaskLevel.Name, Value = myTaskLevel.Id.ToString() };
-
-
-                if (mySubTask != null) return PartialView(mySubTaskViewModel);
-            }
-            return NotFound();
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditMySubTask(MySubTaskViewModel mtvm)
+        public async Task<IActionResult> EditMySubTask(EditSubTaskViewModel model)
         {
-            await _myTaskService.EditSubTask(mtvm);
-            return RedirectToAction("EditMyTask", new { id = mtvm.MyTaskId });
+            await _myTaskService.EditSubTask(model);
+            return RedirectToAction("EditMyTask", new { id = model.MyTaskId });
         }
 
         [HttpPost]

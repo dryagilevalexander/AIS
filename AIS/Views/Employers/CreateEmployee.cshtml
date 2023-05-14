@@ -48,20 +48,56 @@
         <div class="row">
             <div class="col-5 mb-3">
                 <div class="input-group-sm mb-3">
-                    <input type="text" class="form-control" placeholder="Телефон" aria-label="Телефон" asp-for="PhoneNumber">
+                    <input type="text" class="form-control" placeholder="Телефон" aria-label="Телефон" asp-for="PhoneNumber" id="PhoneNumber">
                 </div>
             </div>
             <div class="col-7"><span asp-validation-for="PhoneNumber"></span></div>
         </div>
 
+        <script>
+            $(document).ready(function () {
+                $('#PhoneNumber').inputmask('+7(999)-999-9999');
+            });
+        </script>
+
         <div class="row">
             <div class="col-5 mb-3">
                  <div class="input-group">
-                       <input type="text" class="form-control" placeholder="Email" aria-label="Email" asp-for="Email">
+                       <input type="text" class="form-control" placeholder="Email" aria-label="Email" asp-for="Email" id="Email">
                 </div>
              </div>
             <div class="col-7"><span asp-validation-for="Email"></span></div>
         </div>
+
+        <script>
+            $(function() {
+                let $input = $('#Email');
+                let cursor = $input[0].selectionStart;
+                let prev = $input.val();
+
+            $input.inputmask({
+                mask: "*{1,50}[.*{1,50}][.*{1,50}]@@*{1,50}.*{1,20}[.*{1,20}][.*{1,20}]",
+                greedy: false,
+                clearIncomplete: true,
+                showMaskOnHover: false,
+                definitions: {
+                    '*': {
+                    validator: "[^_@@.]"
+                    }
+                }
+
+            }).on('keyup paste', function() {
+                if (this.value && /[^_a-zA-Z0-9@@\-.]/i.test(this.value)) {
+                    this.value = prev;
+                    this.setSelectionRange(cursor, cursor);
+                    $input.trigger('input');
+                } else {
+                    cursor = this.selectionStart;
+                    prev = this.value;
+                }
+            });
+            });;
+        </script>
 
     </div>
 
@@ -76,8 +112,10 @@
 
 </form>
 
+
 @section scripts{
     <script asp-src-include="~/js/select.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/inputmask/dist/jquery.inputmask.js"></script>
 }

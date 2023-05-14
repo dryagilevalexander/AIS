@@ -42,22 +42,15 @@ namespace AIS.Controllers
 
         public async Task<IActionResult> CreateLetter()
         {
-            LetterViewModel letterViewModel = new LetterViewModel();
-            var shippingMethods = await _letterService.GetAllShippingMethods();
-            letterViewModel.ShippingMethods = from shippingMethod in shippingMethods select new SelectListItem { Text = shippingMethod.Name, Value = shippingMethod.Id.ToString() };
-            var letterTypes = await _letterService.GetAllletterTypes();
-            letterViewModel.LetterTypes = from letterType in letterTypes select new SelectListItem { Text = letterType.Name, Value = letterType.Id.ToString() };
-
-            return View(letterViewModel);
+            CreateLetterViewModel model = new CreateLetterViewModel();
+            await model.Fill(_letterService);
+            return View(model);
         }
 
-
-
-
         [HttpPost]
-        public async Task<IActionResult> CreateLetter(LetterViewModel letterViewModel)
+        public async Task<IActionResult> CreateLetter(CreateLetterViewModel model)
         {
-            await _letterService.CreateLetter(letterViewModel);
+            await _letterService.CreateLetter(model);
             return RedirectToAction("Letters");
         }
 
@@ -70,25 +63,9 @@ namespace AIS.Controllers
 
         public async Task<IActionResult> EditLetter(int id)
         {
-
-                Letter letter = await _letterService.GetLetterById(id);
-                var shippingMethods = await _letterService.GetAllShippingMethods();
-                var letterTypes = await _letterService.GetAllletterTypes();
-
-                LetterViewModel letterViewModel = new LetterViewModel
-                {
-                    Number = letter.Number,
-                    DepartureDate = letter.DepartureDate,
-                    Name = letter.Name,
-                    Destination = letter.Destination,
-                    ShippingMethodId = letter.ShippingMethodId,
-                    LetterTypeId = letter.LetterTypeId
-                };
-
-                letterViewModel.ShippingMethods = from shippingMethod in shippingMethods select new SelectListItem { Text = shippingMethod.Name, Value = shippingMethod.Id.ToString() };
-                letterViewModel.LetterTypes = from letterType in letterTypes select new SelectListItem { Text = letterType.Name, Value = letterType.Id.ToString() };
-
-                return View(letterViewModel);
+            EditLetterViewModel model = new EditLetterViewModel();
+            await model.Fill(id, _letterService);
+            return View(model);
         }
 
         [HttpPost]

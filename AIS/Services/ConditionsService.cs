@@ -14,12 +14,10 @@ namespace AIS.Services
     public class ConditionsService : IConditionsService
     {
         private AisDbContext db;
-        IWebHostEnvironment _appEnvironment;
 
-        public ConditionsService(AisDbContext context, IWebHostEnvironment appEnvironment)
+        public ConditionsService(AisDbContext context)
         {
             db = context;
-            _appEnvironment = appEnvironment;
         }
 
         public async Task<List<RootTemplate>> GetRootTemplates()
@@ -53,6 +51,18 @@ namespace AIS.Services
             try 
             { 
             return await db.DocumentTemplates.ToListAsync();
+            }
+            catch
+            {
+                throw new AisException("Не удалось получить шаблоны документов", HttpStatusCode.BadRequest);
+            }
+        }
+
+        public async Task<List<DocumentTemplate>> GetDocumentTemplatesByTypeOfDocumentId(int id)
+        {
+            try
+            {
+                return await db.DocumentTemplates.Where(p => p.TypeOfDocumentId == 1).ToListAsync();
             }
             catch
             {
@@ -306,7 +316,8 @@ namespace AIS.Services
         {
             try
             {
-                SubConditionParagraph subConditionParagraph = await db.SubConditionParagraphs.FirstOrDefaultAsync(p => p.Id == model.Id);
+                SubConditionParagraph? subConditionParagraph = await db.SubConditionParagraphs.FirstOrDefaultAsync(p => p.Id == model.Id);
+                if(subConditionParagraph == null) throw new AisException("Не найден абзац", HttpStatusCode.BadRequest);
                 subConditionParagraph.Text = model.Text;
                 subConditionParagraph.SubConditionId = model.SubConditionId;
                 subConditionParagraph.NumLevelReference = model.NumLevelReference;
@@ -326,7 +337,8 @@ namespace AIS.Services
         {
             try
             {
-                SubConditionParagraph subConditionParagraph = await db.SubConditionParagraphs.FirstOrDefaultAsync(p => p.Id == id);
+                SubConditionParagraph? subConditionParagraph = await db.SubConditionParagraphs.FirstOrDefaultAsync(p => p.Id == id);
+                if (subConditionParagraph == null) throw new AisException("Не найден абзац", HttpStatusCode.BadRequest);
                 db.SubConditionParagraphs.Remove(subConditionParagraph);
                 await db.SaveChangesAsync();
             }
@@ -445,7 +457,8 @@ namespace AIS.Services
         {
             try
             {
-                Condition condition = await db.Conditions.FirstOrDefaultAsync(p => p.Id == id);
+                Condition? condition = await db.Conditions.FirstOrDefaultAsync(p => p.Id == id);
+                if(condition == null) throw new AisException("Не найден пункт шаблона", HttpStatusCode.BadRequest);
                 db.Conditions.Remove(condition);
                 await db.SaveChangesAsync();
             }

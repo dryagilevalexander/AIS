@@ -44,6 +44,11 @@ namespace AIS.Controllers
             return View();
         }
 
+        public IActionResult Privacy()
+        {
+            return RedirectToAction("Index");
+        }
+
         public IActionResult Error()
         {
             Exception? exception = HttpContext.Features

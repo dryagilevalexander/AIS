@@ -58,7 +58,7 @@ namespace AIS.Services
             }
         }
 
-        public async Task<Partner?> GetPartner(int id)
+        public async Task<Partner> GetPartner(int id)
         {
             Partner? partner = await db.Partners.Include(p => p.DirectorType).FirstOrDefaultAsync(p => p.Id == id);
             if(partner == null) throw new AisException("Контрагент не найден", HttpStatusCode.BadRequest);
@@ -78,7 +78,7 @@ namespace AIS.Services
             }
         }
 
-        public async Task<Partner?> GetPartnerEagerLoading(int id)
+        public async Task<Partner> GetPartnerEagerLoading(int id)
         {
 
             Partner? partner = await db.Partners.Include(u => u.PartnerType).FirstOrDefaultAsync(p => p.Id == id);
@@ -97,6 +97,85 @@ namespace AIS.Services
                 throw new AisException("Не удалось создать контрагента", HttpStatusCode.BadRequest);
             }
         }
+
+        public async Task CreatePartnerOrganization(CreatePartnerOrganizationViewModel model)
+        {
+            Partner partner = new Partner()
+            {
+                Name = model.Name,
+                ShortName = model.ShortName,
+                INN = model.INN,
+                KPP = model.KPP,
+                DirectorTypeId = model.DirectorTypeId,
+                DirectorName = model.DirectorName,
+                DirectorNameR = model.DirectorNameR,
+                Bank = model.Bank,
+                Account = model.Account,
+                CorrespondentAccount = model.CorrespondentAccount,
+                BIK = model.BIK,
+                OGRN = model.OGRN,
+                PartnerCategoryId = model.PartnerCategoryId,
+                PartnerTypeId = model.PartnerTypeId,
+                Address = model.Address,
+                PhoneNumber = model.PhoneNumber,
+                Email = model.Email
+            };
+
+            await CreatePartner(partner);
+        }
+
+        public async Task CreatePartnerIp(CreatePartnerIpViewModel model)
+        {
+            Partner partner = new Partner()
+            {
+                PartnerTypeId = model.PartnerTypeId,
+                Fio = model.Fio,
+                ShortFio = model.ShortFio,
+                ShortFioR = model.ShortFioR,
+                Address = model.Address,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                INN = model.INN,
+                PartnerStatusId = model.PartnerStatusId,
+                Bank = model.Bank,
+                Account = model.Account,
+                CorrespondentAccount = model.CorrespondentAccount,
+                BIK = model.BIK,
+                PassportSeries = model.PassportSeries,
+                PassportNumber = model.PassportNumber,
+                PassportDateOfIssue = model.PassportDateOfIssue,
+                PassportDateOfBirth = model.PassportDateOfBirth,
+                PassportPlaseOfIssue = model.PassportPlaseOfIssue,
+                PassportDivisionCode = model.PassportDivisionCode
+            };
+
+            await CreatePartner(partner);
+        }
+
+        public async Task CreatePartnerFl(CreatePartnerFlViewModel model)
+        {
+            Partner partner = new Partner()
+            {
+                PartnerTypeId = model.PartnerTypeId,
+                Fio = model.Fio,
+                ShortFio = model.ShortFio,
+                ShortFioR = model.ShortFioR,
+                Address = model.Address,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                INN = model.INN,
+                PartnerStatusId = model.PartnerStatusId,
+                PassportSeries = model.PassportSeries,
+                PassportNumber = model.PassportNumber,
+                PassportDateOfIssue = model.PassportDateOfIssue,
+                PassportDateOfBirth = model.PassportDateOfBirth,
+                PassportPlaseOfIssue = model.PassportPlaseOfIssue,
+                PassportDivisionCode = model.PassportDivisionCode
+            };
+
+            await CreatePartner(partner);
+        }
+
 
         public async Task EditPartnerOrganization(EditPartnerOrganizationViewModel model)
         {
@@ -260,7 +339,7 @@ namespace AIS.Services
             return partnerType;
         }
 
-        public async Task<DirectorType?> GetDirectorTypeById(int? id)
+        public async Task<DirectorType> GetDirectorTypeById(int? id)
         {
             DirectorType? directorType = await db.DirectorTypes.FirstOrDefaultAsync(p => p.Id == id);
             if (directorType == null) throw new AisException("Не найден тип руководителя", HttpStatusCode.BadRequest);

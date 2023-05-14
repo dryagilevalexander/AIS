@@ -13,12 +13,12 @@ namespace AIS.Services
         Task<IEnumerable<MyTaskStatus>> GetMyTaskStatuses();
         Task<IEnumerable<LevelImportance>> GetMyTaskLevels();
         Task DeleteMyTask(int id);
-        Task CreateTask(User destinationUser, MyTaskViewModel mtvm);
-        Task EditMyTask(User destinationUser, MyTaskViewModel mtvm);
+        Task CreateTask(User destinationUser, CreateTaskViewModel model);
+        Task EditMyTask(User destinationUser, EditTaskViewModel model);
         Task DeleteMyEnclosure(int id);
         Task<MyTask> GetMyTaskByIdEagerLoading(int id);
-        Task CreateSubTask(MySubTaskViewModel mtvm);
-        Task EditSubTask(MySubTaskViewModel mtvm);
+        Task CreateSubTask(CreateSubTaskViewModel model);
+        Task EditSubTask(EditSubTaskViewModel model);
         Task<MySubTask> GetMySubTaskByIdWithFiles(int id);
         Task<List<MyTaskStatus>> GetMyTaskStatusesToList();
         Task<List<LevelImportance>> GetMyTaskLevelsToList();

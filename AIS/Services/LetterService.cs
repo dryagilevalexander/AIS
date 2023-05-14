@@ -26,7 +26,7 @@ namespace AIS.Services
             return await db.LetterTypes.ToListAsync();
         }
 
-        public async Task CreateLetter(LetterViewModel letterViewModel)
+        public async Task CreateLetter(CreateLetterViewModel letterViewModel)
         {
             try
             { 

@@ -66,10 +66,10 @@ namespace AIS.ViewModels.ContractsViewModels
             DateEnd = contract.DateEnd;
             PartnerOrganizationId = contract.PartnerOrganizationId;
             SubjectOfContract = contract.SubjectOfContract;
-            Cost = (decimal)contract.Cost;
             MyPartners = partners;
             MyContractStatuses = contractStatuses;
             MyContractStatusId = contract.MyContractStatusId;
+            Cost = contract.Cost.Value;
             MyFiles = enclosures;
             TypeOfStateRegs = from typeOfStateReg in typeOfStateRegs select new SelectListItem { Text = typeOfStateReg.Name, Value = typeOfStateReg.Id.ToString() };
             ArticleOfLaws = from articleOfLaw in articleOfLaws select new SelectListItem { Text = articleOfLaw.Name, Value = articleOfLaw.Id.ToString() };

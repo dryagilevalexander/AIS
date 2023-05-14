@@ -1,6 +1,9 @@
-﻿using Infrastructure.Models;
+﻿using AIS.ErrorManager;
+using AIS.Services;
+using Infrastructure.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 namespace AIS.ViewModels.PartnersViewModels
 {
@@ -46,6 +49,43 @@ namespace AIS.ViewModels.PartnersViewModels
         [Required(ErrorMessage = "Не указан статус контрагента")]
         public int PartnerStatusId { get; set; }
         public List<Employee>? Employees { get; set; }
+
+        public async Task Fill(int id, IPartnerService _partnerService)
+        {
+            Partner? partner = await _partnerService.GetPartner(id);
+            if(partner == null) throw new AisException("Не найден контрагент", HttpStatusCode.BadRequest);
+            List<Employee> employees = await _partnerService.GetEmployeesByPartnerId(id);
+
+            Id = partner.Id;
+            Name = partner.Name;
+            ShortName = partner.ShortName;
+            INN = partner.INN;
+            KPP = partner.KPP;
+            DirectorTypeId = partner.DirectorTypeId.Value;
+            DirectorName = partner.DirectorName;
+            DirectorNameR = partner.DirectorNameR;
+            Bank = partner.Bank;
+            Account = partner.Account;
+            CorrespondentAccount = partner.CorrespondentAccount;
+            BIK = partner.BIK;
+            OGRN = partner.OGRN;
+            PartnerCategoryId = partner.PartnerCategoryId.Value;
+            PartnerTypeId = partner.PartnerTypeId;
+            Address = partner.Address;
+            PhoneNumber = partner.PhoneNumber;
+            Email = partner.Email;
+            Employees = employees;
+
+            var directorTypes = await _partnerService.GetDirectorTypes();
+            var categories = await _partnerService.GetCategories();
+            var partnerStatuses = await _partnerService.GetPartnerStatuses();
+
+            DirectorTypes = from directorType in directorTypes select new SelectListItem { Text = directorType.Name, Value = directorType.Id.ToString() };
+            PartnerCategories = from category in categories select new SelectListItem { Text = category.Name, Value = category.Id.ToString() };
+            DirectorTypes = from directorType in directorTypes select new SelectListItem { Text = directorType.Name, Value = directorType.Id.ToString() };
+            PartnerStatuses = from partnerStatus in partnerStatuses select new SelectListItem { Text = partnerStatus.Name, Value = partnerStatus.Id.ToString() };
+            PartnerTypeId = 1;
+        }
     }
 }
 

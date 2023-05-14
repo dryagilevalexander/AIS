@@ -71,7 +71,7 @@ namespace AIS.Controllers
              }
 
              EditContractViewModel model = new EditContractViewModel();
-             model.Fill(id, _contractsService, _enclosureService, _partnerService);
+             await model.Fill(id, _contractsService, _enclosureService, _partnerService);
              return View(model);
         }
 

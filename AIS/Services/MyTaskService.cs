@@ -93,7 +93,7 @@ namespace AIS.Services
 
         }
 
-        public async Task CreateTask(User destinationUser, MyTaskViewModel mtvm)
+        public async Task CreateTask(User destinationUser, CreateTaskViewModel model)
         {
             try
             {
@@ -101,21 +101,21 @@ namespace AIS.Services
                 List<MyFile> myFiles = new List<MyFile>();
                 MyTask myTask = new MyTask
                 {
-                    Name = mtvm.Name,
-                    Description = mtvm.Description,
-                    DateStart = mtvm.DateStart,
-                    DateEnd = mtvm.DateEnd,
-                    MyTaskStatusId = mtvm.MyTaskStatusId,
-                    MyTaskLevelImportanceId = mtvm.MyTaskLevelImportanceId,
-                    SenderUserId = mtvm.SenderUserId,
-                    SenderUserName = mtvm.SenderUserName,
-                    DestinationUserId = mtvm.DestinationUserId,
+                    Name = model.Name,
+                    Description = model.Description,
+                    DateStart = model.DateStart,
+                    DateEnd = model.DateEnd,
+                    MyTaskStatusId = model.MyTaskStatusId,
+                    MyTaskLevelImportanceId = model.MyTaskLevelImportanceId,
+                    SenderUserId = model.SenderUserId,
+                    SenderUserName = model.SenderUserName,
+                    DestinationUserId = model.DestinationUserId,
                     DestinationUserName = destinationUser.UserNickName
                 };
 
-                if (mtvm.Enclosure is not null)
+                if (model.Enclosure is not null)
                 {
-                    foreach (var uploadedFile in mtvm.Enclosure)
+                    foreach (var uploadedFile in model.Enclosure)
                     {
                         var ext = Path.GetExtension(uploadedFile.FileName);
                         string fileName = String.Format(@"{0}" + ext, System.Guid.NewGuid());
@@ -137,7 +137,7 @@ namespace AIS.Services
                     }
                 }
 
-                if(destinationUser.Id==mtvm.SenderUserId)
+                if(destinationUser.Id==model.SenderUserId)
                 {
                     myTask.FirstView = true;
                 }
@@ -153,26 +153,26 @@ namespace AIS.Services
 
         }
 
-        public async Task EditMyTask(User destinationUser, MyTaskViewModel mtvm)
+        public async Task EditMyTask(User destinationUser, EditTaskViewModel model)
         {
             try
             {
                 List<string> enclosure = new List<string>();
                 List<MyFile> myFiles = new List<MyFile>();
-                var currentTask = await db.MyTasks.Include(u => u.MyFiles).FirstOrDefaultAsync(p => p.Id == mtvm.Id);
+                var currentTask = await db.MyTasks.Include(u => u.MyFiles).FirstOrDefaultAsync(p => p.Id == model.Id);
 
-                currentTask.Name = mtvm.Name;
-                currentTask.Description = mtvm.Description;
-                currentTask.DateStart = mtvm.DateStart;
-                currentTask.DateEnd = mtvm.DateEnd;
-                currentTask.MyTaskStatusId = mtvm.MyTaskStatusId;
-                currentTask.MyTaskLevelImportanceId = mtvm.MyTaskLevelImportanceId;
-                currentTask.DestinationUserId = mtvm.DestinationUserId;
+                currentTask.Name = model.Name;
+                currentTask.Description = model.Description;
+                currentTask.DateStart = model.DateStart;
+                currentTask.DateEnd = model.DateEnd;
+                currentTask.MyTaskStatusId = model.MyTaskStatusId;
+                currentTask.MyTaskLevelImportanceId = model.MyTaskLevelImportanceId;
+                currentTask.DestinationUserId = model.DestinationUserId;
                 currentTask.DestinationUserName = destinationUser.UserNickName;
 
-                if (mtvm.Enclosure is not null)
+                if (model.Enclosure is not null)
                 {
-                    foreach (var uploadedFile in mtvm.Enclosure)
+                    foreach (var uploadedFile in model.Enclosure)
                     {
                         // путь к папке Files
 
@@ -226,7 +226,7 @@ namespace AIS.Services
             return myTask;
         }
 
-        public async Task CreateSubTask(MySubTaskViewModel mtvm)
+        public async Task CreateSubTask(CreateSubTaskViewModel model)
         {
             try
             {
@@ -234,18 +234,18 @@ namespace AIS.Services
                 List<MyFile> myFiles = new List<MyFile>();
                 MySubTask mySubTask = new MySubTask
                 {
-                    MyTaskId = mtvm.MyTaskId,
-                    Name = mtvm.Name,
-                    Description = mtvm.Description,
-                    DateStart = mtvm.DateStart,
-                    DateEnd = mtvm.DateEnd,
-                    MyTaskStatusId = mtvm.MyTaskStatusId,
-                    MyTaskLevelImportanceId = mtvm.MyTaskLevelImportanceId,
+                    MyTaskId = model.MyTaskId,
+                    Name = model.Name,
+                    Description = model.Description,
+                    DateStart = model.DateStart,
+                    DateEnd = model.DateEnd,
+                    MyTaskStatusId = model.MyTaskStatusId,
+                    MyTaskLevelImportanceId = model.MyTaskLevelImportanceId,
                 };
 
-                if (mtvm.Enclosure is not null)
+                if (model.Enclosure is not null)
                 {
-                    foreach (var uploadedFile in mtvm.Enclosure)
+                    foreach (var uploadedFile in model.Enclosure)
                     {
                         var ext = Path.GetExtension(uploadedFile.FileName);
                         string fileName = String.Format(@"{0}" + ext, System.Guid.NewGuid());
@@ -276,25 +276,25 @@ namespace AIS.Services
             }
         }
 
-        public async Task EditSubTask(MySubTaskViewModel mtvm)
+        public async Task EditSubTask(EditSubTaskViewModel model)
         {
             try
             {
                 List<string> enclosure = new List<string>();
                 List<MyFile> myFiles = new List<MyFile>();
-                var currentSubTask = await db.MySubTasks.Include(u => u.MyFiles).FirstOrDefaultAsync(p => p.Id == mtvm.Id);
+                var currentSubTask = await db.MySubTasks.Include(u => u.MyFiles).FirstOrDefaultAsync(p => p.Id == model.Id);
 
 
-                currentSubTask.Name = mtvm.Name;
-                currentSubTask.Description = mtvm.Description;
-                currentSubTask.DateStart = mtvm.DateStart;
-                currentSubTask.DateEnd = mtvm.DateEnd;
-                currentSubTask.MyTaskStatusId = mtvm.MyTaskStatusId;
-                currentSubTask.MyTaskLevelImportanceId = mtvm.MyTaskLevelImportanceId;
+                currentSubTask.Name = model.Name;
+                currentSubTask.Description = model.Description;
+                currentSubTask.DateStart = model.DateStart;
+                currentSubTask.DateEnd = model.DateEnd;
+                currentSubTask.MyTaskStatusId = model.MyTaskStatusId;
+                currentSubTask.MyTaskLevelImportanceId = model.MyTaskLevelImportanceId;
 
-                if (mtvm.Enclosure is not null)
+                if (model.Enclosure is not null)
                 {
-                    foreach (var uploadedFile in mtvm.Enclosure)
+                    foreach (var uploadedFile in model.Enclosure)
                     {
                         // путь к папке Files
 

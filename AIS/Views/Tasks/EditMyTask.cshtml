@@ -1,4 +1,4 @@
-﻿@model AIS.ViewModels.TasksViewModels.MyTaskViewModel;
+﻿@model AIS.ViewModels.TasksViewModels.EditTaskViewModel;
 
 <h2>Редактирование задачи</h2>
 <form asp-action="editmytask" asp-controller="tasks" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
@@ -54,7 +54,7 @@
 
         <div class="row">
             <div class="col-5 mb-3">
-                <select size="2" data-placeholder="Статус"  class="form-select" asp-for="MyTaskStatusId" asp-items="ViewBag.MyTaskStatuses" id="MyTaskStatusId">
+                <select size="2" data-placeholder="Статус"  class="form-select" asp-for="MyTaskStatusId" asp-items="Model.MyTaskStatuses" id="MyTaskStatusId">
             </select>
         </div>
         <div class="col-7"></div>
@@ -62,7 +62,7 @@
 
         <div class="row">
             <div class="col-5 mb-3">
-                <select size="2" data-placeholder="Важность" class="form-select" asp-for="MyTaskLevelImportanceId" asp-items="ViewBag.MyTaskLevels" id="MyTaskLevelImportanceId">
+                <select size="2" data-placeholder="Важность" class="form-select" asp-for="MyTaskLevelImportanceId" asp-items="Model.MyTaskLevelImportances" id="MyTaskLevelImportanceId">
              </select>
         </div>
         <div class="col-7"></div>

@@ -47,7 +47,7 @@ namespace AIS.ViewModels.ContractsViewModels
         public async Task Fill(IPartnerService _partnerService, IConditionsService _conditionsService, IContractsService _contractsService)
         {
             IEnumerable<Partner> myPartners = await _partnerService.GetPartnersWithoutOurOrganization();
-            IEnumerable<DocumentTemplate> documentTemplates = await _conditionsService.GetDocumentTemplates();
+            IEnumerable<DocumentTemplate> documentTemplates = await _conditionsService.GetDocumentTemplatesByTypeOfDocumentId(1);
             IEnumerable<TypeOfStateReg> typeOfStateRegs = await _contractsService.GetTypeOfStateRegs();
             IEnumerable<ArticleOfLaw> articleOfLaws = await _contractsService.GetArticleOfLaws();
             IEnumerable<MyContractStatus> myContractStatuses = await _contractsService.GetMyContractStatuses();

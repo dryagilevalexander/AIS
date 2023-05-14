@@ -8,7 +8,7 @@ namespace AIS.Services
     {
         Task<IEnumerable<ShippingMethod>> GetAllShippingMethods();
         Task<IEnumerable<LetterType>> GetAllletterTypes();
-        Task CreateLetter(LetterViewModel letterViewModel);
+        Task CreateLetter(CreateLetterViewModel letterViewModel);
         Task DeleteLetter(int id);
         Task<Letter> GetLetterById(int id);
         Task EditLetter(Letter letter);

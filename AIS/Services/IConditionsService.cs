@@ -37,5 +37,6 @@ namespace AIS.Services
         Task DeleteSubConditionParagraph(int id);
         Task<SubCondition> GetSubCondition(int id);
         Task<SubConditionParagraph?> GetSubConditionParagraph(int id);
+        Task<List<DocumentTemplate>> GetDocumentTemplatesByTypeOfDocumentId(int id);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Infrastructure.Models;
+﻿using AIS.Services;
+using Infrastructure.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
@@ -44,6 +45,19 @@ namespace AIS.ViewModels.PartnersViewModels
         public string DirectorNameR { get; set; }
         [Required(ErrorMessage = "Не указан статус контрагента")]
         public int PartnerStatusId { get; set; }
+    
+    public async Task Fill(IPartnerService _partnerService)
+        {
+            var directorTypes = await _partnerService.GetDirectorTypes();
+            var categories = await _partnerService.GetCategories();
+            var partnerStatuses = await _partnerService.GetPartnerStatuses();
+
+            DirectorTypes = from directorType in directorTypes select new SelectListItem { Text = directorType.Name, Value = directorType.Id.ToString() };
+            PartnerCategories = from category in categories select new SelectListItem { Text = category.Name, Value = category.Id.ToString() };
+            DirectorTypes = from directorType in directorTypes select new SelectListItem { Text = directorType.Name, Value = directorType.Id.ToString() };
+            PartnerStatuses = from partnerStatus in partnerStatuses select new SelectListItem { Text = partnerStatus.Name, Value = partnerStatus.Id.ToString() };
+            PartnerTypeId = 1;
+        }    
     }
 
 

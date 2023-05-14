@@ -67,7 +67,7 @@ function addLink(link) {
     var div = document.createElement("div");
     div.className = "row pb-3";
     // Добавляем HTML-контент с пом. свойства innerHTML
-    div.innerHTML = '<br><div class="col-sm-8"><a href = '+ link + '>Скачать проект договора</div>';
+    div.innerHTML = '<br><div class="col-sm-8"><a href = /files/Output/'+ link + '>Скачать проект договора</div>';
     // Добавляем новый узел в конец списка полей
     document.getElementById("projectDocumentLink").appendChild(div);
     // Возвращаем false, чтобы не было перехода по сслыке

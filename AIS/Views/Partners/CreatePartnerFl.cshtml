@@ -68,7 +68,7 @@
         <div class="row">
             <div class="col-5 mb-3">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Email" aria-label="Email" asp-for="Email">
+                    <input type="text" class="form-control" placeholder="Email" aria-label="Email" asp-for="Email" id="Email">
                 </div>
             </div>
             <div class="col-7"><span asp-validation-for="Email"></span></div>
@@ -77,7 +77,7 @@
         <div class="row">
             <div class="col-5 mb-3">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Телефонный номер" aria-label="Телефонный номер" asp-for="PhoneNumber">
+                    <input type="text" class="form-control" placeholder="Телефонный номер" aria-label="Телефонный номер" asp-for="PhoneNumber" id="PhoneNumber">
                 </div>
             </div>
             <div class="col-7"><span asp-validation-for="PhoneNumber"></span></div>
@@ -86,7 +86,7 @@
         <div class="row">
             <div class="col-5 mb-3">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="ИНН" aria-label="ИНН" asp-for="INN">
+                    <input type="text" class="form-control" placeholder="ИНН" aria-label="ИНН" asp-for="INN" id="INNFl">
                 </div>
             </div>
             <div class="col-7"><span asp-validation-for="INN"></span></div>
@@ -105,7 +105,7 @@
     <div class="row">
         <div class="col-5 mb-3">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Паспорт: серия" aria-label="Паспорт: номер" asp-for="PassportSeries">
+                <input type="text" class="form-control" placeholder="Паспорт: серия" aria-label="Паспорт: номер" asp-for="PassportSeries" id="PassportSeries">
             </div>
         </div>
         <div class="col-7"><span asp-validation-for="PassportSeries"></span></div>
@@ -114,7 +114,7 @@
     <div class="row">
         <div class="col-5 mb-3">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Паспорт: номер" aria-label="Паспорт: номер" asp-for="PassportNumber">
+                <input type="text" class="form-control" placeholder="Паспорт: номер" aria-label="Паспорт: номер" asp-for="PassportNumber" id="PassportNumber">
             </div>
         </div>
         <div class="col-7"><span asp-validation-for="PassportNumber"></span></div>
@@ -142,7 +142,7 @@
     <div class="row">
         <div class="col-5 mb-3">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Код подразделения" aria-label="Код подразделения" asp-for="PassportDivisionCode">
+                <input type="text" class="form-control" placeholder="Код подразделения" aria-label="Код подразделения" asp-for="PassportDivisionCode" id="PassportDivisionCode">
             </div>
         </div>
         <div class="col-7"><span asp-validation-for="PassportDivisionCode"></span></div>
@@ -176,3 +176,5 @@
     </div>
 
 </form>
+
+<script asp-src-include="~/js/inputmask.js"></script>

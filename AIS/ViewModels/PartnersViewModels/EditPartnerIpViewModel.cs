@@ -1,6 +1,10 @@
-﻿using Infrastructure.Models;
+﻿using AIS.ErrorManager;
+using AIS.Services;
+using DocumentFormat.OpenXml.Office2010.Excel;
+using Infrastructure.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 namespace AIS.ViewModels.PartnersViewModels
 {
@@ -48,5 +52,35 @@ namespace AIS.ViewModels.PartnersViewModels
         [Required(ErrorMessage = "Не указан код подразделения")]
         public string? PassportDivisionCode { get; set; }
         public IEnumerable<SelectListItem>? PartnerStatuses { get; set; }
+    
+        public async Task Fill(int id, IPartnerService _partnerService)
+        {
+            Partner? partner = await _partnerService.GetPartner(id);
+            if (partner == null) throw new AisException("Не найден контрагент", HttpStatusCode.BadRequest);
+
+            Id = partner.Id;
+            Fio = partner.Fio;
+            ShortFio = partner.ShortFio;
+            ShortFioR = partner.ShortFioR;
+            Address = partner.Address;
+            Email = partner.Email;
+            PhoneNumber = partner.PhoneNumber;
+            INN = partner.INN;
+            PartnerStatusId = partner.PartnerStatusId;
+            Bank = partner.Bank;
+            Account = partner.Account;
+            CorrespondentAccount = partner.CorrespondentAccount;
+            BIK = partner.BIK;
+            PassportSeries = partner.PassportSeries;
+            PassportNumber = partner.PassportNumber;
+            PassportDateOfIssue = partner.PassportDateOfIssue;
+            PassportDateOfBirth = partner.PassportDateOfBirth;
+            PassportPlaseOfIssue = partner.PassportPlaseOfIssue;
+            PassportDivisionCode = partner.PassportDivisionCode;
+
+            var partnerStatuses = await _partnerService.GetPartnerStatuses();
+            PartnerStatuses = from partnerStatus in partnerStatuses select new SelectListItem { Text = partnerStatus.Name, Value = partnerStatus.Id.ToString() };
+            PartnerTypeId = 2;
+        }
     }
 }

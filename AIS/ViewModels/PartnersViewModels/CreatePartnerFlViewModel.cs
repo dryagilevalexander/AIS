@@ -1,4 +1,5 @@
-﻿using Infrastructure.Models;
+﻿using AIS.Services;
+using Infrastructure.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
@@ -39,5 +40,12 @@ namespace AIS.ViewModels.PartnersViewModels
         [Required(ErrorMessage = "Не указан код подразделения")]
         public string? PassportDivisionCode { get; set; }
         public IEnumerable<SelectListItem>? PartnerStatuses { get; set; }
+
+        public async Task Fill(IPartnerService _partnerService)
+        {
+            var partnerStatuses = await _partnerService.GetPartnerStatuses();
+            PartnerStatuses = from partnerStatus in partnerStatuses select new SelectListItem { Text = partnerStatus.Name, Value = partnerStatus.Id.ToString() };
+            PartnerTypeId = 3;
+        }
     }
 }

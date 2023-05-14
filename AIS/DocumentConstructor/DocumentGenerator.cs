@@ -11,6 +11,7 @@ using Text = DocumentFormat.OpenXml.Wordprocessing.Text;
 using Style = DocumentFormat.OpenXml.Wordprocessing.Style;
 using StyleValues = DocumentFormat.OpenXml.Wordprocessing.StyleValues;
 using Infrastructure.Models;
+using AIS.Models;
 
 
 namespace AIS
@@ -726,8 +727,6 @@ namespace AIS
 
             numberingDefinitionsPart1.Numbering = numbering1;
         }
-
-
     }
 }
 

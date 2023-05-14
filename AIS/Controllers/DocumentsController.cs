@@ -37,12 +37,14 @@ namespace AIS.Controllers
         public DocumentsController(ILogger<ProcessController> logger, 
                                  IWebHostEnvironment appEnvironment, 
                                  IContractsService contractsService, 
-                                 IConditionsService conditionsService)
+                                 IConditionsService conditionsService,
+                                 IPartnerService partnerService)
         {
             _logger = logger;
             _appEnvironment = appEnvironment;
             _contractsService = contractsService;
             _conditionsService = conditionsService;
+            _partnerService = partnerService;
         }
 
         #region[DocumentGenerator]
@@ -216,8 +218,8 @@ namespace AIS.Controllers
             Infrastructure.Models.Condition lowerDownCondition = await _conditionsService.GetConditionByNumberInDocument(condition.NumberInDocument-1);
                 condition.NumberInDocument = lowerDownCondition.NumberInDocument;
                 lowerDownCondition.NumberInDocument = lowerDownCondition.NumberInDocument + 1;
-                _conditionsService.SaveCondition(condition);
-                _conditionsService.SaveCondition(lowerDownCondition);
+                await _conditionsService.SaveCondition(condition);
+                await _conditionsService.SaveCondition(lowerDownCondition);
             }
             return RedirectToAction("EditDocumentTemplate", new { id = condition.DocumentTemplateId });
 
@@ -232,8 +234,8 @@ namespace AIS.Controllers
             {
                 condition.NumberInDocument = liftUpCondition.NumberInDocument;
                 liftUpCondition.NumberInDocument = liftUpCondition.NumberInDocument - 1;
-                _conditionsService.SaveCondition(condition);
-                _conditionsService.SaveCondition(liftUpCondition);
+                await _conditionsService.SaveCondition(condition);
+                await _conditionsService.SaveCondition(liftUpCondition);
 
             }
             return RedirectToAction("EditDocumentTemplate", new { id = condition.DocumentTemplateId });
@@ -274,7 +276,7 @@ namespace AIS.Controllers
         public async Task<IActionResult> EditSubCondition(int id)
         {
             EditSubConditionViewModel model = new EditSubConditionViewModel();
-            model.Fill(id, _conditionsService);
+            await model.Fill(id, _conditionsService);
             return View(model);
         }
 
@@ -325,7 +327,7 @@ namespace AIS.Controllers
         public async Task<IActionResult> EditSubConditionParagraph(int id)
         {
             EditSubConditionParagraphViewModel model = new EditSubConditionParagraphViewModel();
-            model.Fill(id, _conditionsService);
+            await model.Fill(id, _conditionsService);
             return View(model);
         }
 
@@ -351,42 +353,22 @@ namespace AIS.Controllers
             return RedirectToAction("EditSubCondition", new { id = subConditionId });
         }
 
-        public class JsonContractData
-        {
-            public string NumberOfContract { get; set; }
-            public string DateStart { get; set; }
-            public string DateEnd { get; set; }
-            public string PartnerId { get; set; }
-            public string SubjectOfContract { get; set; }
-            public string Cost { get; set; }
-            public string TypeOfStateRegId { get; set; }
-            public string ArticleOfLawId { get; set; }
-            public string DocumentTemplateId { get; set; }
-            public string IsCustomer { get; set; }
-            public string PlaceOfContract { get; set; }
-        }
-
         [HttpPost]
-        public async Task<string> ShadowConstructDocument([FromBody] JsonContractData jsonContractData)
-        {
-           
-            DocumentTemplate DocumentTemplate = await _conditionsService.GetDocumentTemplateWithTypeOfContractById(Convert.ToInt32(jsonContractData.DocumentTemplateId));
+        public async Task<string> ShadowConstructDocument([FromBody] JsonDocumentData jsonDocumentData)
+        {          
+            DocumentTemplate DocumentTemplate = await _conditionsService.GetDocumentTemplateWithTypeOfContractById(Convert.ToInt32(jsonDocumentData.DocumentTemplateId));
             RootTemplate RootTemplate = await _conditionsService.GetRootTemplateWithDocumentTemplatesById(DocumentTemplate.RootTemplateId);
-            Partner contragent = await _partnerService.GetPartner(Convert.ToInt32(jsonContractData.PartnerId));
+            Partner contragent = await _partnerService.GetPartner(Convert.ToInt32(jsonDocumentData.PartnerId));
             Partner mainOrganization = await _partnerService.GetMainOrganization();
-            DocumentTemplate documentTemplate = _conditionsService.GetDocumentTemplateEagerLoadingById(Convert.ToInt32(jsonContractData.DocumentTemplateId));
-
-
+            DocumentTemplate documentTemplate = _conditionsService.GetDocumentTemplateEagerLoadingById(Convert.ToInt32(jsonDocumentData.DocumentTemplateId));
             int typeOfDocumentId = RootTemplate.TypeOfDocumentId;
 
             bool isCustomer;
-            if (jsonContractData.IsCustomer == "true") isCustomer = true;
+            if (jsonDocumentData.IsCustomer == "true") isCustomer = true;
             else isCustomer = false;
-            if (jsonContractData.ArticleOfLawId == "") jsonContractData.ArticleOfLawId = "0";
-            
-            
+            if (jsonDocumentData.ArticleOfLawId == "") jsonDocumentData.ArticleOfLawId = "0";
+                      
             DocumentModel contract = new DocumentModel();
-
 
             List<Infrastructure.Models.Condition> conditions = new List<Infrastructure.Models.Condition>();
 
@@ -399,7 +381,7 @@ namespace AIS.Controllers
                     conditions.Add(condition);
                 }
                 //Если 44-ФЗ добавляем специфические условия для этого типа регулирования               
-                if (Convert.ToInt32(jsonContractData.TypeOfStateRegId) == 1)
+                if (Convert.ToInt32(jsonDocumentData.TypeOfStateRegId) == 1)
                 {
                     if (condition.TypeOfStateRegId == 1)
                     {
@@ -409,7 +391,6 @@ namespace AIS.Controllers
             }
 
             conditions = conditions.OrderBy(x => x.NumberInDocument).ToList<Infrastructure.Models.Condition>();
-
 
             string contractType = "";
             string contractName = "";
@@ -439,9 +420,9 @@ namespace AIS.Controllers
             }
 
             //Получаем пункт основания заключения контракта (для 44-ФЗ)
-            if (Convert.ToInt32(jsonContractData.TypeOfStateRegId) == 1)
+            if (Convert.ToInt32(jsonDocumentData.TypeOfStateRegId) == 1)
             {
-                switch (Convert.ToInt32(jsonContractData.ArticleOfLawId))
+                switch (Convert.ToInt32(jsonDocumentData.ArticleOfLawId))
                 {
                     case 1:
                         paragraphBaseOfContract = "п. 4 ст. 93 ";
@@ -453,7 +434,7 @@ namespace AIS.Controllers
             }
 
             //Получаем фактическое наименование контракта и основание заключения
-            switch (Convert.ToInt32(jsonContractData.TypeOfStateRegId))
+            switch (Convert.ToInt32(jsonDocumentData.TypeOfStateRegId))
             {
                 case 1:
                     contractName = "Контракт";
@@ -466,12 +447,11 @@ namespace AIS.Controllers
                 case 3:
                     contractName = "Договор";
                     break;
-
             }
-
 
             Dictionary<string, string> replacementDictionary = new Dictionary<string, string>();
 
+            replacementDictionary.Add("Договор", contractName);
             replacementDictionary.Add("договор", contractName);
             replacementDictionary.Add("contractType", contractType);
             
@@ -496,19 +476,17 @@ namespace AIS.Controllers
                 replacementDictionary.Add("executorDirectorTypeNameR", mainOrganization.DirectorType.NameR);
             }
 
-            replacementDictionary.Add("place", jsonContractData.PlaceOfContract);
+            replacementDictionary.Add("place", jsonDocumentData.PlaceOfContract);
 
             replacementDictionary.Add("baseOfContract", baseOfContract);
-            replacementDictionary.Add("subjectOfContract", jsonContractData.SubjectOfContract);
-            replacementDictionary.Add("dateEnd", jsonContractData.DateEnd);
+            replacementDictionary.Add("subjectOfContract", jsonDocumentData.SubjectOfContract);
+            replacementDictionary.Add("dateEnd", jsonDocumentData.DateEnd);
             replacementDictionary.Add("executor", executor);
-            replacementDictionary.Add("cost", jsonContractData.Cost);
-
-            
+            replacementDictionary.Add("cost", jsonDocumentData.Cost);
+           
             string fileName = Guid.NewGuid().ToString();
             fileName = fileName + ".docx";
             string path = _appEnvironment.WebRootPath + "\\files\\Output\\" + fileName;
-
 
             contract.TypeOfDocumentId = typeOfDocumentId;
             contract.Conditions = conditions;
@@ -517,23 +495,23 @@ namespace AIS.Controllers
 
             new DocumentGenerator().CreateContract(path, contract);
 
-            return path;
+            return fileName;
         }
 
         [HttpGet]
         public async Task<IActionResult> CreateCancellationOfCourtOrder()
         {
-                CancellationOfCourtOrderViewModel ccovm = new CancellationOfCourtOrderViewModel();
+                CancellationOfCourtOrderViewModel model = new CancellationOfCourtOrderViewModel();
                 var courts = await _partnerService.GetPartnersByPartnerCategoryId(2);
-                ccovm.Courts = from court in courts select new SelectListItem { Text = court.Name, Value = court.Id.ToString() };
+                model.Courts = from court in courts select new SelectListItem { Text = court.Name, Value = court.Id.ToString() };
                 var  partners = await _partnerService.GetPartners();
-                ccovm.MyPartners = from partner in partners select new SelectListItem { Text = partner.Name, Value = partner.Id.ToString() };
+                model.MyPartners = from partner in partners select new SelectListItem { Text = partner.Name, Value = partner.Id.ToString() };
 
-            return View(ccovm);
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCancellationOfCourtOrder(CancellationOfCourtOrderViewModel ccovm)
+        public async Task<IActionResult> CreateCancellationOfCourtOrder(CancellationOfCourtOrderViewModel model)
         {
             return RedirectToAction("MyTasks");
         }
