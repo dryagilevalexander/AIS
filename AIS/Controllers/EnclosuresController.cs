@@ -22,7 +22,6 @@ namespace AIS.Controllers
         {
             _enclosureService = enclosureService;
         }
-        #region [MyTasks]
         
         [HttpPost]
         public async Task<IActionResult> DeleteMyEnclosure(int id)
@@ -30,6 +29,5 @@ namespace AIS.Controllers
             await _enclosureService.DeleteMyEnclosure(id);
             return new EmptyResult();
         }
-        #endregion
     }
 }

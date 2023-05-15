@@ -12,13 +12,19 @@ using DocumentFormat.OpenXml.InkML;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using Hangfire;
+using Hangfire.PostgreSql;
+using AIS.Hangfire.Jobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 string connection = builder.Configuration.GetConnectionString("DefaultConnection");
+string hangfireConnection = builder.Configuration.GetConnectionString("HangfireConnection");
 builder.Services.AddDbContext<AisDbContext>(options => options.UseNpgsql(connection));
 builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<AisDbContext>();
+builder.Services.AddScoped<IHangfireJobs, HangfireJobs>();
 builder.Services.AddTransient<IEmployeeService, EmployeeService>();
 builder.Services.AddTransient<IPartnerService, PartnerService>();
 builder.Services.AddTransient<IMyTaskService, MyTaskService>();
@@ -28,6 +34,9 @@ builder.Services.AddTransient<ILetterService, LetterService>();
 builder.Services.AddTransient<IEnclosureService, EnclosureService>();
 builder.Services.AddTransient<IConditionsService, ConditionsService>();
 builder.Services.AddTransient<IDocumentGenerator, DocumentGenerator>();
+builder.Services.AddHangfire(x => x.UsePostgreSqlStorage(hangfireConnection));
+builder.Services.AddHangfireServer();
+
 builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -89,6 +98,10 @@ app.UseEndpoints(endpoints =>
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
         });
+app.UseHangfireDashboard();
+
+//Hangfire jobs
+RecurringJob.AddOrUpdate<IHangfireJobs>(x => x.DeleteOldFiles(), "0 4 * * *", TimeZoneInfo.FindSystemTimeZoneById("Russian Standard Time")); // ≈жедневно в 4 ночи
 
 using (var scope = app.Services.CreateScope())
 {
