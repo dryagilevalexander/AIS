@@ -63,9 +63,9 @@ namespace Infrastructure
             modelBuilder.Entity<LevelImportance>().HasData(
             new LevelImportance[]
             {
-                new LevelImportance {Id=1, Name="Низкий", ClassView = "btn btn-secondary"},
-                new LevelImportance {Id=2, Name="Средний", ClassView = "btn btn-warning" },
-                new LevelImportance {Id=3, Name="Высокий", ClassView = "btn btn-danger"}
+                new LevelImportance {Id=1, Name="Низкий", ClassView = "btn btn-secondary btn-block"},
+                new LevelImportance {Id=2, Name="Средний", ClassView = "btn btn-warning btn-block" },
+                new LevelImportance {Id=3, Name="Высокий", ClassView = "btn btn-danger btn-block"}
             });
 
             modelBuilder.Entity<MyTaskStatus>().HasData(

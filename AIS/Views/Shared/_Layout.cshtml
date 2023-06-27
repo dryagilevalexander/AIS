@@ -59,7 +59,7 @@
                     </ul>
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <p text-align="right">@User.Identity.Name</p>
+                        <div><span>@User.Identity.Name</span></div>
                         <form method="post" asp-controller="Account" asp-action="Logout">
                             <input type="submit" value="Выход" />
                         </form>

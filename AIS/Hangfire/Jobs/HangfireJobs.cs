@@ -1,11 +1,7 @@
 ﻿using Infrastructure;
 using Infrastructure.Models;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AIS.Hangfire.Jobs
 {
@@ -13,11 +9,14 @@ namespace AIS.Hangfire.Jobs
     {
         private readonly AisDbContext _db;
         private IWebHostEnvironment _appEnvironment;
+        IHubContext<AisHub> _hubContext;
 
-        public HangfireJobs(AisDbContext db, IWebHostEnvironment appEnvironment)
+
+        public HangfireJobs(AisDbContext db, IWebHostEnvironment appEnvironment, IHubContext<AisHub> hubContext)
         {
             _db = db;
             _appEnvironment = appEnvironment;
+            _hubContext = hubContext;
         }
 
         public async Task DeleteOldFiles()
