@@ -48,6 +48,13 @@ namespace AIS.Controllers
             return PartialView(model);
         }
 
+        public async Task<JsonResult> FillInAutomaticallyPartnerOrganization(string id)
+        {
+            Partner partner = new Partner();
+            partner = await _partnerService.GetPartnerInformation(id);
+            return Json(partner);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreatePartnerOrganization(CreatePartnerOrganizationViewModel model)
         {

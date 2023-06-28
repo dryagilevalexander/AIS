@@ -28,5 +28,6 @@ namespace AIS.Services
         Task EditPartnerFl(EditPartnerFlViewModel model);
         Task<Partner> GetMainOrganization();
         Task<List<Employee>> GetEmployeesByPartnerId(int id);
+        Task<Partner> GetPartnerInformation(string inn);
     }
 }

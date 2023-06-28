@@ -82,7 +82,8 @@ namespace Infrastructure
             {
                 new DirectorType {Id=1, Name="Директор", NameR = "Директора"},
                 new DirectorType {Id=2, Name="Генеральный директор", NameR = "Генерального директора"},
-                new DirectorType {Id=3, Name="Глава", NameR = "Главы"}
+                new DirectorType {Id=3, Name="Глава", NameR = "Главы"},
+                new DirectorType {Id=4, Name="Заведующий", NameR = "Заведующего"},
             });
 
             modelBuilder.Entity<PartnerStatus>().HasData(

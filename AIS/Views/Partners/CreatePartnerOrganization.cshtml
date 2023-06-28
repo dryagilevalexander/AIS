@@ -86,6 +86,15 @@
         <div class="row">
             <div class="col-5 mb-3">
                 <div class="input-group">
+                    <a class="btn btn-secondary btn-block" role="button" onclick="return fillInAutomatically()">Заполнить по ИНН</a>
+                </div>
+            </div>
+            <div class="col-7"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 mb-3">
+                <div class="input-group">
                     <input type="text" class="form-control" placeholder="КПП" aria-label="КПП" asp-for="KPP" id="KPP">
                 </div>
             </div>
@@ -199,4 +208,5 @@
     </form>
 
 <script asp-src-include="~/js/inputmask.js"></script>
+<script asp-src-include="~/js/partners.js"></script>
 
