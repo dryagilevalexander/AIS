@@ -112,6 +112,23 @@ namespace AIS.Controllers
             await _myTaskService.EditMyTask(destinationUser, model);
             return RedirectToAction("MyTasks");
         }
+
+        [HttpPost]
+        public async Task<JsonResult> ShowCurrentTasks([FromBody] string id)
+        {
+            var userName = User.FindFirstValue(ClaimTypes.Name);
+            var currentUser = await _myUserService.GetCurrentUser(userName);
+            
+            if (User.IsInRole("admin"))
+            {
+                return Json(await _myTaskService.GetMyActiveTasks());
+            }
+            else
+            {
+                return Json(_myTaskService.GetMyActiveTasksWithCurrentUser(currentUser.Id));
+            }
+        }
+
         #endregion
 
         #region[subTasks]
