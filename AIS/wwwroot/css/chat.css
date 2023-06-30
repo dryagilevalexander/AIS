@@ -24,7 +24,10 @@
 /* Добавить стили для контейнера формы */
 .form-container {
     max-width: 300px;
-    padding: 10px;
+    min-width: 300px;
+    max-height: 400px;
+    min-height: 400px;
+    padding: 5px;
     background-color: white;
 }
 
@@ -32,11 +35,11 @@
     .form-container textarea {
         width: 100%;
         padding: 15px;
-        margin: 5px 0 22px 0;
+        margin: 30px 0 22px 0;
         border: none;
         background: #f1f1f1;
         resize: none;
-        min-height: 200px;
+        min-height: 300px;
     }
 
         /* Когда текстовое поле получает фокус, сделайте что-нибудь */
@@ -46,15 +49,17 @@
         }
 
     /* Установите стиль для кнопки отправить/войти */
-    .form-container .btn {
+    .form-container .send {
+        position: absolute;
+        right: 5px;
+        bottom: 0;
         padding: 5px 5px;
         cursor: pointer;
         width: 47%;
         height: 40px;
-        margin-bottom: 5px;
+        margin-bottom: 3px;
         opacity: 0.8;
     }
-
 
     /* Добавить некоторые эффекты наведения на кнопки */
     .form-container .btn:hover, .open-button:hover {
@@ -65,4 +70,19 @@
     right: 0;
     bottom: 10%;
     position: absolute;
+}
+
+.form-container .cancel {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    padding: 2px 2px;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    opacity: 0.7;
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
