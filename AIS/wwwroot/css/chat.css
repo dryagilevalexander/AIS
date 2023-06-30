@@ -1,0 +1,68 @@
+{
+    box-sizing: border-box;
+}
+
+/* Кнопка, используемая для открытия формы чата - исправлена в нижней части страницы */
+#openChat {  
+    position: fixed;
+    right: 1%;
+    bottom: 11%;
+    width: 80px;
+    height: 40px;
+}
+
+/* Всплывающий чат - скрыт по умолчанию */
+.form-popup {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    right: 15px;
+    border: 3px solid #f1f1f1;
+    z-index: 9;
+}
+
+/* Добавить стили для контейнера формы */
+.form-container {
+    max-width: 300px;
+    padding: 10px;
+    background-color: white;
+}
+
+    /* Полная ширина текстовой области */
+    .form-container textarea {
+        width: 100%;
+        padding: 15px;
+        margin: 5px 0 22px 0;
+        border: none;
+        background: #f1f1f1;
+        resize: none;
+        min-height: 200px;
+    }
+
+        /* Когда текстовое поле получает фокус, сделайте что-нибудь */
+        .form-container textarea:focus {
+            background-color: #ddd;
+            outline: none;
+        }
+
+    /* Установите стиль для кнопки отправить/войти */
+    .form-container .btn {
+        padding: 5px 5px;
+        cursor: pointer;
+        width: 47%;
+        height: 40px;
+        margin-bottom: 5px;
+        opacity: 0.8;
+    }
+
+
+    /* Добавить некоторые эффекты наведения на кнопки */
+    .form-container .btn:hover, .open-button:hover {
+        opacity: 1;
+    }
+
+#myForm {
+    right: 0;
+    bottom: 10%;
+    position: absolute;
+}
