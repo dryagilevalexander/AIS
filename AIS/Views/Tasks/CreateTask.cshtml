@@ -39,7 +39,7 @@
     <div class="row">
         <div class="col-5 mb-3">
         <div class="input-group">
-            <input type="datetime-local" class="form-control" placeholder="Дата создания" aria-label="Дата создания" asp-for="DateStart">
+                    <input type="date" asp-format="{0:yyyy-MM-dd}" class="form-control" placeholder="Дата создания" aria-label="Дата создания" asp-for="DateStart">
         </div>
         </div>
         <div class="col-7"></div>
@@ -48,8 +48,9 @@
     <div class="row">
         <div class="col-5 mb-3">
         <div class="input-group">
-            <input type="datetime-local" class="form-control" placeholder="Дата окончания" aria-label="Дата окончания" asp-for="DateEnd">
-        </div>
+                    <input type="date" asp-format="{0:yyyy-MM-dd}" class="form-control" placeholder="Дата окончания" aria-label="Дата окончания" asp-for="DateEnd">
+        
+                </div>
         </div>
         <div class="col-7"></div>
     </div>

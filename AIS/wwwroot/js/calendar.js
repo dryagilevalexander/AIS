@@ -150,7 +150,8 @@ function selectCell() {
 
         if (response.status == 200) {
             let result = await response.text();
-            alert(result);
+            $('#dialogContent').html(result);
+            $('#modDialog').modal('show');
         }
         else {
             console.log("Server response: ", resonse.status);

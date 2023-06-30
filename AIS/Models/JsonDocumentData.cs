@@ -14,4 +14,9 @@
         public string IsCustomer { get; set; } = null!;
         public string PlaceOfContract { get; set; } = null!;
     }
+
+    public class JsonCalendarData
+    {
+        public string FullDate { get; set; }
+    }
 }

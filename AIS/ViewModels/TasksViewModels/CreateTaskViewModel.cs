@@ -4,6 +4,7 @@ using Infrastructure.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Security.Claims;
 
@@ -18,7 +19,9 @@ namespace AIS.ViewModels.TasksViewModels
         public IEnumerable<SelectListItem>? DestinationUsers { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime? DateStart { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime? DateEnd { get; set; }
         public IFormFileCollection? Enclosure { get; set; }
         public IEnumerable<MyFile>? MyFiles { get; set; }

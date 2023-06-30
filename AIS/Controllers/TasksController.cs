@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 using AIS.ViewModels.TasksViewModels;
 using AIS.ErrorManager;
 using System.Net;
+using AIS.Models;
+using DocumentFormat.OpenXml.Office2010.Excel;
 
 namespace AIS.Controllers
 {
@@ -113,20 +115,23 @@ namespace AIS.Controllers
             return RedirectToAction("MyTasks");
         }
 
+        //  [HttpPost]
+        //  public async Task<JsonResult> ShowCurrentTasks([FromBody] JsonCalendarData jsonCalendarData)
+        //  {
+        //      var userName = User.FindFirstValue(ClaimTypes.Name);
+        //      var currentUser = await _myUserService.GetCurrentUser(userName);
+
+        //      return Json(await _myTaskService.GetRequiredDateTasks(currentUser.Id, jsonCalendarData.FullDate));
+        //  }
+
         [HttpPost]
-        public async Task<JsonResult> ShowCurrentTasks([FromBody] string id)
+        public async Task<IActionResult> ShowCurrentTasks([FromBody] JsonCalendarData jsonCalendarData)
         {
             var userName = User.FindFirstValue(ClaimTypes.Name);
             var currentUser = await _myUserService.GetCurrentUser(userName);
+            IEnumerable<MyTask> tasks = await _myTaskService.GetRequiredDateTasks(currentUser.Id, jsonCalendarData.FullDate);
             
-            if (User.IsInRole("admin"))
-            {
-                return Json(await _myTaskService.GetMyActiveTasks());
-            }
-            else
-            {
-                return Json(_myTaskService.GetMyActiveTasksWithCurrentUser(currentUser.Id));
-            }
+            return PartialView(tasks);
         }
 
         #endregion

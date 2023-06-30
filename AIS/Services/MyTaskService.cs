@@ -45,6 +45,74 @@ namespace AIS.Services
             return myTasksWithTaskStatus;
         }
 
+        public async Task<IEnumerable<MyTask>> GetRequiredDateTasks(string currentUserId, string date)
+        {
+            string year = date.Split(" ")[1];
+            string month = date.Split(" ")[0];
+            int numberOfMonth = 0;
+            string day = date.Split(" ")[2];
+            switch (month)
+            {
+                case "Январь":
+                    numberOfMonth = 1; 
+                    break;
+
+                case "Февраль":
+                    numberOfMonth = 2;
+                    break;
+
+                case "Март":
+                    numberOfMonth = 3;
+                    break;
+
+                case "Апрель":
+                    numberOfMonth = 4;
+                    break;
+
+                case "Май":
+                    numberOfMonth = 5;
+                    break;
+
+                case "Июнь":
+                    numberOfMonth = 6;
+                    break;
+
+                case "Июль":
+                    numberOfMonth = 7;
+                    break;
+
+                case "Август":
+                    numberOfMonth = 8;
+                    break;
+
+                case "Сентябрь":
+                    numberOfMonth = 9;
+                    break;
+
+                case "Октябрь":
+                    numberOfMonth = 10;
+                    break;
+
+                case "Ноябрь":
+                    numberOfMonth = 11;
+                    break;
+
+                case "Декабрь":
+                    numberOfMonth = 12;
+                    break;
+            }
+
+
+
+            DateTime requiredDate = new DateTime(Convert.ToInt32(year), numberOfMonth, Convert.ToInt32(day));
+            
+            IEnumerable <MyTask> tasks = await db.MyTasks
+                                                                .Include(u => u.MyTaskStatus)
+                                                                .Include(r => r.MyTaskLevelImportance).Where(p => p.MyTaskStatusId != 4).Where(p => p.DateEnd == requiredDate).OrderByDescending(p => p.Id).ToListAsync();
+            return tasks;
+
+        }
+
         public async Task<IEnumerable<MyTask>> GetMyArchiveTasksWithCurrentUser(string currentUserId)
         {
             IEnumerable<MyTask> myTasks = await db.MyTasks

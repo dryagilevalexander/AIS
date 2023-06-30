@@ -22,6 +22,7 @@ namespace AIS.Services
         Task<List<MyTaskStatus>> GetMyTaskStatusesToList();
         Task<List<LevelImportance>> GetMyTaskLevelsToList();
         Task DeleteMySubTask(MySubTask currentSubTask);
+        Task<IEnumerable<MyTask>> GetRequiredDateTasks(string currentUserId, string date);
 
     }
 }
